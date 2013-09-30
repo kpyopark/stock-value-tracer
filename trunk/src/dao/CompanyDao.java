@@ -1,0 +1,127 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import post.Company;
+
+public class CompanyDao extends BaseDao {
+	
+	public boolean insert(Company company) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		boolean rtn = false;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY ( STOCK_ID , COMPANY_NAME , STANDARD_DATE ) VALUES ( ? , ? , ? )");
+			ps.setString(1, company.getId() );
+			ps.setString(2, company.getName() );
+			ps.setString(3, company.getStandardDate());
+			rtn = ps.execute();
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		System.out.println( rtn );
+		return rtn;
+	}
+	
+	public boolean update(Company company) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		boolean rtn = false;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("UPDATE TB_COMPANY SET COMPANY_NAME = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
+			ps.setString(1, company.getName() );
+			ps.setString(2, company.getId() );
+			ps.setString(3, company.getStandardDate());
+			rtn = ps.execute();
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		System.out.println( rtn );
+		return rtn;
+	}
+	
+	/**
+	 * Stock id를 이용하여 회사의 존재 여부를 확인하며
+	 * 있을 경우 회사 정보를 가지고 온다.
+	 * 없을 경우 null값을 돌려준다.
+	 * 
+	 * 중요!! 실은 이 메쏘드는 변경이 필요하다.
+	 * PK 가 id와 standard_date 두개임에도 불구하고 id로만 검색하기 때문이다.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+	//TODO: 검색시, id,standard_date 두개로 검색할 수 있도록 변경이 필요함.
+	public Company select(String id,String standardDate) throws SQLException {
+		Company rtn = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			if ( standardDate == null ) {
+				ps = conn.prepareStatement("SELECT * FROM TB_COMPANY WHERE STOCK_ID = ? ORDER BY STANDARD_DATE DESC");
+				ps.setString(1, id );
+			} else {
+				ps = conn.prepareStatement("SELECT * FROM TB_COMPANY WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
+				ps.setString(1, id );
+				ps.setString(2, standardDate );
+			}
+			rs = ps.executeQuery();
+			
+			if( rs.next() ) {
+				rtn = new Company();
+				rtn.setId(id);
+				rtn.setName(rs.getString("COMPANY_NAME"));
+				rtn.setStandardDate(rs.getString("STANDARD_DATE"));
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
+	
+	public java.util.ArrayList<Company> selectAllList() throws SQLException {
+		java.util.ArrayList<Company> list = new java.util.ArrayList<Company>();
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("SELECT A.STOCK_ID, A.COMPANY_NAME, A.STANDARD_DATE, CLOSED_YN FROM TB_COMPANY A JOIN ( SELECT STOCK_ID, MAX(STANDARD_DATE) AS STANDARD_DATE FROM TB_COMPANY GROUP BY STOCK_ID ) B ON ( A.STOCK_ID = B.STOCK_ID AND A.STANDARD_DATE = B.STANDARD_DATE )");
+			rs = ps.executeQuery();
+			
+			while ( rs.next() ) {
+				Company company = new Company();
+				company.setId(rs.getString("STOCK_ID"));
+				company.setName(rs.getString("COMPANY_NAME"));
+				company.setStandardDate(rs.getString("STANDARD_DATE"));
+				list.add(company);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return list;
+	}
+	
+}
