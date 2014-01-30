@@ -4,13 +4,19 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 
 import post.Company;
@@ -65,10 +71,15 @@ public class StockEstimationResourceWithYahoo {
 				stockId = company.getId();
 			}
 			
-			HttpGet method = new HttpGet("http://datamall.koscom.co.kr/servlet/cyberir/CyberIrCurrentServlet?screenId=301003&simplecode=" + stockId);
-
+			HttpPost method = new HttpPost("http://datamall.koscom.co.kr/servlet/cyberir/AjaxCyberIrCurrentServlet");
+			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+			pairs.add(new BasicNameValuePair("screenId", "301001"));
+			pairs.add(new BasicNameValuePair("simplecode", "005930"));
+			pairs.add(new BasicNameValuePair("style", ""));
+			pairs.add(new BasicNameValuePair("lang", "kor"));
+			method.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = client.execute(method);
-
+			
 			if ( response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 		        System.err.println("Method failed: " + response.getStatusLine().toString() );
 		    }
@@ -76,6 +87,7 @@ public class StockEstimationResourceWithYahoo {
 			br = new BufferedReader( new InputStreamReader( is ) );
 			try {
 				for ( String aLine = br.readLine() ; aLine != null ; aLine = br.readLine() ) {
+					System.out.println(aLine);
 					if ( aLine.contains("<td width=\"107\" class=\"td_color\">현재가</td>") || aLine.contains("<td width=\"25%\" class=\"td_color\">현재가</td>") ) {
 						aLine = br.readLine();
 						value = aLine.trim().
