@@ -44,6 +44,25 @@ public class ItemListResource {
 		return rtn;
 	}
 	
+	private static String getValueFieldFromLine(String aLine) {
+		boolean start = false;
+		boolean filterOn = false;
+		int startPoint = 0;
+		for ( int cnt = 0 ; cnt < aLine.length() ; cnt++ ) {
+			if ( aLine.charAt(cnt) == '>' ) {
+				filterOn = true;
+			} else if ( filterOn & ( aLine.charAt(cnt) >= '0' && aLine.charAt(cnt) <= '9' ) ) {
+				filterOn = false;
+				start = true;
+				startPoint = cnt;
+			} else if ( start && aLine.charAt(cnt) == '<' ) {
+				start = false;
+				return aLine.substring(startPoint, cnt);
+			}
+		}
+		return "0";
+	}
+	
 	/**
 	 * @return
 	 * @throws Exception
@@ -56,28 +75,36 @@ public class ItemListResource {
 			conn = (HttpURLConnection)new URL(ITEM_ID_URL).openConnection();
 			br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String aLine = null;
+			int linecnt = 0;
 			while( ( aLine = br.readLine() ) != null ) {
-				if ( aLine.contains("<tr height='18'><td width='5%' class='td_gray_center' align='center'>") ) {
+				System.out.println(linecnt++ + ":" + aLine);
+				if ( aLine.contains("<td class='tdcon_lef_r b tdtit'>") ) {
 					Company company = new Company();
 					CompanyFinancialStatus financialStatus = new CompanyFinancialStatus();
-					System.out.println(aLine.replaceAll("<tr height='18'><td width='5%' class='td_gray_center' align='center'>", "").replaceAll("</td>", ""));
-					br.readLine();
-					company.setId(br.readLine().replaceAll("<a href=.javascript.GoMenuto..4.,.", "").replaceAll("... class=.tahoma_Blue. onclick=.GoMenuto.>", ""));
-					company.setName(br.readLine().replaceAll("</a></td>",""));
+					company.setId(br.readLine().trim().replaceAll("<a href=\"javascript:GoMenuto[(]'.','","").substring(0,7));
+					System.out.println(company.getId());
+					company.setName(br.readLine().trim().replaceAll("</a></td>",""));
+					System.out.println(company.getName());
 					financialStatus.setCompany(company);
-					String date = br.readLine().replaceAll("<td width='9%' class='td_white_center' align='center'>", "").replaceAll("</td>", "");
+					String date = br.readLine().trim().replaceAll("<td class=\"tdcon_cen_r\">", "").replaceAll("</td>", "");
 					date += "01";
 					financialStatus.setStandardDate(date);
+					System.out.println(company.getStandardDate());
 					company.setStandardDate(date);
-					financialStatus.setKOSPI(br.readLine().replaceAll("<td width='5%' class='td_white_center' align='center'><font color='FF0030'>", "").replaceAll("</font>&nbsp;&nbsp;</td>", "").trim().replaceAll("&nbsp;","").equals("°Å"));
-					financialStatus.setAssets(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
-					financialStatus.setCapital(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
-					financialStatus.setGrossCapital(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
-					financialStatus.setDebt(financialStatus.getAssets()-financialStatus.getGrossCapital());
-					financialStatus.setSales(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
-					financialStatus.setOperatingProfit(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
-					//financialStatus.setOrdinaryProfit(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
-					financialStatus.setNetProfit(1000000 * getLongValue(br.readLine().replaceAll("<td width='9%' class='td_white_center' align='right'>","").replaceAll("&nbsp;&nbsp;</td>","")));
+					financialStatus.setKOSPI(br.readLine().indexOf("À¯") >= 0);
+					System.out.println(financialStatus.isKOSPI());
+					financialStatus.setAssets(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
+					System.out.println(financialStatus.getAssets());
+					financialStatus.setCapital(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
+					System.out.println(financialStatus.getCapital());
+					financialStatus.setGrossCapital(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
+					System.out.println(financialStatus.getGrossCapital());
+					financialStatus.setSales(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
+					System.out.println(financialStatus.getSales());
+					financialStatus.setOperatingProfit(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
+					System.out.println(financialStatus.getOperatingProfit());
+					financialStatus.setNetProfit(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
+					System.out.println(financialStatus.getNetProfit());
 					financialStatus.setFixed(true);
 					financialStatus.setQuarter(false);
 					list.add(financialStatus);
@@ -91,6 +118,10 @@ public class ItemListResource {
 			//else if ( is != null ) try { is.close(); } catch ( Exception e1 ) {e1.printStackTrace();}
 		}
 		return list;
+	}
+	
+	public static void main2(String[] args) {
+		System.out.println(getValueFieldFromLine("<td class=\"tdcon_rig_r\">10</td>"));
 	}
 	
 	public static void main(String[] args) {

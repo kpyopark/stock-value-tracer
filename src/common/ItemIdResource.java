@@ -24,7 +24,7 @@ public class ItemIdResource {
 	static String ITEM_ID_URL = null;
 	
 	static {
-		ITEM_ID_URL = "http://comp.fnguide.com/svo/HandBook_new/SVD_list.asp?pGB=1&mkt_gb=&gicode=&market_gb=&keyword=";
+		ITEM_ID_URL = "http://comp.fnguide.com/svo/handbook_New/xml/SVD_UJRank.asp?pGB=1&gicode=A005930&cID=&MenuYn=Y&ReportGB=&NewMenuID=301&stkGb=&u_cd=&selMktGb=&selReportGB=A&sort=undefinedundefined";
 	}
 	
 	public String getId(String name) throws Exception {
@@ -33,15 +33,15 @@ public class ItemIdResource {
 		BufferedReader br = null;
 		String id = null;
 		try {
-			conn = (HttpURLConnection)new URL(ITEM_ID_URL+name).openConnection();
+			conn = (HttpURLConnection)new URL(ITEM_ID_URL).openConnection();
 			is = conn.getInputStream();
 			br = new BufferedReader( new InputStreamReader(is) );
 			
 			//print all the html
-			Pattern pattern = Pattern.compile("javascript:Go[(].........[)]");
+			Pattern pattern = Pattern.compile("javascript:GoMenuto[(]'1','.......'[)]\" title=\"" + name + " ½º³À¼¦º¸±â\"");
 	        Pattern pattern2 = Pattern.compile("[A-Z]\\p{Digit}{6}");
 			for ( CharSequence aLine = br.readLine() ; aLine != null ; aLine = br.readLine() ) {
-				System.out.println(aLine);
+				//System.out.println(aLine);
 				Matcher matcher = pattern.matcher(aLine);
 		        if ( matcher.find() ) {
 		        	Matcher matcher2 = pattern2.matcher(matcher.group());
