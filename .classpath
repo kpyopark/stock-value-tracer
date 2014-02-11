@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="D:/Downloads/developer/q-value/commons-dbcp-1.4/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="D:/Downloads/developer/q-value/mysql-connector-java-5.1.26/mysql-connector-java-5.1.26-bin.jar"/>
 	<classpathentry kind="lib" path="D:/Downloads/developer/q-value/commons-pool-1.5.6.jar"/>
+	<classpathentry kind="lib" path="D:/Downloads/developer/q-value/htmlcleaner-2.7/htmlcleaner-2.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
