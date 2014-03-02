@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -24,7 +26,13 @@ import dao.CompanyStockEstimationDao;
 import estimator.FinancialStatusEstimator;
 
 public class StockAnalyzer {
+
+	static SimpleDateFormat DATE_FORMAT = null;
 	
+	static {
+		DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd.HHmmss");
+	}
+
 	ArrayList<Company> companyList = new ArrayList<Company>();
 	ArrayList<StockEstimated> stockEstimList = new ArrayList<StockEstimated>();
 	ArrayList<StockRank> stockRankList = new ArrayList<StockRank>();
@@ -82,8 +90,14 @@ public class StockAnalyzer {
 		}
 	}
 	
+	
 	private void printStockListToExcel(int rank) {
-		
+		File newExcel = null;
+		try {
+			newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) );
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void getBestStockList(int rank) throws java.sql.SQLException {
