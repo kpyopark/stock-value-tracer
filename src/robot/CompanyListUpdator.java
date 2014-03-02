@@ -9,6 +9,7 @@ import post.CompanyFinancialStatus;
 
 import common.ItemListResource;
 import common.ItemResource;
+import common.ItemResource2;
 
 import dao.CompanyDao;
 import dao.CompanyFinancialStatusDao;
@@ -103,9 +104,10 @@ public class CompanyListUpdator extends DataUpdator {
 	public int updateFinancialStatus(Company company) throws Exception {
 		CompanyFinancialStatusDao dao = new CompanyFinancialStatusDao();
 		int totCount = 0;
-		ItemResource ir = new ItemResource();
-		ArrayList<CompanyFinancialStatus> financialStatus = ir.getFinancialStatus(company.getName(), company.getId());
+		ItemResource2 ir = new ItemResource2();
+		ArrayList<CompanyFinancialStatus> financialStatus = ir.getFinancialStatus(company);
 		for ( int cnt = 0 ; cnt < financialStatus.size() ; cnt++ ) {
+			System.out.println("start update for[" + company.getId() + ":" + company.getName() + "]");
 			CompanyFinancialStatus stat = financialStatus.get(cnt);
 			CompanyFinancialStatus oldStat = dao.select(stat.getCompany(),stat.getStandardDate(),stat.isQuarter());
 			if ( oldStat == null ) {

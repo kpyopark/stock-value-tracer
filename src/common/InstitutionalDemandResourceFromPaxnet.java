@@ -150,14 +150,18 @@ public class InstitutionalDemandResourceFromPaxnet {
 			// 1. Company List
 			for ( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) { //companyList.size() ; cnt++ ) {
 				System.out.println("start....." + cnt + ":" + companyList.size());
-				for ( int pagecnt = 1 ; pagecnt <= 5 ; pagecnt++ ) {
-					conn = (HttpURLConnection)new URL(ID_URL(companyList.get(cnt).getId().substring(1), pagecnt)).openConnection();
-					TagNode xml = cleaner.clean(conn.getInputStream(), "euc-kr");
-					ArrayList<InstitutionalDamand> insDemandList = getInstitutionalDemandList(companyList.get(cnt), xml);
-					for ( int line = 0 ; line < insDemandList.size() ; line++ ) {
-						insdemandDao.delete(insDemandList.get(line));
-						insdemandDao.insert(insDemandList.get(line));
+				try {
+					for ( int pagecnt = 1 ; pagecnt <= 1 ; pagecnt++ ) {
+						conn = (HttpURLConnection)new URL(ID_URL(companyList.get(cnt).getId().substring(1), pagecnt)).openConnection();
+						TagNode xml = cleaner.clean(conn.getInputStream(), "euc-kr");
+						ArrayList<InstitutionalDamand> insDemandList = getInstitutionalDemandList(companyList.get(cnt), xml);
+						for ( int line = 0 ; line < 8 ; line++ ) { //insDemandList.size() ; line++ ) {
+							insdemandDao.delete(insDemandList.get(line));
+							insdemandDao.insert(insDemandList.get(line));
+						}
 					}
+				} catch ( Exception innere ) {
+					innere.printStackTrace();
 				}
 				timewatch.stopAndStart();
 			}
