@@ -235,18 +235,38 @@ public class CompanyListUpdator extends DataUpdator {
 		System.out.println( "false is right. result[" + updator.isUpdateNeeded(cfs1, cfs2, "roa") + "]" );
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		testUpdateFinancialStatus();
+	}
+	
+	public static void testUpdateFinancialStatus() {
+		CompanyDao dao = null;
+		CompanyListUpdator updator = new CompanyListUpdator();
+		try {
+			dao = new CompanyDao();
+			Company company = null;
+			company = dao.select("A000140", null);
+			updator.updateFinancialStatus(company);
+		} catch ( Exception e1 ) { 
+			e1.printStackTrace();
+		} finally {
+		}
+	}
+	
+	public static void testUpdateAllCompany() {
 		try {
 			CompanyListUpdator updator = new CompanyListUpdator();
-			updator.getAnnualStatusList();
-			updator.updateCompany();
+			if ( false ) { // Wanna to update all company list? Do this code block.
+				updator.getAnnualStatusList();
+				updator.updateCompany();
+			}
 			//updator.updateFinancialStatus();
-			updator.getCompanyList();
+			//updator.getCompanyList();
 			//updator.updateAllFinancialStatus();
-			//Company comp = new Company();
-			//comp.setName("성원파이프");
-			//comp.setId("A015200");
-			//updator.updateFinancialStatus(comp);
+			Company comp = new Company();
+			CompanyDao dao = new CompanyDao();
+			comp = dao.select("A000040", null);
+			updator.updateFinancialStatus(comp);
 			//testIsDifferent();
 		} catch ( Exception e ) {
 			e.printStackTrace();

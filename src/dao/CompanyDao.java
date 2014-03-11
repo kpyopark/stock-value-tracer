@@ -15,10 +15,14 @@ public class CompanyDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY ( STOCK_ID , COMPANY_NAME , STANDARD_DATE ) VALUES ( ? , ? , ? )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY ( STOCK_ID , COMPANY_NAME , STANDARD_DATE, MODIFIED_DATE, FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN ) VALUES ( ? , ? , ?, date_format(curdate(), '%Y%m%d'), ?, ?, ?, ? )");
 			ps.setString(1, company.getId() );
 			ps.setString(2, company.getName() );
 			ps.setString(3, company.getStandardDate());
+			ps.setString(4, company.getFicsSector());
+			ps.setString(5, company.getFicsIndustryGroup());
+			ps.setString(6, company.getFicsIndustry());
+			ps.setString(7, company.isClosed() ? "Y" : "N" );
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -36,10 +40,14 @@ public class CompanyDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("UPDATE TB_COMPANY SET COMPANY_NAME = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
+			ps = conn.prepareStatement("UPDATE TB_COMPANY SET COMPANY_NAME = ?, MODIFIED_DATE = date_format(curdate(), '%Y%m%d'), FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
 			ps.setString(1, company.getName() );
-			ps.setString(2, company.getId() );
-			ps.setString(3, company.getStandardDate());
+			ps.setString(2, company.getFicsSector());
+			ps.setString(3, company.getFicsIndustryGroup());
+			ps.setString(4, company.getFicsIndustry());
+			ps.setString(5, company.isClosed() ? "Y": "N");
+			ps.setString(6, company.getId() );
+			ps.setString(7, company.getStandardDate());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -86,6 +94,10 @@ public class CompanyDao extends BaseDao {
 				rtn.setId(id);
 				rtn.setName(rs.getString("COMPANY_NAME"));
 				rtn.setStandardDate(rs.getString("STANDARD_DATE"));
+				rtn.setFicsSector(rs.getString("FICS_SECTOR"));
+				rtn.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
+				rtn.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
+				rtn.setClosed("Y".equals(rs.getString("CLOSED_YN")));
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -104,7 +116,7 @@ public class CompanyDao extends BaseDao {
 		ResultSet rs = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("SELECT A.STOCK_ID, A.COMPANY_NAME, A.STANDARD_DATE, CLOSED_YN FROM TB_COMPANY A JOIN ( SELECT STOCK_ID, MAX(STANDARD_DATE) AS STANDARD_DATE FROM TB_COMPANY GROUP BY STOCK_ID ) B ON ( A.STOCK_ID = B.STOCK_ID AND A.STANDARD_DATE = B.STANDARD_DATE )");
+			ps = conn.prepareStatement("SELECT A.STOCK_ID, A.COMPANY_NAME, A.STANDARD_DATE, A.FICS_SECTOR, A.FICS_INDUSTRY_GROUP, A.FICS_INDUSTRY, A.CLOSED_YN FROM TB_COMPANY A JOIN ( SELECT STOCK_ID, MAX(STANDARD_DATE) AS STANDARD_DATE FROM TB_COMPANY GROUP BY STOCK_ID ) B ON ( A.STOCK_ID = B.STOCK_ID AND A.STANDARD_DATE = B.STANDARD_DATE )");
 			rs = ps.executeQuery();
 			
 			while ( rs.next() ) {
@@ -112,6 +124,10 @@ public class CompanyDao extends BaseDao {
 				company.setId(rs.getString("STOCK_ID"));
 				company.setName(rs.getString("COMPANY_NAME"));
 				company.setStandardDate(rs.getString("STANDARD_DATE"));
+				company.setFicsSector(rs.getString("FICS_SECTOR"));
+				company.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
+				company.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
+				company.setClosed("Y".equals(rs.getString("CLOSED_YN")));
 				list.add(company);
 			}
 		} catch ( Exception e ) {

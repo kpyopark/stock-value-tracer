@@ -2,12 +2,30 @@ package post;
 
 public class Company extends BaseStructure {
 	
-	/**
-	 * SECTOR_UNDEFINCED : 섹터를 정의하지 않음
-	 */
-	public static final int SECTOR_UNDEFINED = 0;
-	//public static final int SECTOR_
-	
+	public String getFicsSector() {
+		return ficsSector;
+	}
+
+	public void setFicsSector(String ficsSector) {
+		this.ficsSector = ficsSector;
+	}
+
+	public String getFicsIndustryGroup() {
+		return ficsIndustryGroup;
+	}
+
+	public void setFicsIndustryGroup(String ficsIndustryGroup) {
+		this.ficsIndustryGroup = ficsIndustryGroup;
+	}
+
+	public String getFicsIndustry() {
+		return ficsIndustry;
+	}
+
+	public void setFicsIndustry(String ficsIndustry) {
+		this.ficsIndustry = ficsIndustry;
+	}
+
 	/**
 	 * id : 증시 고유 번호
 	 */
@@ -23,10 +41,22 @@ public class Company extends BaseStructure {
 	 */
 	private String standardDate = null;
 	
-	/**
-	 * sector : 소속된 섹터 
-	 */
-	private int sector = SECTOR_UNDEFINED;
+	private boolean isClosed = false;
+	
+	private String ficsSector = "";
+	
+	private String ficsIndustryGroup = "";
+	
+	private String ficsIndustry = "";
+	
+	public boolean isClosed() {
+		return isClosed;
+	}
+
+	public void setClosed(boolean isClosed) {
+		this.isClosed = isClosed;
+	}
+
 	
 	public String getId() {
 		return id;
@@ -42,14 +72,6 @@ public class Company extends BaseStructure {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public int getSector() {
-		return sector;
-	}
-
-	public void setSector(int sector) {
-		this.sector = sector;
 	}
 
 	public String getStandardDate() {

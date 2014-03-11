@@ -105,6 +105,8 @@ public class StockValueEstimator {
 		cse.setStandardDate(cfs.getStandardDate());
 		if ( cfs instanceof CompanyFinancialStatusEstimated ) {
 			cse.setRelatedDateList(((CompanyFinancialStatusEstimated)cfs).getRelatedDateList());
+		} else {
+			cse.setRelatedDateList(cfs.getStandardDate());
 		}
 		
 		return cse;

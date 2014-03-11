@@ -129,7 +129,16 @@ public class StockAnalyzerManager {
 				threadPool.run(new Runnable() {
 					public void run() {
 						try {
+							Company orgCompany = new Company();
+							orgCompany.copyStructure(company);
 							updator.updateFinancialStatus(company);
+							if ( ( orgCompany.isClosed() != company.isClosed() ) ||
+									( orgCompany.getFicsSector() != null && orgCompany.getFicsSector().equals(company.getFicsSector() ) ) ||
+									( orgCompany.getFicsIndustryGroup() != null && orgCompany.getFicsIndustryGroup().equals(company.getFicsIndustryGroup() ) ) ||
+									( orgCompany.getFicsIndustry() != null && orgCompany.getFicsIndustry().equals(company.getFicsIndustry() ) ) ||
+									( orgCompany.isClosed() != company.isClosed() ) ) {
+								dao.update(company);
+							}
 						} catch ( Exception e ) {
 							e.printStackTrace();
 						}

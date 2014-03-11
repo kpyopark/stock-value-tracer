@@ -26,10 +26,10 @@ public class FinancialStatusEstimator {
 		}
 	}
 	
-	static String FIRST_QUARTER = "0301";
-	static String SECOND_QUARTER = "0601";
-	static String THIRD_QUARTER = "0901";
-	static String FORTH_QUARTER = "1201";
+	static String FIRST_QUARTER = "0331";
+	static String SECOND_QUARTER = "0630";
+	static String THIRD_QUARTER = "0930";
+	static String FORTH_QUARTER = "1231";
 	
 	static String[] STANDARD_QUARTER_LIST = {FIRST_QUARTER,SECOND_QUARTER,THIRD_QUARTER,FORTH_QUARTER};
 
@@ -166,6 +166,7 @@ public class FinancialStatusEstimator {
 			java.util.Collections.sort(cfsList,new StandardDateReverseComparator());
 			try {
 				//System.out.println("--년 정보로 산출--[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
+				estimated.setRelatedDateList(cfsList.get(0).getStandardDate());
 				estimated.copyStructure(cfsList.get(0));
 				estimated.setOrdinarySharesSize(getLatestOrdinarySharesSize(cfsList.get(0).getCompany()));
 				estimated.setPrefferedSharesSize(getLatestPrefferedSharesSize(cfsList.get(0).getCompany()));
