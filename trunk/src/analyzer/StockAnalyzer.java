@@ -1,6 +1,7 @@
 package analyzer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,12 +10,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import post.Company;
 import post.CompanyFinancialStatus;
@@ -59,9 +65,13 @@ public class StockAnalyzer {
 	 */
 	private void getCompanyStockEstimationList() throws java.sql.SQLException {
 		for( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) {
-			StockEstimated stockEstim = stockEstimDao.select(companyList.get(cnt));
-			if ( stockEstim != null )
-				stockEstimList.add(stockEstim);
+			if ( !companyList.get(cnt).isClosed() ) {
+				StockEstimated stockEstim = stockEstimDao.select(companyList.get(cnt));
+				if ( stockEstim != null )
+					stockEstimList.add(stockEstim);
+			} else {
+				System.out.println("Company[" + companyList.get(cnt).getId() + ":" + companyList.get(cnt).getName() + "] should be ignored.");
+			}
 		}
 	}
 	
@@ -90,16 +100,84 @@ public class StockAnalyzer {
 		}
 	}
 	
+	void printStockListToExcel(int rank) {
+		File newExcel = null;
+		newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) + ".xls" );
+		createExcelFile(newExcel, rank);
+	}
+
+	
+	/*
+	static String HEADER_LIST[] = { 
+		"Name",						// 0 
+		"Id", 						// 1
+		"Per",						// 2
+		"Roa",						// 3
+		"Roe",						// 4
+		"Tot",						// 5
+		"Est",						// 6
+		"AvePer",					// 7
+		"AveRoe",					// 8
+		"AveRoa",					// 9
+		"AveDividendRatio",			// 10
+		"RecentEps",				// 11
+		"RecentStockValue",			// 12
+		"LastEps",					// 13
+		"Date",						// 14
+		"size",						// 15
+		"URL"};						// 16
 	
 	private void printStockListToExcel(int rank) {
 		File newExcel = null;
 		try {
-			newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) );
+			newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) + ".xls" );
+			POIFSFileSystem fs=new POIFSFileSystem(new FileInputStream(newExcel));
+			HSSFWorkbook workbook=new HSSFWorkbook(fs);
+			HSSFSheet sheet=workbook.createSheet("Shee1");
+			HSSFFont font = workbook.createFont();
+			font.setFontName(HSSFFont.FONT_ARIAL);
+			HSSFCellStyle titlestyle = workbook.createCellStyle();
+			titlestyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+			titlestyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+			titlestyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			titlestyle.setFont(font);
+			HSSFRow row = sheet.createRow((short)0);
+			for ( int column = 0 ; column < HEADER_LIST.length ; column++ ) {
+				HSSFCell cell1 = row.createCell(column);
+				cell1.setCellValue(HEADER_LIST[column]);
+				cell1.setCellStyle(titlestyle);
+			}
+			HSSFCellStyle style = workbook.createCellStyle();
+			style.setFont(font);
+			for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
+				//System.out.println( stockRankList.get(cnt));
+				int column = 0;
+				HSSFRow contentRow = sheet.createRow(cnt+1);
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getCompany().getName());	// 0
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getCompany().getId());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getPerRank());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getRoaRank());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getRoeRank());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getTotRank());				// 5
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getEstimKind());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getAvePer());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getAveRoe());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getAveRoa());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getAveDividendRatio());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getRecentEps());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getRecentStockValue());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getLastEps());
+				contentRow.createCell(column++).setCellValue(stockRankList.get(cnt).getStockEstimation().getRelatedDateList());
+				contentRow.createCell(column++).setCellValue(FinancialStatusEstimator.getLatestOrdinarySharesSize(stockRankList.get(cnt).getCompany()));
+				contentRow.createCell(column++).setCellValue("http://stock.naver.com/sise/ksc_summary.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1));
+			}
+			
 		} catch( Exception e ) {
 			e.printStackTrace();
+		} finally {
 		}
 	}
-	
+	*/
 	public void getBestStockList(int rank) throws java.sql.SQLException {
 		calculateRankByRoe();
 		calculateRankByRoa();
@@ -177,13 +255,13 @@ public class StockAnalyzer {
 
 		for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
 			//System.out.println( stockRankList.get(cnt));
-		    HSSFRow row = sheet1.createRow((short)0);
+		    HSSFRow row = sheet1.createRow((short)cnt+1);
 			printData(wb,row,stockRankList.get(cnt));
 		}
 
 	    FileOutputStream fileOut = null;
 		try {
-			fileOut = new FileOutputStream("workbook.xls");
+			fileOut = new FileOutputStream(targetFile);
 		    wb.write(fileOut);
 
 		} catch (FileNotFoundException e) {
@@ -197,7 +275,7 @@ public class StockAnalyzer {
 	}
 	
 	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE",
-		"TOT","EST","AVEPER","AVEROE","AVEROA",
+		"TOT","EST","SECTOR","GROUP","INDUSTRY","AVEPER","AVEROE","AVEROA",
 		"AVEDIV","REPS","RSTOCK","LEPS","DATE","URL"
 	};
 	
@@ -228,6 +306,9 @@ public class StockAnalyzer {
 		row.createCell(column++).setCellValue(rankInfo.getRoeRank());
 		row.createCell(column++).setCellValue(rankInfo.getTotRank());
 		row.createCell(column++).setCellValue(rankInfo.getStockEstimation().getEstimKind());
+		row.createCell(column++).setCellValue(rankInfo.getCompany().getFicsSector());
+		row.createCell(column++).setCellValue(rankInfo.getCompany().getFicsIndustryGroup());
+		row.createCell(column++).setCellValue(rankInfo.getCompany().getFicsIndustry());
 		cell = row.createCell(column++);
 		cell.setCellValue(rankInfo.getStockEstimation().getAvePer());
 		cell.setCellStyle(perStyle);
@@ -253,12 +334,15 @@ public class StockAnalyzer {
 		cell.setCellValue(rankInfo.getStockEstimation().getRelatedDateList());
 		cell.setCellStyle(textStyle);
 		cell = row.createCell(column++);
-		cell.setCellValue("http://stock.naver.com/sise/ksc_summary.nhn?code=" + rankInfo.getCompany().getId().substring(1));
+		cell.setCellValue("http://finance.naver.com/item/main.nhn?code=" + rankInfo.getCompany().getId().substring(1));
+		HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+		link.setAddress("http://finance.naver.com/item/main.nhn?code=" + rankInfo.getCompany().getId().substring(1));
+		cell.setHyperlink(link);
 	}
 	
 	public static void main(String[] args) throws Exception {
 		StockAnalyzer stockAnal = new StockAnalyzer();
-		stockAnal.getBestStockList(50);
+		stockAnal.getBestStockList(100);
 	}
 	
 }

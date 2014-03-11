@@ -37,7 +37,7 @@ public class TableSample implements IUpdateListener {
 	
 	Tree treeStatus;
 	TreeItem textNode1;
-	Button updateFinanceButton,updateButton,updateAllButton,refreshButton,updateCompanyButton;
+	Button updateFinanceButton,updateButton,updateAllButton,refreshButton,estimButton,updateCompanyButton;
 	Group treeGroup, buttonGroup;
 
 	private StockAnalyzerManager manager = null;
@@ -160,6 +160,24 @@ public class TableSample implements IUpdateListener {
 					public void run() {
 						manager.startCompanyFinancialStatusUpdator();
 						manager.startStockValueUpdator();
+						manager.startAnnualEstimationUpdator();
+						manager.startStockValueEstimationUpdator();
+						manager.startStockAnalyzer();
+					}
+				}).start();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}
+		});
+
+		estimButton = new Button(buttonGroup, SWT.PUSH);
+		estimButton.setLayoutData(data);
+		estimButton.setText("추정계산");
+		estimButton.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				new Thread(new Runnable(){
+					public void run() {
 						manager.startAnnualEstimationUpdator();
 						manager.startStockValueEstimationUpdator();
 						manager.startStockAnalyzer();

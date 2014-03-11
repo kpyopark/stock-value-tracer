@@ -19,7 +19,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),? )");
 			int cnt = 1;
 			ps.setString(cnt++, financialStat.getCompany().getId() );
 			ps.setString(cnt++, financialStat.getStandardDate() );
@@ -41,8 +41,10 @@ public class CompanyFinancialStatusDao extends BaseDao {
 			ps.setFloat(cnt++, financialStat.getRoi());
 			ps.setString(cnt++, financialStat.isKOSPI() ? "Y" : "N" );
 			ps.setString(cnt++, financialStat.isFixed() ? "Y" : "N" );
-
+			ps.setString(cnt++,  financialStat.isCalculated() ? "Y": "N");
 			rtn = ps.execute();
+		} catch ( SQLException sqle ) {
+			throw sqle;
 		} catch ( Exception e ) {
 			System.out.println("=============FINALCIAL DATE:" + financialStat.getStandardDate() );
 			e.printStackTrace();
@@ -140,6 +142,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		rtn.setRoi(rs.getFloat("ROI"));
 		rtn.setKOSPI("Y".equals(rs.getString("KOSPI_YN")));
 		rtn.setFixed("Y".equals(rs.getString("FIXED_YN")));
+		rtn.setCalculated("Y".equals(rs.getString("CALCULATED_YN")));
 		return rtn;
 	}
 	
@@ -156,7 +159,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		ResultSet rs = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT WHERE STOCK_ID = ?");
+			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT WHERE STOCK_ID = ? ORDER BY 1,2,3");
 			ps.setString(1, company.getId() );
 			rs = ps.executeQuery();
 			

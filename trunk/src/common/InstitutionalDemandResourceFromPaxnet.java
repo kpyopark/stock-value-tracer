@@ -155,7 +155,7 @@ public class InstitutionalDemandResourceFromPaxnet {
 						conn = (HttpURLConnection)new URL(ID_URL(companyList.get(cnt).getId().substring(1), pagecnt)).openConnection();
 						TagNode xml = cleaner.clean(conn.getInputStream(), "euc-kr");
 						ArrayList<InstitutionalDamand> insDemandList = getInstitutionalDemandList(companyList.get(cnt), xml);
-						for ( int line = 0 ; line < 8 ; line++ ) { //insDemandList.size() ; line++ ) {
+						for ( int line = 0 ; line < 12 ; line++ ) { //insDemandList.size() ; line++ ) {
 							insdemandDao.delete(insDemandList.get(line));
 							insdemandDao.insert(insDemandList.get(line));
 						}

@@ -77,6 +77,9 @@ public class CompanyFinancialStatus extends BaseStructure {
 	 */
 	private long investedCapital = 0;
 	
+	
+	private boolean isCalculated = false;
+	
 	//
 	
 	public long getAssets() {
@@ -207,5 +210,11 @@ public class CompanyFinancialStatus extends BaseStructure {
 	
 	public CompanyFinancialStatus(BaseStructure cfs) throws Exception {
 		super(cfs);
+	}
+	public boolean isCalculated() {
+		return isCalculated;
+	}
+	public void setCalculated(boolean isCalculated) {
+		this.isCalculated = isCalculated;
 	}
 }
