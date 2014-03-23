@@ -1,0 +1,11 @@
+# Security Types
+
+= KRX securities =
+
+KRX manages 3 types of securities in their stocks.
+
+Ordinary shares are normal stocks in market. They contain kospi, kosdaq stocks.
+Exchange Trade Funds (ETFs) shares are derivatives of funds.
+And thirds is ELWs.
+
+
