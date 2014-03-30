@@ -1,31 +1,19 @@
 package common;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
-import java.io.PipedInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
-import org.htmlparser.Parser;
-import org.htmlparser.util.NodeList;
-
-import dao.CompanyDao;
 
 import post.Company;
 import post.CompanyFinancialStatus;
-import post.InstitutionalDamand;
-import sun.util.locale.StringTokenIterator;
+import dao.CompanyDao;
 
 public class ItemResource2 {
 	

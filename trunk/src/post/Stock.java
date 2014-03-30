@@ -21,7 +21,7 @@ public class Stock extends BaseStructure {
 	/**
 	 * 액면가
 	 */
-	private int faceValue = 0;
+	private float parValue = 0;
 	
 	/**
 	 * 현재가
@@ -31,22 +31,40 @@ public class Stock extends BaseStructure {
 	/**
 	 * 거래량
 	 */
-	private int volume = 0;
+	private long volume = 0;
 	
+	private int todayHigh = 0;
+	
+	private int todayLow = 0;
+	
+	private long ordinaryShares = 0;
+	
+	private long marketCapitalization = 0;
+	
+	private int openPrice = 0;
+	
+	public int getOpenPrice() {
+		return openPrice;
+	}
+
+	public void setOpenPrice(int openPrice) {
+		this.openPrice = openPrice;
+	}
+
 	/**
 	 * 
 	 * @return
 	 */
-	public int getFaceValue() {
-		return faceValue;
+	public float getParValue() {
+		return parValue;
 	}
 	
 	/**
 	 * 
 	 * @param faceValue
 	 */
-	public void setFaceValue(int faceValue) {
-		this.faceValue = faceValue;
+	public void setParValue(float faceValue) {
+		this.parValue = faceValue;
 	}
 	
 	/**
@@ -89,12 +107,46 @@ public class Stock extends BaseStructure {
 		this.standardTime = standardTime;
 	}
 
-	public int getVolume() {
+	public long getVolume() {
 		return volume;
 	}
 
-	public void setVolume(int volume) {
+	public void setVolume(long volume) {
 		this.volume = volume;
 	}
+
+	public int getTodayHigh() {
+		return todayHigh;
+	}
+
+	public void setTodayHigh(int todayHigh) {
+		this.todayHigh = todayHigh;
+	}
+
+	public int getTodayLow() {
+		return todayLow;
+	}
+
+	public void setTodayLow(int todayLow) {
+		this.todayLow = todayLow;
+	}
+
+	public long getOrdinaryShares() {
+		return ordinaryShares;
+	}
+
+	public void setOrdinaryShares(long ordinaryShares) {
+		this.ordinaryShares = ordinaryShares;
+	}
+
+	public long getMarketCapitalization() {
+		return marketCapitalization;
+	}
+
+	public void setMarketCapitalization(long marketCapitalization) {
+		this.marketCapitalization = marketCapitalization;
+	}
+	
+	
 	
 }

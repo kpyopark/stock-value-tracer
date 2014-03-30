@@ -8,7 +8,6 @@ import post.Company;
 import post.CompanyFinancialStatus;
 
 import common.ItemListResource;
-import common.ItemResource;
 import common.ItemResource2;
 
 import dao.CompanyDao;
