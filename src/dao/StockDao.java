@@ -16,12 +16,78 @@ public class StockDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STOCK ( STOCK_ID , STANDARD_DATE , STANDARD_TIME , STOCK_PRICE , STOCK_VOLUME ) VALUES ( ? , ? , ? , ? , ? )");
+			ps = conn.prepareStatement("INSERT INTO tb_company_stock ( \n" +
+					"STOCK_ID,\n" +
+					"STANDARD_DATE,\n" +
+					"STANDARD_TIME,\n" +
+					"STOCK_PRICE,\n" +
+					"STOCK_VOLUME,\n" +
+					"CURRENT_ROA,\n" +
+					"CURRENT_ROE,\n" +
+					"CURRENT_ROI,\n" +
+					"ROA_RANK,\n" +
+					"ROE_RANK,\n" +
+					"ROI_RANK,\n" +
+					"CURRENT_PER,\n" +
+					"CURRENT_PBR,\n" +
+					"PER_RANK,\n" +
+					"PBR_RANK,\n" +
+					"CURRENT_EPS,\n" +
+					"MODIFIED_DATE,\n" +
+					"TODAY_HIGH,\n" +
+					"TODAY_LOW,\n" +
+					"ORDINARY_SHARES,\n" +
+					"MARKET_CAPITALIZATION,\n" +
+					"PAR_VALUE, \n" +
+					"OPEN_PRICE\n" +
+					") VALUES (\n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"date_format(curdate(), '%Y%m%d'), \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"?, \n" +
+					"? " +
+					")");
 			ps.setString(1, companyStock.getCompany().getId() );
 			ps.setString(2, companyStock.getStandardDate());
 			ps.setString(3, companyStock.getStandardTime());
 			ps.setLong(4, companyStock.getValue());
 			ps.setLong(5, companyStock.getVolume());
+			ps.setFloat(6, 0.0f);
+			ps.setFloat(7, 0.0f);
+			ps.setFloat(8, 0.0f);
+			ps.setInt(9, 1);
+			ps.setInt(10, 1);
+			ps.setInt(11, 1);
+			ps.setFloat(12, 0.0f);
+			ps.setFloat(13, 0.0f);
+			ps.setInt(14, 1);
+			ps.setInt(15, 1);
+			ps.setInt(16, 1);
+			ps.setLong(17, companyStock.getTodayHigh());
+			ps.setLong(18, companyStock.getTodayLow());
+			ps.setLong(19, companyStock.getOrdinaryShares());
+			ps.setLong(20, companyStock.getMarketCapitalization());
+			ps.setFloat(21, companyStock.getParValue());
+			ps.setInt(22, companyStock.getOpenPrice());
+			
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -74,6 +140,12 @@ public class StockDao extends BaseDao {
 				rtn.setVolume(rs.getInt("STOCK_VOLUME"));
 				rtn.setStandardDate(rs.getString("STANDARD_DATE"));
 				rtn.setStandardTime(rs.getString("STANDARD_TIME"));
+				rtn.setTodayHigh(rs.getInt("TODAY_HIGH"));
+				rtn.setTodayLow(rs.getInt("TODAY_LOW"));
+				rtn.setOrdinaryShares(rs.getLong("ORDINARY_SHARES"));
+				rtn.setMarketCapitalization(rs.getLong("MARKET_CAPITALIZATION"));
+				rtn.setParValue(rs.getFloat("PAR_VALUE"));
+				rtn.setOpenPrice(rs.getInt("OPEN_PRICE"));
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();

@@ -36,61 +36,26 @@ public class InstitutionalDemandResourceFromPaxnet {
 		}
 	}
 	
-	static String XPATH_ID = "//*[@id=\"analysis\"]/tbody/tr";
+	private static String XPATH_ID = "//*[@id=\"analysis\"]/tbody/tr";
 	
-	static String XPATH_CONTENTS_LINE(int line) {
+	private static String XPATH_CONTENTS_LINE(int line) {
 		return "//*[@id=\"analysis\"]/tbody/tr[" + line + "]/td";
 	}
 
-	private static long getLongValue(String content) throws NotNumericContentException {
-		long rtn = 0;
-		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") )
-			return 0;
-		if ( content.equals("-") )
-			return 0;
-		try {
-			rtn = Long.parseLong(content.replaceAll(",", ""));
-		} catch ( Exception e ) {
-			throw new NotNumericContentException(content + ":" + e.getMessage() );
-		}
-		return rtn;
-	}
-	
-	private static float getFloatValue(String content) throws NotNumericContentException {
-		float rtn = 0;
-		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") )
-			return 0;
-		if ( content.equals("-") )
-			return 0;
-		try {
-			rtn = Float.parseFloat(content.replaceAll("%", ""));
-		} catch ( Exception e ) {
-			throw new NotNumericContentException(content + ":" + e.getMessage() );
-		}
-		return rtn;
-	}
-	
-	public ArrayList<CompanyFinancialStatus> getFinancialStatus(String name, String id) throws Exception {
-		ArrayList<CompanyFinancialStatus> list = new ArrayList<CompanyFinancialStatus>();
-		Parser parser = null;
-		boolean needAnotherConnection = true;
-
-		return list;
-	}
-	static HtmlCleaner cleaner;
+	private static HtmlCleaner cleaner;
 	
 	static {
 		cleaner = new HtmlCleaner();
 	}
 	
-	static boolean isValidLine(Object[] dataline ) {
+	private static boolean isValidLine(Object[] dataline ) {
 		return ( dataline != null )
 				&& ( dataline.length > 0 )
 				&& ( ((TagNode)dataline[0]).getText().toString().indexOf("/") > 0 )
 				&& dataline.length >= 8;
 	}
 	
-	static TagNode node(Object org) {
+	private static TagNode node(Object org) {
 		return (TagNode)org;
 	}
 	
@@ -107,13 +72,13 @@ public class InstitutionalDemandResourceFromPaxnet {
 				insDemand.setCompany(company);
 				insDemand.setStandardDate(node(dataLine[0]).getText().toString().replaceAll("/",""));
 				insDemand.setStandardTime("150000");
-				insDemand.setStockClosingPrice(getLongValue(node(dataLine[1]).getText().toString()));
-				insDemand.setStockUpdownRatioOfDay(getFloatValue(node(dataLine[2]).getText().toString().replaceAll("%", "")));
-				insDemand.setStockUpdownPriceOfDay(getLongValue(node(dataLine[3]).getChildTags()[0].getText().toString().replaceAll("¡å", "-").replaceAll("¡ã","")));
-				insDemand.setForeignerNetDemand(getLongValue(node(dataLine[4]).getText().toString()));
-				insDemand.setForeignerOwnershipRatio(getFloatValue(node(dataLine[5]).getText().toString().replaceAll("%", "")));
-				insDemand.setCompanyNetDemand(getLongValue(node(dataLine[6]).getText().toString()));
-				insDemand.setIndividualNetDemand(getLongValue(node(dataLine[7]).getText().toString()));
+				insDemand.setStockClosingPrice(StringUtil.getLongValue(node(dataLine[1]).getText().toString()));
+				insDemand.setStockUpdownRatioOfDay(StringUtil.getFloatValue(node(dataLine[2]).getText().toString().replaceAll("%", "")));
+				insDemand.setStockUpdownPriceOfDay(StringUtil.getLongValue(node(dataLine[3]).getChildTags()[0].getText().toString().replaceAll("¡å", "-").replaceAll("¡ã","")));
+				insDemand.setForeignerNetDemand(StringUtil.getLongValue(node(dataLine[4]).getText().toString()));
+				insDemand.setForeignerOwnershipRatio(StringUtil.getFloatValue(node(dataLine[5]).getText().toString().replaceAll("%", "")));
+				insDemand.setCompanyNetDemand(StringUtil.getLongValue(node(dataLine[6]).getText().toString()));
+				insDemand.setIndividualNetDemand(StringUtil.getLongValue(node(dataLine[7]).getText().toString()));
 				list.add(insDemand);
 			}
 			//System.out.println(list);
@@ -124,20 +89,6 @@ public class InstitutionalDemandResourceFromPaxnet {
 		return list;
 	}
 	
-	public static long getLongValueFromString(String value) {
-		long rtn = 0;
-		try {
-			value = value.replaceAll(",", "");
-			if ( "-".equals(value) )
-				return 0;
-			rtn = Long.parseLong(value);
-		} catch ( Exception e ) {
-			System.out.println("Invalid number..:" + e.getMessage() );
-			rtn = 0;
-		}
-		return rtn;
-	}
-
 	public static void main(String[] args) {
 		TimeWatch timewatch = new TimeWatch();
 		HttpURLConnection conn = null;
@@ -155,7 +106,7 @@ public class InstitutionalDemandResourceFromPaxnet {
 						conn = (HttpURLConnection)new URL(ID_URL(companyList.get(cnt).getId().substring(1), pagecnt)).openConnection();
 						TagNode xml = cleaner.clean(conn.getInputStream(), "euc-kr");
 						ArrayList<InstitutionalDamand> insDemandList = getInstitutionalDemandList(companyList.get(cnt), xml);
-						for ( int line = 0 ; line < 12 ; line++ ) { //insDemandList.size() ; line++ ) {
+						for ( int line = 0 ; line < 20 ; line++ ) { //insDemandList.size() ; line++ ) {
 							insdemandDao.delete(insDemandList.get(line));
 							insdemandDao.insert(insDemandList.get(line));
 						}
