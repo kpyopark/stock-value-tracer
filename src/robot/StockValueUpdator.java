@@ -1,11 +1,12 @@
 package robot;
 
+import internetResource.stock.StockResource;
+
 import java.util.ArrayList;
 
 import post.Company;
 import post.Stock;
 
-import common.StockResource;
 
 import dao.CompanyDao;
 import dao.StockDao;

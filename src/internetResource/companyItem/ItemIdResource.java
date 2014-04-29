@@ -1,4 +1,4 @@
-package common;
+package internetResource.companyItem;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -19,6 +19,11 @@ import java.util.regex.Pattern;
 
 //import org.w3c.dom.*;
 
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class ItemIdResource {
 	
 	static String ITEM_ID_URL = null;

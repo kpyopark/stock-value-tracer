@@ -1,4 +1,4 @@
-package common;
+package internetResource.stock;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -22,6 +22,11 @@ import org.apache.http.message.BasicNameValuePair;
 import post.Company;
 import post.StockEstimated;
 
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class StockEstimationResourceWithYahoo {
 	
 	static SimpleDateFormat STANDARD_DATE = null;

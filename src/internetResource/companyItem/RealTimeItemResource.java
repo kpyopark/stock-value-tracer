@@ -1,11 +1,18 @@
-package common;
+package internetResource.companyItem;
 
 import org.htmlparser.Parser;
 import org.htmlparser.util.NodeList;
 
+import common.NotNumericContentException;
+
 import post.Company;
 import post.CompanyFinancialStatus;
 
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class RealTimeItemResource {
 	
 	static String ITEM_ID_URL = null;

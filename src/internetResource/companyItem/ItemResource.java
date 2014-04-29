@@ -1,4 +1,4 @@
-package common;
+package internetResource.companyItem;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,9 +12,16 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.htmlparser.Parser;
 import org.htmlparser.util.NodeList;
 
+import common.NotNumericContentException;
+
 import post.Company;
 import post.CompanyFinancialStatus;
 
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class ItemResource {
 	
 	static String ITEM_ID_URL = null;
