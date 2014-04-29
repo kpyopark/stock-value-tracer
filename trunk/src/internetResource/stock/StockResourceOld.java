@@ -1,4 +1,4 @@
-package common;
+package internetResource.stock;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,6 +16,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import post.Company;
 import post.Stock;
 
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class StockResourceOld {
 	
 	static SimpleDateFormat STANDARD_DATE = null;

@@ -1,4 +1,4 @@
-package common;
+package internetResource.companyItem;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,10 +7,12 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import common.NotNumericContentException;
+
 import post.Company;
 import post.CompanyFinancialStatus;
 
-public class ItemListResource {
+public class CompanyListResourceFromFnguide {
 	
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	
@@ -126,7 +128,7 @@ public class ItemListResource {
 	
 	public static void main(String[] args) {
 		//ItemIdResource iir = new ItemIdResource();
-		ItemListResource ir = new ItemListResource();
+		CompanyListResourceFromFnguide ir = new CompanyListResourceFromFnguide();
 		try {
 			ArrayList<CompanyFinancialStatus> companyList = ir.getItemList();
 			for ( int cnt = 0 ; cnt < companyList.size(); cnt++ ) {

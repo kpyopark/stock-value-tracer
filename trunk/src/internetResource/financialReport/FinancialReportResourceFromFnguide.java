@@ -1,4 +1,4 @@
-package common;
+package internetResource.financialReport;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,11 +11,13 @@ import org.apache.http.client.HttpClient;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import common.NotNumericContentException;
+
 import post.Company;
 import post.CompanyFinancialStatus;
 import dao.CompanyDao;
 
-public class ItemResource2 {
+public class FinancialReportResourceFromFnguide {
 	
 	HttpClient client = null;
 	static HtmlCleaner cleaner;
@@ -255,7 +257,7 @@ public class ItemResource2 {
 	
 	public static void testCheckSpecialGeneralFinancialReport() {
 		CompanyDao dao = null;
-		ItemResource2 ir = new ItemResource2();
+		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		try {
 			dao = new CompanyDao();
 			ArrayList<Company> companies = dao.selectAllList();
@@ -270,7 +272,7 @@ public class ItemResource2 {
 	}
 
 	public static void testFinancialStatusAPI() {
-		ItemResource2 ir = new ItemResource2();
+		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyDao dao = new CompanyDao();
 		try {
 			Company company = dao.select("A000140", null);

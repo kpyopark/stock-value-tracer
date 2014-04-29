@@ -1,4 +1,4 @@
-package common;
+package internetResource.companyItem;
 
 import java.io.IOException;
 import java.io.InputStream;

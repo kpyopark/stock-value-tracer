@@ -1,4 +1,6 @@
-package common;
+package internetResource.financialReport;
+
+import internetResource.companyItem.Filter1;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,6 +26,9 @@ import org.htmlcleaner.TagNode;
 import org.htmlparser.Parser;
 import org.htmlparser.util.NodeList;
 import org.w3c.dom.Document;
+
+import common.NotNumericContentException;
+import common.TimeWatch;
 
 import dao.CompanyDao;
 import dao.CompanyStatementOfFinancialPosition;

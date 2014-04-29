@@ -1,4 +1,4 @@
-package common;
+package internetResource.companyItem;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +16,8 @@ import java.util.List;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import common.StringUtil;
+
 import dao.CompanyExDao;
 import dao.StockDao;
 
@@ -24,7 +26,7 @@ import post.CompanyEx;
 import post.KrxItem;
 import post.Stock;
 
-public class ItemListResourceFromKrx {
+public class CompanyAndItemListResourceFromKrx {
 	
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	static HtmlCleaner cleaner;
@@ -203,7 +205,7 @@ public class ItemListResourceFromKrx {
 	}
 	
 	public static void insertETFstockFrom2002Year() {
-		ItemListResourceFromKrx ir = new ItemListResourceFromKrx();
+		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
 		CompanyExDao dao = new CompanyExDao();
 		List<String> workDays = new ArrayList<String>();
 		// To last year.
@@ -327,7 +329,7 @@ public class ItemListResourceFromKrx {
 	}
 	
 	public static void insertCompanyAndStockFromKrxItem(String standardDate) {
-		ItemListResourceFromKrx ir = new ItemListResourceFromKrx();
+		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
 		CompanyExDao dao = new CompanyExDao();
 		StockDao stockDao = new StockDao();
 		try {

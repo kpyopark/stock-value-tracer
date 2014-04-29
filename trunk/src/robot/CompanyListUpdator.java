@@ -1,5 +1,8 @@
 package robot;
 
+import internetResource.companyItem.CompanyListResourceFromFnguide;
+import internetResource.financialReport.FinancialReportResourceFromFnguide;
+
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,8 +10,6 @@ import java.util.ArrayList;
 import post.Company;
 import post.CompanyFinancialStatus;
 
-import common.ItemListResource;
-import common.ItemResource2;
 
 import dao.CompanyDao;
 import dao.CompanyFinancialStatusDao;
@@ -40,7 +41,7 @@ public class CompanyListUpdator extends DataUpdator {
 	 * @deprecated
 	 */
 	public void getAnnualStatusList() throws Exception {
-		ItemListResource ilr = new ItemListResource();
+		CompanyListResourceFromFnguide ilr = new CompanyListResourceFromFnguide();
 		financialStatusList = ilr.getItemList();
 	}
 	
@@ -103,7 +104,7 @@ public class CompanyListUpdator extends DataUpdator {
 	public int updateFinancialStatus(Company company) throws Exception {
 		CompanyFinancialStatusDao dao = new CompanyFinancialStatusDao();
 		int totCount = 0;
-		ItemResource2 ir = new ItemResource2();
+		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		ArrayList<CompanyFinancialStatus> financialStatus = ir.getFinancialStatus(company);
 		for ( int cnt = 0 ; cnt < financialStatus.size() ; cnt++ ) {
 			System.out.println("start update for[" + company.getId() + ":" + company.getName() + "]");

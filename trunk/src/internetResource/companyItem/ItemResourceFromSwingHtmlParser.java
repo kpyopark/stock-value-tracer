@@ -1,4 +1,5 @@
-package common;
+package internetResource.companyItem;
+
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +12,11 @@ import org.htmlparser.Parser;
 
 import post.Company;
 
-
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class ItemResourceFromSwingHtmlParser {
 	
 	static String ITEM_ID_URL = null;

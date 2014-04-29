@@ -1,4 +1,4 @@
-package common;
+package internetResource.environment;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.htmlparser.Parser;
+
+import common.StringUtil;
+import common.TimeWatch;
 
 import post.Company;
 import post.CompanyFinancialStatus;
