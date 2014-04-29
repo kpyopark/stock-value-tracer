@@ -198,31 +198,8 @@ public class ItemListResourceFromKrx {
 	}
 	
 	public static void main(String[] args) {
-		ItemListResourceFromKrx ir = new ItemListResourceFromKrx();
-		CompanyExDao dao = new CompanyExDao();
-		List<String> workDays = new ArrayList<String>();
-		// To last year.
-		for( int year = 2002 ; year < 2014 ; year++ ) {
-			workDays.addAll(getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
-		}
-		Calendar calendar = Calendar.getInstance();
-		workDays.addAll(getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
-		for( int dayCnt = 0 ; dayCnt < workDays.size(); dayCnt++ ) {
-			String standardDate = workDays.get(dayCnt);
-			System.out.println("Start for the date - " + standardDate + " -");
-			try {
-				ArrayList<KrxItem> companyAndStock = ir.getItemList(1 /* ETF */, standardDate, null);
-				System.out.println("    # of etf :" + companyAndStock.size());
-				for ( int cnt = 0 ; cnt < companyAndStock.size(); cnt++ ) {
-					CompanyEx company = companyAndStock.get(cnt).getCompany();
-					company.setSecuritySector(1);
-					company.setStandardDate(standardDate);
-					dao.update(company);
-				}
-			} catch ( Exception e ) {
-				e.printStackTrace();
-			}
-		}
+		List<String> workDays = getWorkDays(2014, Calendar.APRIL, 8, 2014, Calendar.APRIL, 28);
+		insertCompanyCodeListAndStockValueForPeriods(workDays);
 	}
 	
 	public static void insertETFstockFrom2002Year() {
@@ -254,61 +231,29 @@ public class ItemListResourceFromKrx {
 	}
 	
 	public static void insertCompanyCodeListAndStockValueFrom1999Year() {
-		ItemListResourceFromKrx ir = new ItemListResourceFromKrx();
-		CompanyExDao dao = new CompanyExDao();
-		StockDao stockDao = new StockDao();
 
+		Calendar calendar = Calendar.getInstance();
+		for( int year = 1999 ; year < calendar.get(Calendar.YEAR) ; year++ ) {
+			insertCompanyCodeListAndStockValueForOneYear(year);
+		}
+	}
+	
+	public static void insertCompanyCodeListAndStockValueForOneYear(int year) {
 		List<String> workDays = new ArrayList<String>();
-		// To last year.
-		for( int year = 1999 ; year < 2014 ; year++ ) {
+		Calendar calendar = Calendar.getInstance();
+		if ( year == Calendar.getInstance().get(Calendar.YEAR) ) {
+			workDays.addAll(getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
+		} else {
 			workDays.addAll(getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
 		}
-		Calendar calendar = Calendar.getInstance();
-		workDays.addAll(getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
-
+		insertCompanyCodeListAndStockValueForPeriods(workDays);
+	}
+	
+	public static void insertCompanyCodeListAndStockValueForPeriods(List<String> workDays) {
 		for( int dayCnt = 0 ; dayCnt < workDays.size(); dayCnt++ ) {
 			String standardDate = workDays.get(dayCnt);
 			System.out.println("Start for the date - " + standardDate + " -");
-			try {
-				ArrayList<CompanyEx> companies = dao.selectAllList(standardDate);
-				System.out.println("  # of companies : " + companies.size());
-				for ( int securitySector = 0 ; securitySector < 2 ;  securitySector++ ) {
-					ArrayList<KrxItem> companyList = ir.getItemList(securitySector, standardDate, null);
-					System.out.println("  securitySector : " + securitySector);
-					System.out.println("  # of companies from krx : " + companyList.size());
-					for ( int cnt = 0 ; cnt < companyList.size(); cnt++ ) {
-						// CompanyEx
-						CompanyEx company = companyList.get(cnt).getCompany();
-						company.setStandardDate(standardDate);
-						company.setSecuritySector(securitySector);
-						int index = -1;
-						if ( ( index = companies.indexOf(company) ) != -1 ) {
-							CompanyEx companyEx = companies.get(index);
-							if ( !companyEx.getName().equals(company.getName()) )
-								dao.insert(company);
-						} else
-							dao.insert(company);
-	
-						// Stock Info
-						Stock stock = new Stock();
-						stock.setCompany(company);
-						stock.setMarketCapitalization(companyList.get(cnt).getMaketCapitalization());
-						stock.setOrdinaryShares(companyList.get(cnt).getOrdinaryShare());
-						stock.setParValue(companyList.get(cnt).getParValue());
-						stock.setStandardDate(standardDate);
-						stock.setStandardTime("150000");
-						stock.setTodayHigh((int)companyList.get(cnt).getTodayHigh());
-						stock.setTodayLow((int)companyList.get(cnt).getTodayLow());
-						stock.setValue((int)companyList.get(cnt).getStockPrice());
-						stock.setOpenPrice((int)companyList.get(cnt).getOpenPrice());
-						stock.setVolume(companyList.get(cnt).getVolume());
-						
-						stockDao.insert(stock);
-					}
-				}
-			} catch ( Exception e ) {
-				e.printStackTrace();
-			}
+			insertCompanyAndStockFromKrxItem(standardDate);
 		}
 	}
 	
@@ -340,77 +285,73 @@ public class ItemListResourceFromKrx {
 		return contains;
 	}
 	
-	private static List<String> getWorkDaysForOneW(int year, int month /* from 0 - January */, int day /* from 1 base. */) {
+	private static List<String> getWorkDays(int fromYear, int fromMonth, int fromDay, int toYear, int toMonth, int toDay) {
 		List<String> rtn = new ArrayList<String>();
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
-		calendar.set(year, Calendar.JANUARY, 1);
-		int maxDayOfYear = calendar.getActualMaximum(Calendar.DAY_OF_YEAR);
+		calendar.set(toYear,  toMonth, toDay);
+		int lastJulianDate = calendar.get(Calendar.DAY_OF_YEAR);
+		calendar.clear();
+		calendar.set(fromYear, fromMonth, fromDay);
 		SimpleDateFormat standardFormat = new SimpleDateFormat("yyyyMMdd");
-		for( int cnt = 0 ; cnt < maxDayOfYear ; cnt++ ) {
+		while(true) {
+			if ( calendar.get(Calendar.YEAR) > toYear )
+				break;
+			if ( calendar.get(Calendar.YEAR) == toYear && calendar.get(Calendar.DAY_OF_YEAR) >= lastJulianDate )
+				break;
 			if ( ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ) && ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ) ) {
 				rtn.add(standardFormat.format(calendar.getTime()));
 			}
-			if ( calendar.get(Calendar.MONTH) == month && calendar.get(Calendar.DAY_OF_MONTH) == day )
-				break;
 			calendar.add(Calendar.DAY_OF_YEAR, 1);
 		}
 		return rtn;
 	}
 	
 	private static List<String> getWorkDaysForOneYear(int year, int month /* from 0 - January */, int day /* from 1 base. */) {
-		List<String> rtn = new ArrayList<String>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.clear();
-		calendar.set(year, Calendar.JANUARY, 1);
-		int maxDayOfYear = calendar.getActualMaximum(Calendar.DAY_OF_YEAR);
-		SimpleDateFormat standardFormat = new SimpleDateFormat("yyyyMMdd");
-		for( int cnt = 0 ; cnt < maxDayOfYear ; cnt++ ) {
-			if ( ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ) && ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ) ) {
-				rtn.add(standardFormat.format(calendar.getTime()));
-			}
-			if ( calendar.get(Calendar.MONTH) == month && calendar.get(Calendar.DAY_OF_MONTH) == day )
-				break;
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-		}
-		return rtn;
+		return getWorkDays(year, Calendar.JANUARY, 1, year, month, day);
+	}
+
+	private static Stock getStockFromKrxItem(KrxItem krxStockInfo, CompanyEx company, String standardDate, String standardTime) {
+		Stock stock = new Stock();
+		stock.setCompany(company);
+		stock.setMarketCapitalization(krxStockInfo.getMaketCapitalization());
+		stock.setOrdinaryShares(krxStockInfo.getOrdinaryShare());
+		stock.setParValue(krxStockInfo.getParValue());
+		stock.setStandardDate(standardDate);
+		stock.setStandardTime(standardTime);
+		stock.setTodayHigh((int)krxStockInfo.getTodayHigh());
+		stock.setTodayLow((int)krxStockInfo.getTodayLow());
+		stock.setValue((int)krxStockInfo.getClosePrice());
+		stock.setVolume(krxStockInfo.getVolume());
+		return stock;
 	}
 	
-	public static void main2(String[] args) {
+	public static void insertCompanyAndStockFromKrxItem(String standardDate) {
 		ItemListResourceFromKrx ir = new ItemListResourceFromKrx();
 		CompanyExDao dao = new CompanyExDao();
 		StockDao stockDao = new StockDao();
-		String standardDate = getTodayDate();
 		try {
-			ArrayList<CompanyEx> companies = dao.selectAllList(standardDate);
+			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
 			for ( int securityType = 0 ; securityType < 2 ;  securityType++ ) {
-				ArrayList<KrxItem> companyList = ir.getItemList(securityType, standardDate, null);
-				for ( int cnt = 0 ; cnt < companyList.size(); cnt++ ) {
+				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
+				for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
 					// CompanyEx
-					CompanyEx company = companyList.get(cnt).getCompany();
-					company.setStandardDate(standardDate);
-					int index = -1;
-					if ( ( index = companies.indexOf(company) ) != -1 ) {
-						CompanyEx companyEx = companies.get(index);
-						if ( !companyEx.getName().equals(company.getName()) )
-							dao.insert(company);
+					CompanyEx companyFromKrx = krxItemList.get(cnt).getCompany();
+					companyFromKrx.setStandardDate(standardDate);
+					int currentDBPosition = -1;
+					if ( ( currentDBPosition = companiesFromDB.indexOf(companyFromKrx) ) != -1 ) {
+						CompanyEx companyEx = companiesFromDB.get(currentDBPosition);
+						if ( !companyEx.getName().equals(companyFromKrx.getName()) )
+							dao.insert(companyFromKrx);
 					} else
-						dao.insert(company);
-
+						dao.insert(companyFromKrx);
 					// Stock Info
-					Stock stock = new Stock();
-					stock.setCompany(company);
-					stock.setMarketCapitalization(companyList.get(cnt).getMaketCapitalization());
-					stock.setOrdinaryShares(companyList.get(cnt).getOrdinaryShare());
-					stock.setParValue(companyList.get(cnt).getParValue());
-					stock.setStandardDate(standardDate);
-					stock.setStandardTime("150000");
-					stock.setTodayHigh((int)companyList.get(cnt).getTodayHigh());
-					stock.setTodayLow((int)companyList.get(cnt).getTodayLow());
-					stock.setValue((int)companyList.get(cnt).getClosePrice());
-					stock.setVolume(companyList.get(cnt).getVolume());
-					
-					stockDao.insert(stock);
+					Stock stock = getStockFromKrxItem(krxItemList.get(cnt), companyFromKrx, standardDate, "150000");
+					if ( stockDao.select(companyFromKrx, standardDate, "150000") != null ) {
+						// skip
+					} else {
+						stockDao.insert(stock);
+					}
 				}
 			}
 		} catch ( Exception e ) {

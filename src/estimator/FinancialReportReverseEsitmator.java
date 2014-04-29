@@ -1,6 +1,8 @@
 package estimator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import post.Company;
 import post.CompanyFinancialStatus;
@@ -45,11 +47,11 @@ public class FinancialReportReverseEsitmator {
 	 * @param company
 	 * @return
 	 */
-	public void fillBlankAssetInfos(Company company) {
+	public void fillBlankAssetInfos(Company company, String registeredDate) {
 		ArrayList<CompanyFinancialStatus> cfs = null;
 		CompanyFinancialStatus prevcfs = null;
 		try {
-			cfs = orgDao.getFinancialStatus(company);
+			cfs = orgDao.getFinancialStatus(company, registeredDate);
 			for( int cnt = 0 ; cnt < cfs.size() ; cnt++ ) {
 				CompanyFinancialStatus target = cfs.get(cnt);
 				if ( target.getAssets() == 0 || target.getDebt() == 0 || target.getCapital() == 0 || target.getGrossCapital() == 0 ) {
@@ -248,11 +250,11 @@ public class FinancialReportReverseEsitmator {
 		}
 	}
 	
-	public void fillYearReport(Company company) {
+	public void fillYearReport(Company company, String registeredDate) {
 		ArrayList<CompanyFinancialStatus> cfs = null;
 		CompanyFinancialStatus prevYear = null;
 		try {
-			cfs = orgDao.getFinancialStatus(company);
+			cfs = orgDao.getFinancialStatus(company, registeredDate);
 			for( int cnt = 0 ; cnt < cfs.size() ; cnt++ ) {
 				CompanyFinancialStatus target = cfs.get(cnt);
 				if ( !target.isQuarter() ) {
@@ -301,13 +303,13 @@ public class FinancialReportReverseEsitmator {
 		return false;
 	}
 
-	public void fillQuaterReport(Company company) {
+	public void fillQuaterReport(Company company, String registeredDate) {
 		ArrayList<CompanyFinancialStatus> cfs = null;
 		ArrayList<CompanyFinancialStatus> annualcfs = new ArrayList<CompanyFinancialStatus>();
 		ArrayList<CompanyFinancialStatus> quartercfs = new ArrayList<CompanyFinancialStatus>();
 		ArrayList<AnnualQuarterRelatedCfs> idealquartercfs = new ArrayList<AnnualQuarterRelatedCfs>();
 		try {
-			cfs = orgDao.getFinancialStatus(company);
+			cfs = orgDao.getFinancialStatus(company, registeredDate);
 			if ( cfs.size() == 0 )
 				return;
 			// 1. Select annual report 
@@ -437,14 +439,17 @@ public class FinancialReportReverseEsitmator {
 		executeFillblankQuarterReport();
 	}
 	
+	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	
 	public static void executeFillblankQuarterReport() {
 		FinancialReportReverseEsitmator estimator = new FinancialReportReverseEsitmator();
 		ArrayList<Company> companies = estimator.companyList;
+		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		try {
 			for ( int pos = 0 ; pos < companies.size() ; pos++ ) {
 				System.out.println("-------> company[" + companies.get(pos).getId() + "][" + companies.get(pos).getName() + "][" + pos + "/" + companies.size() + "] <--------");
 				//estimator.fillYearReport(companies.get(pos));
-				estimator.fillQuaterReport(companies.get(pos));
+				estimator.fillQuaterReport(companies.get(pos), currentDate);
 			}
 		} catch ( Exception e1 ) {
 			e1.printStackTrace();
@@ -454,10 +459,11 @@ public class FinancialReportReverseEsitmator {
 	public static void executeFillblankYearReport() {
 		FinancialReportReverseEsitmator estimator = new FinancialReportReverseEsitmator();
 		ArrayList<Company> companies = estimator.companyList;
+		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		try {
 			for ( int pos = 0 ; pos < companies.size() ; pos++ ) {
 				System.out.println("-------> company[" + companies.get(pos).getId() + "][" + companies.get(pos).getName() + "][" + pos + "/" + companies.size() + "] <--------");
-				estimator.fillYearReport(companies.get(pos));
+				estimator.fillYearReport(companies.get(pos), currentDate);
 			}
 		} catch ( Exception e1 ) {
 			e1.printStackTrace();
@@ -467,10 +473,11 @@ public class FinancialReportReverseEsitmator {
 	public static void executeFillblankAssetInfo() {
 		FinancialReportReverseEsitmator estimator = new FinancialReportReverseEsitmator();
 		ArrayList<Company> companies = estimator.companyList;
+		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		try {
 			for ( int pos = 0 ; pos < companies.size() ; pos++ ) {
 				System.out.println("-------> company[" + companies.get(pos).getId() + "][" + companies.get(pos).getName() + "][" + pos + "/" + companies.size() + "] <--------");
-				estimator.fillBlankAssetInfos(companies.get(pos));
+				estimator.fillBlankAssetInfos(companies.get(pos), currentDate);
 			}
 		} catch ( Exception e1 ) {
 			e1.printStackTrace();

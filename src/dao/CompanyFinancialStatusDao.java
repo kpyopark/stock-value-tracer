@@ -19,7 +19,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),? )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),?,DATE_FORMAT(curdate(), '%Y%m%d') )");
 			int cnt = 1;
 			ps.setString(cnt++, financialStat.getCompany().getId() );
 			ps.setString(cnt++, financialStat.getStandardDate() );
@@ -152,15 +152,16 @@ public class CompanyFinancialStatusDao extends BaseDao {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<CompanyFinancialStatus> getFinancialStatus(Company company) throws SQLException {
+	public ArrayList<CompanyFinancialStatus> getFinancialStatus(Company company, String registeredDate) throws SQLException {
 		ArrayList<CompanyFinancialStatus> list = new ArrayList<CompanyFinancialStatus>();
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT WHERE STOCK_ID = ? ORDER BY 1,2,3");
+			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT WHERE STOCK_ID = ? and registered_date <= ? ORDER BY 1,2,3");
 			ps.setString(1, company.getId() );
+			ps.setString(2, registeredDate );
 			rs = ps.executeQuery();
 			
 			while ( rs.next() ) {

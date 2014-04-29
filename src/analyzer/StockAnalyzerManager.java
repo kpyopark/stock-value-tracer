@@ -1,6 +1,8 @@
 package analyzer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import post.Company;
 import robot.AnnualEstimationUpdator;
@@ -176,8 +178,9 @@ public class StockAnalyzerManager {
 		try {
 			AnnualEstimationUpdator updator = new AnnualEstimationUpdator();
 			updator.addUpdateListener(listener);
+			String standardDate = STANDARD_DATE_FORMAT.format(new Date());
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
-				updator.updateCompanyFinancialStatusEstimated(companyList.get(cnt));
+				updator.updateCompanyFinancialStatusEstimated(companyList.get(cnt), standardDate);
 			}
 			updator.removeUpdateListener(listener);
 		} catch ( Exception e ) {
@@ -201,13 +204,15 @@ public class StockAnalyzerManager {
 		}
 	}
 	
+	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	
 	/**
 	 * 주가를 평가한다.
 	 */
 	public void startStockAnalyzer() {
 		try {
 		StockAnalyzer stockAnal = new StockAnalyzer();
-		stockAnal.getBestStockList(100);
+		stockAnal.getBestStockList(100, STANDARD_DATE_FORMAT.format(new Date()) );
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

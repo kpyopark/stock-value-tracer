@@ -1,7 +1,9 @@
 package robot;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import post.Company;
 import post.CompanyFinancialStatus;
@@ -29,10 +31,10 @@ public class AnnualEstimationUpdator extends DataUpdator {
 		companyList = dao.selectAllList();
 	}
 	
-	private CompanyFinancialStatusEstimated estimate(Company company) throws SQLException {
+	private CompanyFinancialStatusEstimated estimate(Company company, String registeredDate) throws SQLException {
 		FinancialStatusEstimator estimator = new FinancialStatusEstimator();
-		ArrayList<CompanyFinancialStatus> cfsList = estimator.getStandardFinancialStatusList(company);
-		CompanyFinancialStatusEstimated estimatedCfs = estimator.getEstimatedCompanyFinancialStatus(cfsList);
+		ArrayList<CompanyFinancialStatus> cfsList = estimator.getStandardFinancialStatusList(company,registeredDate);
+		CompanyFinancialStatusEstimated estimatedCfs = estimator.getEstimatedCompanyFinancialStatus(cfsList, registeredDate);
 		return estimatedCfs;
 	}
 	
@@ -51,8 +53,8 @@ public class AnnualEstimationUpdator extends DataUpdator {
 	 * 
 	 * @throws SQLException
 	 */
-	public void updateCompanyFinancialStatusEstimated(Company company) throws SQLException {
-		CompanyFinancialStatusEstimated estimatedCfs = estimate(company);
+	public void updateCompanyFinancialStatusEstimated(Company company, String registeredDate) throws SQLException {
+		CompanyFinancialStatusEstimated estimatedCfs = estimate(company, registeredDate);
 		Throwable err = null;
 		if ( estimatedCfs == null ) {
 			err = new Throwable("추산치 측정 불가. 직접 확인");
@@ -62,14 +64,15 @@ public class AnnualEstimationUpdator extends DataUpdator {
 		fireCompanyFinancialStatusEstimatedChanged(estimatedCfs, err);
 	}
 	
+	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	
 	public static void main(String[] args) {
 		try {
 			AnnualEstimationUpdator updator = new AnnualEstimationUpdator();
 			updator.addUpdateListener(new robot.conc.ExamUpdateListener());
 			Company company = new Company();
 			company.setId("A025890");
-			updator.updateCompanyFinancialStatusEstimated(company);
-			
+			updator.updateCompanyFinancialStatusEstimated(company, STANDARD_DATE_FORMAT.format(new Date()));
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

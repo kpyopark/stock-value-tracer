@@ -1,7 +1,6 @@
 package analyzer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,20 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import post.Company;
-import post.CompanyFinancialStatus;
 import post.StockEstimated;
 import post.StockRank;
 import dao.CompanyDao;
@@ -75,7 +69,7 @@ public class StockAnalyzer {
 		}
 	}
 	
-	private void printStockListToConsole(int rank) {
+	private void printStockListToConsole(int rank, String registeredDate) {
 		System.out.println("Name;Id;Per;Roa;Roe;Tot;Est;AvePer;AveRoe;AveRoa;AveDividendRatio;RecentEps;RecentStockValue;LastEps;Date;size;URL");
 		for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
 			//System.out.println( stockRankList.get(cnt));
@@ -94,7 +88,7 @@ public class StockAnalyzer {
 					stockRankList.get(cnt).getStockEstimation().getRecentStockValue() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getLastEps() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getRelatedDateList() + ";" +
-					FinancialStatusEstimator.getLatestOrdinarySharesSize(stockRankList.get(cnt).getCompany()) + ";" +
+					FinancialStatusEstimator.getLatestOrdinarySharesSize(stockRankList.get(cnt).getCompany(), registeredDate) + ";" +
 					"http://stock.naver.com/sise/ksc_summary.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1)
 					);
 		}
@@ -104,6 +98,12 @@ public class StockAnalyzer {
 		File newExcel = null;
 		newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) + ".xls" );
 		createExcelFile(newExcel, rank);
+	}
+	
+	void printStockListToXML(int rank, String registeredDate) {
+		File newXML = null;
+		newXML = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) + ".xml" );
+		createXMLFile(newXML, rank, registeredDate);
 	}
 
 	
@@ -178,13 +178,14 @@ public class StockAnalyzer {
 		}
 	}
 	*/
-	public void getBestStockList(int rank) throws java.sql.SQLException {
+	public void getBestStockList(int rank, String registeredDate) throws java.sql.SQLException {
 		calculateRankByRoe();
 		calculateRankByRoa();
 		calculateRankByPer();
 		calculateTotRank();
-		printStockListToConsole(rank);
+		printStockListToConsole(rank, registeredDate);
 		printStockListToExcel(rank);
+		printStockListToXML(rank, registeredDate);
 	}
 	
 	private void calculateRankByRoe() {
@@ -274,6 +275,58 @@ public class StockAnalyzer {
 
 	}
 	
+	public static String getUtf8String(String eucKr) {
+		String utf8 = null;
+		try {
+		if ( eucKr != null )
+			utf8 = new String(eucKr.getBytes("utf-8"), "utf-8");
+		} catch ( Exception e ) { e.printStackTrace(); }
+		return utf8;
+	}
+
+	/*
+	 * Schema
+	 * name
+	 * id
+	 * 
+	 */
+	private void createXMLFile(File targetFile, int rank, String registeredDate) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<root>");
+		for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
+			sb.append("<item>");
+			sb.append("<name>").append(getUtf8String(stockRankList.get(cnt).getCompany().getName())).append("</name>");
+			sb.append("<id>").append(stockRankList.get(cnt).getCompany().getId()).append("</id>");
+			sb.append("<per>").append(stockRankList.get(cnt).getPerRank()).append("</per>");
+			sb.append("<roa>").append(stockRankList.get(cnt).getRoaRank()).append("</roa>");
+			sb.append("<roe>").append(stockRankList.get(cnt).getRoeRank()).append("</roe>");
+			sb.append("<tot>").append(stockRankList.get(cnt).getTotRank()).append("</tot>");
+			sb.append("<aveper>").append(stockRankList.get(cnt).getStockEstimation().getAvePer()).append("</aveper>");
+			sb.append("<averoe>").append(stockRankList.get(cnt).getStockEstimation().getAveRoe()).append("</averoe>");
+			sb.append("<averoa>").append(stockRankList.get(cnt).getStockEstimation().getAveRoa()).append("</averoa>");
+			sb.append("<avedividened>").append(stockRankList.get(cnt).getStockEstimation().getAveDividendRatio()).append("</avedividened>");
+			sb.append("<eps>").append(stockRankList.get(cnt).getStockEstimation().getRecentEps()).append("</eps>");
+			sb.append("<stockvalue>").append(stockRankList.get(cnt).getStockEstimation().getRecentStockValue()).append("</stockvalue>");
+			sb.append("<date>").append(stockRankList.get(cnt).getStockEstimation().getStandardDate()).append("</date>");
+			sb.append("<size>").append(FinancialStatusEstimator.getLatestOrdinarySharesSize(stockRankList.get(cnt).getCompany(), registeredDate)).append("</size>");
+			sb.append("<linkurl>").append("http://stock.naver.com/sise/ksc_summary.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1)).append("</linkurl>");
+			sb.append("</item>\n");
+		}
+		sb.append("</root>");
+	    FileOutputStream fileOut = null;
+		try {
+			fileOut = new FileOutputStream(targetFile);
+			fileOut.write(sb.toString().getBytes());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		} finally {
+			if ( fileOut != null ) try { fileOut.close(); } catch ( Exception e ) {}
+		}
+
+	}
+	
 	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE",
 		"TOT","EST","SECTOR","GROUP","INDUSTRY","AVEPER","AVEROE","AVEROA",
 		"AVEDIV","REPS","RSTOCK","LEPS","DATE","URL"
@@ -340,9 +393,12 @@ public class StockAnalyzer {
 		cell.setHyperlink(link);
 	}
 	
+	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	
 	public static void main(String[] args) throws Exception {
 		StockAnalyzer stockAnal = new StockAnalyzer();
-		stockAnal.getBestStockList(100);
+		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
+		stockAnal.getBestStockList(100, currentDate);
 	}
 	
 }
