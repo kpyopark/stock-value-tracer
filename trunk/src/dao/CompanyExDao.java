@@ -176,4 +176,28 @@ public class CompanyExDao extends BaseDao {
 		return list;
 	}
 	
+	public void insertCompanyTableFromDefferedTable() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		int updateCount = 0;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("insert into tb_company " + 
+					"select stock_id, company_name, standard_date, modified_date, fics_sector, fics_industry_group, fics_industry, closed_yn from " + 
+					"( select stock_id, company_name, standard_date, modified_date, fics_sector, fics_industry_group, fics_industry, closed_yn  " +
+					"from   tb_company_and_deffered where security_sector = 0 ) a left outer join ( select stock_id, standard_date, 'true' isExist from tb_company ) b " +
+					"using ( stock_id, standard_date ) " +
+					"where isExist is null"
+					);
+			updateCount = ps.executeUpdate();
+			System.out.println("Net Company Inserted :" + updateCount);
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		
+	}
+	
 }

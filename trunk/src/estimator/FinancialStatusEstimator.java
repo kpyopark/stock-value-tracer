@@ -1,6 +1,8 @@
 package estimator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import post.Company;
 import post.CompanyFinancialStatus;
@@ -44,13 +46,13 @@ public class FinancialStatusEstimator {
 	 * @param company
 	 * @return
 	 */
-	public ArrayList<CompanyFinancialStatus> getStandardFinancialStatusList(Company company) {
+	public ArrayList<CompanyFinancialStatus> getStandardFinancialStatusList(Company company, String registeredDate) {
 		CompanyFinancialStatusDao orgDao = new CompanyFinancialStatusDao();
 		ArrayList<CompanyFinancialStatus> cfsList = null;
 		ArrayList<CompanyFinancialStatus> rtn = null;
 		
 		try {
-			cfsList = getAvailiableCfs( orgDao.getFinancialStatus(company) );
+			cfsList = getAvailiableCfs( orgDao.getFinancialStatus(company, registeredDate) );
 			ArrayList<CompanyFinancialStatus> quarterList = getQuarterList(cfsList);
 			ArrayList<CompanyFinancialStatus> annualList = getAnnualList(cfsList);
 			ArrayList<CompanyFinancialStatus> continuousQuarterList = getContinuousQuarterList(quarterList);
@@ -71,7 +73,7 @@ public class FinancialStatusEstimator {
 		return rtn;
 	}
 	
-	public CompanyFinancialStatusEstimated getEstimatedCompanyFinancialStatus(ArrayList<CompanyFinancialStatus> cfsList) {
+	public CompanyFinancialStatusEstimated getEstimatedCompanyFinancialStatus(ArrayList<CompanyFinancialStatus> cfsList, String registeredDate) {
 		CompanyFinancialStatusEstimated estimated = new CompanyFinancialStatusEstimated();
 		if ( cfsList.size() == 0 ) {
 			System.out.println("기초 재무정보를 획득하지 못했습니다. 위에 프로그램을 다시 한번 손좀 보세요.");
@@ -135,11 +137,11 @@ public class FinancialStatusEstimator {
 					estimatedOrdinaryProfit = realValueCount == 0 ? 0 : estimatedOrdinaryProfit * 4 / realValueCount; 
 				}
 				// 주식수는 가장 최신의 주식수를 가지고 온다. modifid 2007.02.27
-				long estimatedOrdinarySharesSize = getLatestOrdinarySharesSize(first.getCompany());
+				long estimatedOrdinarySharesSize = getLatestOrdinarySharesSize(first.getCompany(), registeredDate);
 					//(( first.isFixed() ? first.getOrdinarySharesSize() : 0 ) + ( second.isFixed() ? second.getOrdinarySharesSize() : 0 ) +
 					//	( third.isFixed() ? third.getOrdinarySharesSize() : 0 ) + ( forth.isFixed() ? forth.getOrdinarySharesSize() : 0 )) / fixedCfsCount;
 				// 주식수는 가장 최신의 주식수를 가지고 온다. modifid 2007.02.27
-				long estimatedPrefferedSharesSize = getLatestPrefferedSharesSize(first.getCompany());
+				long estimatedPrefferedSharesSize = getLatestPrefferedSharesSize(first.getCompany(), registeredDate);
 					//(( first.isFixed() ? first.getPrefferedSharesSize() : 0 ) + ( second.isFixed() ? second.getPrefferedSharesSize() : 0 ) +
 					//	( third.isFixed() ? third.getPrefferedSharesSize() : 0 ) + ( forth.isFixed() ? forth.getPrefferedSharesSize() : 0 )) / fixedCfsCount;
 				long estimatedSales = (( first.isFixed() ? first.getSales() : 0 ) + ( second.isFixed() ? second.getSales() : 0 ) +
@@ -168,8 +170,8 @@ public class FinancialStatusEstimator {
 				//System.out.println("--년 정보로 산출--[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
 				estimated.setRelatedDateList(cfsList.get(0).getStandardDate());
 				estimated.copyStructure(cfsList.get(0));
-				estimated.setOrdinarySharesSize(getLatestOrdinarySharesSize(cfsList.get(0).getCompany()));
-				estimated.setPrefferedSharesSize(getLatestPrefferedSharesSize(cfsList.get(0).getCompany()));
+				estimated.setOrdinarySharesSize(getLatestOrdinarySharesSize(cfsList.get(0).getCompany(), registeredDate));
+				estimated.setPrefferedSharesSize(getLatestPrefferedSharesSize(cfsList.get(0).getCompany(), registeredDate));
 			} catch ( Exception e ) {
 				System.out.println("년간 재무정보를 정확하게 얻지 못했습니다. 확인이 필요합니다.[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
 			}
@@ -179,10 +181,10 @@ public class FinancialStatusEstimator {
 	
 	static CompanyFinancialStatusDao orgDaoUsedBySharesSize = new CompanyFinancialStatusDao();
 	
-	public static long getLatestOrdinarySharesSize(Company company) {
+	public static long getLatestOrdinarySharesSize(Company company, String registeredDate) {
 		long rtn = Integer.MAX_VALUE;
 		try {
-			ArrayList<CompanyFinancialStatus> cfsList = orgDaoUsedBySharesSize.getFinancialStatus(company);
+			ArrayList<CompanyFinancialStatus> cfsList = orgDaoUsedBySharesSize.getFinancialStatus(company, registeredDate);
 			java.util.Collections.sort(cfsList,new StandardDateReverseComparator());
 			for ( int cnt = 0 ; cnt < cfsList.size() ; cnt++ ) {
 				if ( cfsList.get(cnt).getOrdinarySharesSize() != 0 ) {
@@ -194,10 +196,10 @@ public class FinancialStatusEstimator {
 		return rtn;
 	}
 	
-	private static long getLatestPrefferedSharesSize(Company company) {
+	private static long getLatestPrefferedSharesSize(Company company, String registeredDate) {
 		long rtn = Integer.MAX_VALUE;
 		try {
-			ArrayList<CompanyFinancialStatus> cfsList = orgDaoUsedBySharesSize.getFinancialStatus(company);
+			ArrayList<CompanyFinancialStatus> cfsList = orgDaoUsedBySharesSize.getFinancialStatus(company, registeredDate);
 			java.util.Collections.sort(cfsList,new StandardDateReverseComparator());
 			for ( int cnt = 0 ; cnt < cfsList.size() ; cnt++ ) {
 				if ( cfsList.get(cnt).getOrdinarySharesSize() != 0 ) {
@@ -303,13 +305,16 @@ public class FinancialStatusEstimator {
 		return currentQuarterString;
 	}
 	
+	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	
 	public static void main(String[] args) {
 		FinancialStatusEstimator estim = new FinancialStatusEstimator();
 		Company company = new Company();
+		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		company.setId("A031980");
 		company.setName("피에스케이");
-		System.out.println(estim.getEstimatedCompanyFinancialStatus(estim.getStandardFinancialStatusList(company)));
-		System.out.println(FinancialStatusEstimator.getLatestOrdinarySharesSize(company));
+		System.out.println(estim.getEstimatedCompanyFinancialStatus(estim.getStandardFinancialStatusList(company, currentDate), currentDate));
+		System.out.println(FinancialStatusEstimator.getLatestOrdinarySharesSize(company, currentDate));
 	}
 	
 }
