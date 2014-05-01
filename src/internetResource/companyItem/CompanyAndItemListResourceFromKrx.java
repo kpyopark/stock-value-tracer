@@ -96,7 +96,7 @@ public class CompanyAndItemListResourceFromKrx {
 
 	static TagNode node(Object org) {
 		return (TagNode)org;
-	}
+	}	
 	
 	private static KrxItem getKrxItem(TagNode item) {
 		KrxItem oneItem = new KrxItem();
@@ -200,7 +200,7 @@ public class CompanyAndItemListResourceFromKrx {
 	}
 	
 	public static void main(String[] args) {
-		List<String> workDays = getWorkDays(2014, Calendar.APRIL, 8, 2014, Calendar.APRIL, 28);
+		List<String> workDays = getWorkDays(2014, Calendar.APRIL, 28, 2014, Calendar.MAY, 1);
 		insertCompanyCodeListAndStockValueForPeriods(workDays);
 	}
 	
