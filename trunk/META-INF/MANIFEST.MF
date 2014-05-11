@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: StockRatioViewer Plug-in
+Bundle-SymbolicName: StockRatioViewer; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: stockratioviewer.Activator
+Bundle-Vendor: PKP
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
+Bundle-ClassPath: bin/
+
