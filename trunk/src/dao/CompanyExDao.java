@@ -7,6 +7,25 @@ import java.sql.SQLException;
 
 import post.CompanyEx;
 
+/**
+<pre>
+CREATE TABLE `tb_company_and_deffered` (
+  `STOCK_ID` varchar(10) COLLATE euckr_bin NOT NULL,
+  `STANDARD_DATE` varchar(8) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `COMPANY_NAME` varchar(100) COLLATE euckr_bin NOT NULL,
+  `SECURITY_SECTOR` int(1) DEFAULT '0',
+  `FICS_SECTOR` varchar(45) COLLATE euckr_bin DEFAULT NULL,
+  `FICS_INDUSTRY_GROUP` varchar(45) COLLATE euckr_bin DEFAULT NULL,
+  `FICS_INDUSTRY` varchar(45) COLLATE euckr_bin DEFAULT NULL,
+  `CLOSED_YN` varchar(45) COLLATE euckr_bin DEFAULT NULL,
+  `MODIFIED_DATE` date DEFAULT NULL,
+  PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`)
+) ENGINE=MyISAM DEFAULT CHARSET=euckr COLLATE=euckr_bin;
+
+</pre>
+ * @author user
+ *
+ */
 public class CompanyExDao extends BaseDao {
 	
 	public boolean insert(CompanyEx company) throws SQLException {

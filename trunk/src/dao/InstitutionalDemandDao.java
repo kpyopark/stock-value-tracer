@@ -10,6 +10,26 @@ import post.Company;
 import post.CompanyFinancialStatus;
 import post.InstitutionalDamand;
 
+/**
+<pre>
+CREATE TABLE `tb_institutional_demand` (
+  `stock_id` varchar(10) COLLATE euckr_bin NOT NULL,
+  `standard_date` varchar(8) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `standard_time` varchar(6) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `stock_closing_price` bigint(20) DEFAULT NULL,
+  `stock_updown_ratio_of_day` float(20,5) DEFAULT NULL,
+  `stock_updown_price_of_day` bigint(20) DEFAULT NULL,
+  `foreigner_net_demand` bigint(20) DEFAULT NULL,
+  `foreigner_ownership_ratio` float DEFAULT NULL,
+  `company_net_demand` bigint(20) DEFAULT NULL,
+  `individual_net_demand` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`stock_id`,`standard_date`,`standard_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=euckr COLLATE=euckr_bin;
+
+</pre>
+ * @author user
+ *
+ */
 public class InstitutionalDemandDao extends BaseDao {
 	
 	public InstitutionalDemandDao() {

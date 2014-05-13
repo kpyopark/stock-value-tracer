@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import post.CompanyEx;
@@ -159,9 +160,21 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	public void updateLatestCompanyList() {
 		try {
 			String latestStandardDate = dao.getLatestStandardDate();
+			int fromYear, fromMonth, fromDay, toYear, toMonth, toDay;
 			Date latestDate = StringUtil.convertToDate(latestStandardDate);
-			Date currentDate = new java.util.Date();
-			List<String> workDays = getWorkDays(latestDate.getDate(), latestDate.getMonth(), latestDate.getDay(), currentDate.getYear(), currentDate.getMonth(), currentDate.getDay());
+			Calendar calendar = Calendar.getInstance();
+			calendar.clear();
+			calendar.setTimeInMillis(latestDate.getTime());
+			fromYear = calendar.get(Calendar.YEAR);
+			fromMonth = calendar.get(Calendar.MONTH);
+			fromDay = calendar.get(Calendar.DAY_OF_MONTH);
+			calendar.clear();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			toYear = calendar.get(Calendar.YEAR);
+			toMonth = calendar.get(Calendar.MONTH);
+			toDay = calendar.get(Calendar.DAY_OF_MONTH);
+			List<String> workDays = getWorkDays(fromYear, fromMonth, fromDay,
+					toYear, toMonth, toDay);
 			insertCompanyCodeListAndStockValueForPeriods(workDays);
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -171,8 +184,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		List<String> workDays = CompanyListUpdatorFromKrx.getWorkDays(2014, Calendar.APRIL, 28, 2014, Calendar.MAY, 1);
-		updator.insertCompanyCodeListAndStockValueForPeriods(workDays);
+		updator.updateLatestCompanyList();
 	}
 	
 }

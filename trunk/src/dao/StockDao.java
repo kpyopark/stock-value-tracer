@@ -8,6 +8,40 @@ import java.sql.SQLException;
 import post.Company;
 import post.Stock;
 
+/**
+<pre>
+CREATE TABLE `tb_company_stock` (
+  `STOCK_ID` varchar(10) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `STANDARD_DATE` varchar(8) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `STANDARD_TIME` varchar(6) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `STOCK_PRICE` bigint(20) DEFAULT NULL,
+  `STOCK_VOLUME` bigint(20) unsigned DEFAULT NULL,
+  `CURRENT_ROA` float DEFAULT NULL,
+  `CURRENT_ROE` float DEFAULT NULL,
+  `CURRENT_ROI` float DEFAULT NULL,
+  `ROA_RANK` int(10) unsigned DEFAULT NULL,
+  `ROE_RANK` decimal(10,0) DEFAULT NULL,
+  `ROI_RANK` decimal(10,0) DEFAULT NULL,
+  `CURRENT_PER` float DEFAULT NULL,
+  `CURRENT_PBR` float DEFAULT NULL,
+  `PER_RANK` decimal(10,0) DEFAULT NULL,
+  `PBR_RANK` decimal(10,0) DEFAULT NULL,
+  `CURRENT_EPS` decimal(10,0) DEFAULT NULL,
+  `MODIFIED_DATE` datetime DEFAULT NULL,
+  `TODAY_HIGH` bigint(20) DEFAULT NULL,
+  `TODAY_LOW` bigint(20) DEFAULT NULL,
+  `ORDINARY_SHARES` bigint(20) DEFAULT NULL,
+  `MARKET_CAPITALIZATION` bigint(20) DEFAULT NULL,
+  `PAR_VALUE` float DEFAULT NULL,
+  `OPEN_PRICE` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`STANDARD_TIME`),
+  KEY `ix_company_stock_standard_date` (`STANDARD_DATE`)
+) ENGINE=MyISAM DEFAULT CHARSET=euckr COLLATE=euckr_bin;
+
+</pre>
+ * @author user
+ *
+ */
 public class StockDao extends BaseDao {
 	
 	public boolean insert(Stock companyStock) throws SQLException {
