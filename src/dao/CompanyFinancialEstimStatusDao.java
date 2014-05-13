@@ -8,6 +8,41 @@ import java.sql.SQLException;
 import post.Company;
 import post.CompanyFinancialStatusEstimated;
 
+/**
+<pre>
+CREATE TABLE `tb_company_estim_stat` (
+  `STOCK_ID` varchar(10) NOT NULL DEFAULT '',
+  `STANDARD_DATE` varchar(8) NOT NULL DEFAULT '',
+  `IS_ANNUAL` varchar(1) NOT NULL DEFAULT '',
+  `ESTIM_KIND` varchar(1) NOT NULL DEFAULT 'O',
+  `ASSET_TOTAL` bigint(20) DEFAULT NULL,
+  `DEBT_TOTAL` bigint(20) DEFAULT NULL,
+  `CAPITAL` bigint(20) DEFAULT NULL,
+  `CAPITAL_TOTAL` bigint(20) DEFAULT NULL,
+  `SALES` bigint(20) DEFAULT NULL,
+  `OPERATION_PROFIT` bigint(20) DEFAULT NULL,
+  `ORDINARY_PROFIT` bigint(20) DEFAULT NULL,
+  `NET_PROFIT` bigint(20) DEFAULT NULL,
+  `INVESTED_CAPITAL` bigint(20) DEFAULT NULL,
+  `PREFFERED_STOCK_SIZE` bigint(20) DEFAULT NULL,
+  `GENERAL_STOCK_SIZE` bigint(20) DEFAULT NULL,
+  `DIVIDENED_RATIO` float(8,3) DEFAULT NULL,
+  `ROE` float(8,3) DEFAULT NULL,
+  `ROA` float(8,3) DEFAULT NULL,
+  `ROI` float(8,3) DEFAULT NULL,
+  `KOSPI_YN` varchar(1) DEFAULT NULL,
+  `FIXED_YN` varchar(1) DEFAULT NULL,
+  `MODIFIED_DATE` date DEFAULT NULL,
+  `ESTIMATED_YN` varchar(1) NOT NULL DEFAULT 'N',
+  `RELATED_DATE_LIST` varchar(45) DEFAULT NULL,
+  `REGISTERED_DATE` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`IS_ANNUAL`,`ESTIM_KIND`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+</pre>
+ * @author user
+ *
+ */
 public class CompanyFinancialEstimStatusDao extends BaseDao {
 	
 	final static long PRECISION_THRESHOLD = 1000000;

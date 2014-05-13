@@ -8,6 +8,28 @@ import java.sql.SQLException;
 import post.Company;
 import post.StockEstimated;
 
+/**
+<pre>
+CREATE TABLE `tb_decade_estim` (
+  `STOCK_ID` varchar(10) NOT NULL DEFAULT '',
+  `STANDARD_DATE` varchar(8) NOT NULL DEFAULT '',
+  `ESTIM_KIND` varchar(1) NOT NULL DEFAULT 'O',
+  `AVE_PER` float(20,5) NOT NULL DEFAULT '0.00000',
+  `AVE_ROE` float(20,5) NOT NULL DEFAULT '0.00000',
+  `AVE_DIVIDEND_RATIO` float(20,5) NOT NULL DEFAULT '0.00000',
+  `RECENT_EPS` float(20,5) NOT NULL DEFAULT '0.00000',
+  `RECENT_STOCK_VALUE` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `LAST_EPS` float(20,5) NOT NULL DEFAULT '0.00000',
+  `EXPECTATION_RATIO` float(20,5) NOT NULL DEFAULT '0.00000',
+  `AVE_ROA` float(20,5) NOT NULL DEFAULT '0.00000',
+  `RELATED_DATE_LIST` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`ESTIM_KIND`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='estimation of next 10 years';
+
+</pre>
+ * @author user
+ *
+ */
 public class CompanyStockEstimationDao extends BaseDao {
 	
 	final static long PRECISION_THRESHOLD = 1000000;
