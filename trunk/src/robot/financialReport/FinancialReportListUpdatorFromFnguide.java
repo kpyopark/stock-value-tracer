@@ -6,6 +6,7 @@ import internetResource.financialReport.FinancialReportResourceFromFnguide;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import post.Company;
 import post.CompanyFinancialStatus;
@@ -237,7 +238,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		testUpdateFinancialStatus();
+		testUpdateAllCompany();
 	}
 	
 	public static void testUpdateFinancialStatus() {
@@ -257,18 +258,11 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	public static void testUpdateAllCompany() {
 		try {
 			FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
-			if ( false ) { // Wanna to update all company list? Do this code block.
-				updator.getAnnualStatusList();
-				updator.updateCompany();
-			}
-			//updator.updateFinancialStatus();
-			//updator.getCompanyList();
-			//updator.updateAllFinancialStatus();
-			Company comp = new Company();
 			CompanyDao dao = new CompanyDao();
-			comp = dao.select("A000040", null);
-			updator.updateFinancialStatus(comp);
-			//testIsDifferent();
+			List<Company> companies = dao.selectAllList();
+			for( Company comp : companies ) {
+				updator.updateFinancialStatus(comp);
+			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

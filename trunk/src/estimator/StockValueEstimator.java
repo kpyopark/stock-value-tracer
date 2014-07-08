@@ -14,14 +14,14 @@ public class StockValueEstimator {
 	
 	ArrayList<Company> companyList = null;
 	ArrayList<Stock> stockList = null;
-	String currentDate = null;
+	String standardDate = null;
 	
 	public StockValueEstimator() {
-		init();
+		this(new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date()));
 	}
 	
-	private void init() {
-		currentDate = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+	public StockValueEstimator(String standardDate) {
+		this.standardDate = standardDate;
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class StockValueEstimator {
 		StockDao stockDao = new StockDao();
 		CompanyFinancialEstimStatusDao estimStatusDao = new CompanyFinancialEstimStatusDao();
 		try {
-			CompanyFinancialStatusEstimated estimStatus = estimStatusDao.select(company,null, null);
+			CompanyFinancialStatusEstimated estimStatus = estimStatusDao.select(company,standardDate, null);
 			Stock stock = stockDao.select(company, null, null);
 			if ( estimStatus != null && stock != null ) {
 				estimation = caculateStockEstimation(estimStatus, stock);
@@ -69,7 +69,7 @@ public class StockValueEstimator {
 		if ( cfs.getNetProfit() > 0 ) {
 			if ( cfs.getOrdinarySharesSize() > 0 ) {
 				cse.setRecentEps(cfs.getNetProfit() / cfs.getOrdinarySharesSize());
-				if ( stock.getStandardDate().compareTo(currentDate) == 0 && stock.getValue() > 0 ) {
+				if ( stock.getStandardDate().compareTo(standardDate) == 0 && stock.getValue() > 0 ) {
 					cse.setAvePer(stock.getValue()/cse.getRecentEps());
 				} else {
 					cse.setRecentEps(0);

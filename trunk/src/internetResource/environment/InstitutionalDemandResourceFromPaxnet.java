@@ -3,6 +3,13 @@ package internetResource.environment;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
@@ -40,17 +47,10 @@ public class InstitutionalDemandResourceFromPaxnet {
 	}
 	
 	private static String XPATH_ID = "//*[@id=\"analysis\"]/tbody/tr";
-	
 	private static String XPATH_CONTENTS_LINE(int line) {
 		return "//*[@id=\"analysis\"]/tbody/tr[" + line + "]/td";
 	}
 
-	private static HtmlCleaner cleaner;
-	
-	static {
-		cleaner = new HtmlCleaner();
-	}
-	
 	private static boolean isValidLine(Object[] dataline ) {
 		return ( dataline != null )
 				&& ( dataline.length > 0 )
@@ -92,40 +92,66 @@ public class InstitutionalDemandResourceFromPaxnet {
 		return list;
 	}
 	
+	static class InsdemandThread implements Runnable {
+		Company company;
+		InstitutionalDemandDao insDao;
+		HttpURLConnection conn;
+		int cnt;
+		HtmlCleaner cleaner;
+		InsdemandThread(int cnt, Company company, InstitutionalDemandDao insDao) {
+			InsdemandThread.this.cnt = cnt;
+			InsdemandThread.this.company = company;
+			InsdemandThread.this.insDao = insDao;
+			cleaner = new HtmlCleaner();
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			try {
+				for ( int pagecnt = 1 ; pagecnt <= 1 ; pagecnt++ ) {
+					System.out.println("[" + cnt + "][" + company.getId() + "][" + company.getName() + "] start... ");
+					conn = (HttpURLConnection)new URL(ID_URL(company.getId().substring(1), pagecnt)).openConnection();
+					TagNode xml = cleaner.clean(conn.getInputStream(), "euc-kr");
+					ArrayList<InstitutionalDamand> insDemandList = getInstitutionalDemandList(company, xml);
+					System.out.println("[" + cnt + "][" + company.getId() + "][" + company.getName() + "] start to delete and insert " + insDemandList.size());
+					for ( int line = 0 ; line < Math.min(insDemandList.size(), 10) ; line++ ) { //insDemandList.size() ; line++ ) {
+						insDao.replace(insDemandList.get(line));
+					}
+				}
+			} catch ( Exception innere ) {
+				innere.printStackTrace();
+			}
+			if ( conn != null ) {
+				conn.disconnect();
+			}
+			
+		}
+	}
+	
 	public static void main(String[] args) {
 		TimeWatch timewatch = new TimeWatch();
-		HttpURLConnection conn = null;
+		ExecutorService threadPool = Executors.newFixedThreadPool(1);
 		try {
 			timewatch.start();
-			CompanyDao dao = new CompanyDao();
-			InstitutionalDemandDao insdemandDao = new InstitutionalDemandDao();
-			ArrayList<Company> companyList = dao.selectAllList();
+			final CompanyDao dao = new CompanyDao();
+			final InstitutionalDemandDao insdemandDao = new InstitutionalDemandDao();
+			final ArrayList<Company> companyList = dao.selectAllList();
+			//final ArrayList<Company> companyList = new ArrayList<Company>();
+			//Company testCompany = new Company();
+			//testCompany.setId("A009070");
+			//testCompany.setName("KCTC");
+			//companyList.add(testCompany);
 			timewatch.reset();
 			// 1. Company List
 			for ( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) { //companyList.size() ; cnt++ ) {
 				System.out.println("start....." + cnt + ":" + companyList.size());
-				try {
-					for ( int pagecnt = 1 ; pagecnt <= 1 ; pagecnt++ ) {
-						conn = (HttpURLConnection)new URL(ID_URL(companyList.get(cnt).getId().substring(1), pagecnt)).openConnection();
-						TagNode xml = cleaner.clean(conn.getInputStream(), "euc-kr");
-						ArrayList<InstitutionalDamand> insDemandList = getInstitutionalDemandList(companyList.get(cnt), xml);
-						for ( int line = 0 ; line < 20 ; line++ ) { //insDemandList.size() ; line++ ) {
-							insdemandDao.delete(insDemandList.get(line));
-							insdemandDao.insert(insDemandList.get(line));
-						}
-					}
-				} catch ( Exception innere ) {
-					innere.printStackTrace();
-				}
-				timewatch.stopAndStart();
+				threadPool.execute(new InsdemandThread(cnt, companyList.get(cnt), insdemandDao));
 			}
 			timewatch.stopAndStart();
 		} catch ( Exception e ) {
 			e.printStackTrace();
 			//System.out.println(e.getLocalizedMessage());
-		}
-		if ( conn != null ) {
-			conn.disconnect();
 		}
 		
 	}

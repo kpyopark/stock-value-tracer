@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import post.Company;
+import post.CompanyEx;
 
 /**
 <pre>
@@ -159,5 +160,42 @@ public class CompanyDao extends BaseDao {
 		}
 		return list;
 	}
+	
+	public java.util.ArrayList<Company> selectAllList(String standardDate) throws SQLException {
+		java.util.ArrayList<Company> list = new java.util.ArrayList<Company>();
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("SELECT * FROM tb_company A JOIN ( " +
+					"SELECT STOCK_ID, MAX(STANDARD_DATE) STANDARD_DATE FROM tb_company  " +
+					"WHERE  STANDARD_DATE <= ?  " +
+					"GROUP BY STOCK_ID ) B USING ( STOCK_ID, STANDARD_DATE) " +
+					"WHERE CLOSED_YN <> 'Y' ");
+			ps.setString(1, standardDate);
+			rs = ps.executeQuery();
+			
+			while ( rs.next() ) {
+				Company company = new Company();
+				company.setId(rs.getString("STOCK_ID"));
+				company.setName(rs.getString("COMPANY_NAME"));
+				company.setStandardDate(rs.getString("STANDARD_DATE"));
+				company.setFicsSector(rs.getString("FICS_SECTOR"));
+				company.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
+				company.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
+				company.setClosed("Y".equals(rs.getString("CLOSED_YN")));
+				list.add(company);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return list;
+	}
+	
 	
 }

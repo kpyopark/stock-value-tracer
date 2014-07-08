@@ -210,8 +210,9 @@ public class StockAnalyzerManager {
 	 */
 	public void startStockAnalyzer() {
 		try {
-		StockAnalyzer stockAnal = new StockAnalyzer();
-		stockAnal.getBestStockList(100, STANDARD_DATE_FORMAT.format(new Date()) );
+			String standardDate = STANDARD_DATE_FORMAT.format(new Date());
+			StockAnalyzer stockAnal = new StockAnalyzer(standardDate);
+			stockAnal.getBestStockList(100, standardDate);
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

@@ -27,26 +27,29 @@ import estimator.FinancialStatusEstimator;
 
 public class StockAnalyzer {
 
-	static SimpleDateFormat DATE_FORMAT = null;
+	static SimpleDateFormat FILE_DATE_FORMAT = null;
 	
 	static {
-		DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd.HHmmss");
+		FILE_DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd.HHmmss");
 	}
+	
+	String standardDate;
 
-	ArrayList<Company> companyList = new ArrayList<Company>();
+	ArrayList<Company> companyList = null;
 	ArrayList<StockEstimated> stockEstimList = new ArrayList<StockEstimated>();
 	ArrayList<StockRank> stockRankList = new ArrayList<StockRank>();
 	CompanyStockEstimationDao stockEstimDao = new CompanyStockEstimationDao();
 	CompanyDao companyDao = new CompanyDao();
 	CompanyFinancialStatusDao financialStatusDao = new CompanyFinancialStatusDao();
 	
-	public StockAnalyzer() throws Exception {
+	public StockAnalyzer(String standardDate) throws Exception {
+		this.standardDate = standardDate;
 		getCompanyList();
 		getCompanyStockEstimationList();
 	}
 	
 	private void getCompanyList() throws java.sql.SQLException {
-		companyList = companyDao.selectAllList();
+		companyList = companyDao.selectAllList(this.standardDate);
 	}
 	
 	/**
@@ -58,6 +61,7 @@ public class StockAnalyzer {
 	 * @throws java.sql.SQLException
 	 */
 	private void getCompanyStockEstimationList() throws java.sql.SQLException {
+		stockEstimList.clear();
 		for( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) {
 			if ( !companyList.get(cnt).isClosed() ) {
 				StockEstimated stockEstim = stockEstimDao.select(companyList.get(cnt));
@@ -96,13 +100,13 @@ public class StockAnalyzer {
 	
 	void printStockListToExcel(int rank) {
 		File newExcel = null;
-		newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) + ".xls" );
+		newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xls" );
 		createExcelFile(newExcel, rank);
 	}
 	
 	void printStockListToXML(int rank, String registeredDate) {
 		File newXML = null;
-		newXML = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + DATE_FORMAT.format(new Date()) + ".xml" );
+		newXML = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xml" );
 		createXMLFile(newXML, rank, registeredDate);
 	}
 
@@ -396,9 +400,12 @@ public class StockAnalyzer {
 	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	
 	public static void main(String[] args) throws Exception {
-		StockAnalyzer stockAnal = new StockAnalyzer();
-		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
-		stockAnal.getBestStockList(100, currentDate);
+		// 1. All registered date from the estim stat.
+		// 2. In each registered date, retreive all company list.
+		// 3. Analyze all.
+		String standardDate = STANDARD_DATE_FORMAT.format(new Date());
+		StockAnalyzer stockAnal = new StockAnalyzer(standardDate);
+		stockAnal.getBestStockList(100, standardDate);
 	}
 	
 }
