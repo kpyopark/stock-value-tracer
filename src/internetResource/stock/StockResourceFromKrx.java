@@ -10,26 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Hashtable;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
-import org.w3c.dom.Document;
-
-import common.StringUtil;
-
-import post.Company;
-import post.Stock;
 
 /**
  * 
@@ -38,21 +21,9 @@ import post.Stock;
  */
 public class StockResourceFromKrx {
 	
-	static SimpleDateFormat STANDARD_DATE = null;
-	static SimpleDateFormat STANDARD_TIME = null;
-	
 	static HtmlCleaner cleaner;
 	static {
 		cleaner = new HtmlCleaner();
-	}
-	
-	static {
-		try {
-			STANDARD_DATE = new SimpleDateFormat("yyyyMMdd");
-			STANDARD_TIME = new SimpleDateFormat("HHmmss");
-		} catch ( Exception e ) {
-			e.printStackTrace();
-		}
 	}
 	
 	private static String SECRET_KEY = "//*[@id=\"se_key\"]";
@@ -76,6 +47,7 @@ public class StockResourceFromKrx {
 		{ "searchBtn2", "Á¶È¸" },
 		{ "_", "" },
 	};
+	
 	private StockResourceFromKrx() {
 	}
 	
@@ -121,26 +93,26 @@ public class StockResourceFromKrx {
 		stockResourceParams[0][1] = getSecretKey();
 	}
 	
-	private TagNode getRootTagNode(String standardDate, String id) {
-		TagNode itemListXML = null;
+	private HttpURLConnection getURLConnection(String url) throws Exception {
 		HttpURLConnection conn = null;
+		conn = (HttpURLConnection)new URL(url).openConnection();
+		conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+		conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+		conn.setRequestProperty("Accept-Encoding","gzip,deflate,sdch");
+		conn.setRequestProperty("Accept-Language","ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4");
+		conn.setRequestProperty("Cookie", "JSESSIONID=8C473BDFA55CF1CD08A1C818E61906D2.node_tomcat102_8109; JSESSIONID=DDE959247AD49AECC732B49D8653EF04.node_tomcat102_8109; _EXEN=1; __utma=139639017.174687372.1395400314.1398942705.1398956062.27; __utmb=139639017.1.10.1398956062; __utmc=139639017; __utmz=139639017.1395484050.4.3.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)");
+		conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
+		conn.setRequestProperty("X-Prototype-Version","1.6.1");
+		conn.setRequestProperty("Origin","http://www.krx.co.kr");
+		conn.setRequestMethod("POST");
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		return conn;
+	}
+	
+	private void setRequestFormData(HttpURLConnection conn) throws Exception {
 		OutputStream os = null;
-		BufferedReader br = null;
 		try {
-			setParams(standardDate, id);
-			conn = (HttpURLConnection)new URL(STOCK_RESOURCE_URL2).openConnection();
-			conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded; charset=UTF-8");
-			conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-			conn.setRequestProperty("Accept-Encoding","gzip,deflate,sdch");
-			conn.setRequestProperty("Accept-Language","ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4");
-			conn.setRequestProperty("Referer", "http://www.krx.co.kr/m2/m2_1/m2_1_4/JHPKOR02001_04.jsp");
-			conn.setRequestProperty("Cookie", "JSESSIONID=8C473BDFA55CF1CD08A1C818E61906D2.node_tomcat102_8109; JSESSIONID=DDE959247AD49AECC732B49D8653EF04.node_tomcat102_8109; _EXEN=1; __utma=139639017.174687372.1395400314.1398942705.1398956062.27; __utmb=139639017.1.10.1398956062; __utmc=139639017; __utmz=139639017.1395484050.4.3.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided)");
-			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36");
-			conn.setRequestProperty("X-Prototype-Version","1.6.1");
-			conn.setRequestProperty("Origin","http://www.krx.co.kr");
-			conn.setRequestMethod("POST");
-			conn.setDoInput(true);
-			conn.setDoOutput(true);
 			StringBuffer postParameter = new StringBuffer();
 			for( int paramCount = 0 ; paramCount < stockResourceParams.length ; paramCount++ ) {
 				postParameter.append("&").append(stockResourceParams[paramCount][0]).append("=").append(URLEncoder.encode(stockResourceParams[paramCount][1]));
@@ -150,6 +122,22 @@ public class StockResourceFromKrx {
 			os.write('\n');
 			os.flush();
 			os.close();
+		} finally {
+			if ( os != null ) try { os.close(); } catch ( Exception e ) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private TagNode getRootTagNode(String standardDate, String id) {
+		TagNode itemListXML = null;
+		HttpURLConnection conn = null;
+		BufferedReader br = null;
+		try {
+			setParams(standardDate, id);
+			conn = getURLConnection(STOCK_RESOURCE_URL2);
+			conn.setRequestProperty("Referer", "http://www.krx.co.kr/m2/m2_1/m2_1_4/JHPKOR02001_04.jsp");
+			setRequestFormData(conn);
 			InputStream is = conn.getInputStream();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int length = -1;

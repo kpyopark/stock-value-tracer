@@ -12,6 +12,7 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
 import common.NotNumericContentException;
+import common.StringUtil;
 
 import post.Company;
 import post.CompanyFinancialStatus;
@@ -32,36 +33,6 @@ public class FinancialReportResourceFromFnguide {
 	
 	static TagNode node(Object org) {
 		return (TagNode)org;
-	}
-	
-	private static long getLongValue(String content) throws NotNumericContentException {
-		long rtn = 0;
-		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") )
-			return 0;
-		try {
-			rtn = Long.parseLong(content.replaceAll(",", ""));
-		} catch ( Exception e ) {
-			throw new NotNumericContentException(content + ":" + e.getMessage() );
-		}
-		return rtn;
-	}
-	
-	private static String removeHtmlSpaceTag(String content) {
-		return (content != null) ? content.trim().replaceAll("&nbsp;", "") : null;
-	}
-	
-	private static float getFloatValue(String content) throws NotNumericContentException {
-		float rtn = (float)0.0;
-		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") )
-			return 0;
-		if ( content.equals("N/A(IFRS)") )
-			return 0;
-		try {
-			rtn = Float.parseFloat(content.replaceAll(",", ""));
-		} catch ( Exception e ) {
-			throw new NotNumericContentException(content + ":" + e.getMessage() );
-		}
-		return rtn;
 	}
 	
 	static String XPATH_FINANCIAL_STATUS_CATEGORY = "//*[@id=\"fhTheadD\"]/tr/th";
@@ -101,7 +72,7 @@ public class FinancialReportResourceFromFnguide {
 			Object[] items = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_ITEM);
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
-				String header = removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
+				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
 				headers.add(header);
 				for ( int headerPos = 0 ; headerPos < GENERAL_REPORT_HEADERS.length ; headerPos++ ) {
 					for ( int subPos = 0 ; !existHeaders[headerPos] && subPos < GENERAL_REPORT_HEADERS[headerPos].length ; subPos++ ) {
@@ -148,7 +119,7 @@ public class FinancialReportResourceFromFnguide {
 				Object[] ficsInfoObjects = financeReport.evaluateXPath(XPATH_FICS_SECTOR);
 				if ( ficsInfoObjects.length > 0 ) {
 					String ficsInfos = node(financeReport.evaluateXPath(XPATH_FICS_SECTOR)[0]).getText().toString();
-					StringTokenizer st = new StringTokenizer(removeHtmlSpaceTag(ficsInfos), ">");
+					StringTokenizer st = new StringTokenizer(StringUtil.removeHtmlSpaceTag(ficsInfos), ">");
 					if ( st.countTokens() == 3 ) {
 						String ficsSector = st.nextToken().trim();
 						String ficsIndustryGroup = st.nextToken().trim();
@@ -189,34 +160,34 @@ public class FinancialReportResourceFromFnguide {
 			Object[] items = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_ITEM);
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
-				String header = removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
+				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
 				if ( header.equals("매출액(억원)") || header.equals("보험료수익(억원)") || header.equals("순영업수익(억원)") || header.equals("이자수익(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setSales(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setSales(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("영업이익(억원)") || header.equals("영업손익(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setOperatingProfit(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setOperatingProfit(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("당기순이익(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setNetProfit(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setNetProfit(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("자산총계(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setAssets(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setAssets(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("부채총계(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setDebt(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setDebt(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("자본총계(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setGrossCapital(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setGrossCapital(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("자본금(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setCapital(getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
+						list.get(position).setCapital(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
 				} else if ( header.equals("부채비율(%)") ) {
 					//
@@ -224,19 +195,19 @@ public class FinancialReportResourceFromFnguide {
 					//
 				} else if ( header.equals("발행주식수(천주)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setOrdinarySharesSize(getLongValue(node(childNodes[columns.get(position)]).getText().toString())* 1000);
+						list.get(position).setOrdinarySharesSize(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString())* 1000);
 					}
 				} else if ( header.equals("ROA(%)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setRoa(getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
+						list.get(position).setRoa(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
 				} else if ( header.equals("ROE(%)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setRoe(getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
+						list.get(position).setRoe(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
 				} else if ( header.equals("배당수익률(%)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
-						list.get(position).setDividendRatio(getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
+						list.get(position).setDividendRatio(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
 				}
 			}

@@ -185,7 +185,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 		return rtn;
 	}
 	
-	private final static String SELECT_STATEMENT_01 = "SELECT * FROM TB_COMPANY_ESTIM_STAT WHERE STOCK_ID = ? AND STANDARD_DATE = ? AND ESTIM_KIND = ?";
+	private final static String SELECT_STATEMENT_01 = "SELECT * FROM TB_COMPANY_ESTIM_STAT WHERE STOCK_ID = ? AND STANDARD_DATE <= ? AND ESTIM_KIND = ? ORDER BY STANDARD_DATE DESC";
 	private final static String SELECT_STATEMENT_02 = "SELECT * FROM TB_COMPANY_ESTIM_STAT WHERE STOCK_ID = ? AND ESTIM_KIND = ? ORDER BY STANDARD_DATE DESC";
 	
 	public boolean delete(CompanyFinancialStatusEstimated cfs) {

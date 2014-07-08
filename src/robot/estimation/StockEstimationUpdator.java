@@ -7,6 +7,7 @@ import post.StockEstimated;
 import robot.DataUpdator;
 import dao.CompanyDao;
 import dao.CompanyStockEstimationDao;
+import estimator.StockValueEstimator;
 
 /**
  * 저장되어 있는 주식정보를 활용하여 기초 자료를 생성한다.
@@ -32,9 +33,15 @@ public class StockEstimationUpdator extends DataUpdator {
 	}
 	
 	public StockEstimated estimate(Company company) {
-		estimator.StockValueEstimator estimator = new estimator.StockValueEstimator();
+		StockValueEstimator estimator = new StockValueEstimator();
 		StockEstimated cse = estimator.caculateCompanyStockEstimation(company);
 		return cse;
+	}
+	
+	public void updateAllStockEstimation() {
+		for(Company company:companyList) {
+			updateStockEstimated(company);
+		}
 	}
 
 	/**
@@ -63,8 +70,8 @@ public class StockEstimationUpdator extends DataUpdator {
 
 	public static void main(String[] args) {
 		try {
-			//StockEstimationUpdator updator = new StockEstimationUpdator();
-			//updator.updateAllStockEstimation();
+			StockEstimationUpdator updator = new StockEstimationUpdator();
+			updator.updateAllStockEstimation();
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

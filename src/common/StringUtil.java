@@ -5,12 +5,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StringUtil {
-	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
+	static SimpleDateFormat STANDARD_DATE = null;
+	static SimpleDateFormat STANDARD_TIME = null;
+	
+	static {
+		try {
+			STANDARD_DATE = new SimpleDateFormat("yyyyMMdd");
+			STANDARD_TIME = new SimpleDateFormat("HHmmss");
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static Date convertToDate(String standardDate) {
 		java.util.Date rtn = null;
 		try {
-			rtn = dateFormat.parse(standardDate);
+			rtn = STANDARD_DATE.parse(standardDate);
 		} catch ( ParseException pe ) {
 			pe.printStackTrace();
 		}
@@ -19,7 +30,7 @@ public class StringUtil {
 	
 	public static String convertToStandardDate(Date date) {
 		String rtn = null;
-		rtn = dateFormat.format(date);
+		rtn = STANDARD_DATE.format(date);
 		return rtn;
 	}
 	
@@ -36,6 +47,10 @@ public class StringUtil {
 		return org;
 	}
 
+	public static String removeHtmlSpaceTag(String content) {
+		return (content != null) ? content.trim().replaceAll("&nbsp;", "") : null;
+	}
+	
 	public static long getLongValue(String content) throws NotNumericContentException {
 		long rtn = 0;
 		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") || content.equals("-"))
@@ -53,9 +68,11 @@ public class StringUtil {
 		float rtn = 0;
 		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") || content.equals("-"))
 			return 0;
-		content = content.trim();
-		if ( content.equals("-") )
+		if ( content == null || content.trim().length() == 0 || content.trim().equals("&nbsp;") )
 			return 0;
+		if ( content.equals("N/A(IFRS)") )
+			return 0;
+		content = content.trim();
 		try {
 			rtn = Float.parseFloat(content.replaceAll("%", "").replaceAll(",",""));
 		} catch ( Exception e ) {

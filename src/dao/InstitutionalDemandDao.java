@@ -58,6 +58,29 @@ public class InstitutionalDemandDao extends BaseDao {
 			"?,"+
 			"?,"+
 			"?);";
+
+	static String REPLACE_STATEMENT = "REPLACE INTO `stock`.`tb_institutional_demand` " +
+			"(`stock_id`, " +
+			"`standard_date`, " +
+			"`standard_time`, " +
+			"`stock_closing_price`, " +
+			"`stock_updown_ratio_of_day`, " +
+			"`stocK_updown_price_of_day`, " +
+			"`foreigner_net_demand`, " +
+			"`foreigner_ownership_ratio`, " +
+			"`company_net_demand`, " +
+			"`individual_net_demand`) " +
+			"VALUES " +
+			"(?,"+
+			"?,"+
+			"?,"+
+			"?,"+
+			"?,"+
+			"?,"+
+			"?,"+
+			"?,"+
+			"?,"+
+			"?);";
 	
 	public boolean insert(InstitutionalDamand insDemand) throws SQLException {
 		Connection conn = null;
@@ -66,6 +89,35 @@ public class InstitutionalDemandDao extends BaseDao {
 		try {
 			conn = getConnection();
 			ps = conn.prepareStatement(INSERT_STATEMENT);
+			int cnt = 1;
+			ps.setString(cnt++, insDemand.getCompany().getId() );
+			ps.setString(cnt++, insDemand.getStandardDate() );
+			ps.setString(cnt++, insDemand.getStandardTime());
+			ps.setLong(cnt++, insDemand.getStockClosingPrice());
+			ps.setFloat(cnt++, insDemand.getStockUpdownRatioOfDay());
+			ps.setLong(cnt++, insDemand.getStockUpdownPriceOfDay());
+			ps.setLong(cnt++, insDemand.getForeignerNetDemand());
+			ps.setFloat(cnt++,  insDemand.getForeignerOwnershipRatio());
+			ps.setLong(cnt++, insDemand.getCompanyNetDemand());
+			ps.setLong(cnt++,  insDemand.getIndividualNetDemand());
+			rtn = ps.execute();
+		} catch ( Exception e ) {
+			System.out.println("=============STANDARD DATE:" + insDemand.getStandardDate() );
+			e.printStackTrace();
+		} finally {
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
+	
+	public boolean replace(InstitutionalDamand insDemand) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		boolean rtn = false;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(REPLACE_STATEMENT);
 			int cnt = 1;
 			ps.setString(cnt++, insDemand.getCompany().getId() );
 			ps.setString(cnt++, insDemand.getStandardDate() );

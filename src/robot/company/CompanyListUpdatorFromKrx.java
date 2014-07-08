@@ -185,6 +185,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
 		updator.updateLatestCompanyList();
+		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	
 }

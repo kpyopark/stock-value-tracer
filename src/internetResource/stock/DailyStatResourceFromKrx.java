@@ -38,21 +38,9 @@ import post.Stock;
  */
 public class DailyStatResourceFromKrx {
 	
-	static SimpleDateFormat STANDARD_DATE = null;
-	static SimpleDateFormat STANDARD_TIME = null;
-	
 	static HtmlCleaner cleaner;
 	static {
 		cleaner = new HtmlCleaner();
-	}
-	
-	static {
-		try {
-			STANDARD_DATE = new SimpleDateFormat("yyyyMMdd");
-			STANDARD_TIME = new SimpleDateFormat("HHmmss");
-		} catch ( Exception e ) {
-			e.printStackTrace();
-		}
 	}
 	
 	final static String STOCK_RESOURCE_URL = "http://www.krx.co.kr/por_kor/corelogic/process/m2/m2_3/m2_3_13/hpkor02003_13.xhtml?data-only=true";

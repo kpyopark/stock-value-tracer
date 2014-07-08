@@ -123,6 +123,40 @@ public class CompanyStockEstimationDao extends BaseDao {
 		return rtn;
 	}
 	
+	/**
+	 * 검색하고자 하는 정확한 회사정보와 기준일자를 알 경우 이용.
+	 * 
+	 * @param company
+	 * @param standardDate
+	 * @return
+	 * @throws SQLException
+	 */
+	public StockEstimated selectLatestRegisteredEstimation(Company company, String registeredDate) throws SQLException {
+		StockEstimated rtn = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("SELECT * FROM TB_DECADE_ESTIM WHERE STOCK_ID = ? AND registered_date <= ? ORDER BY STANDARD_DATE DESC");
+			ps.setString(1, company.getId() );
+			ps.setString(2, registeredDate );
+			rs = ps.executeQuery();
+			
+			if( rs.next() ) {
+				rtn = getCseFromResultSet(rs);
+				rtn.setCompany(company);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
+	
 	public boolean delete(StockEstimated cse) {
 		boolean rtn = false;
 		Connection conn = null;
