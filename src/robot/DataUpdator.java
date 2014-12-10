@@ -3,6 +3,7 @@ package robot;
 import java.util.Iterator;
 
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
 import post.Stock;
@@ -59,7 +60,7 @@ public class DataUpdator {
 	 * @param company
 	 * @param err
 	 */
-	public void fireCompanyChanged(final Company company, final Throwable err) {
+	public void fireCompanyChanged(final CompanyEx company, final Throwable err) {
 		for (Iterator<IUpdateListener> eachOne = listenerList.iterator(); eachOne != null && eachOne.hasNext() ; ) {
 			final IUpdateListener listener = eachOne.next();
 			new Thread(new Runnable() {

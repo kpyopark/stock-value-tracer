@@ -76,7 +76,8 @@ public class StringUtil {
 		try {
 			rtn = Float.parseFloat(content.replaceAll("%", "").replaceAll(",",""));
 		} catch ( Exception e ) {
-			throw new NotNumericContentException(content + ":" + e.getMessage() );
+			//throw new NotNumericContentException(content + ":" + e.getMessage() );
+			System.out.println("Not Numeric Content:" + e.getMessage());
 		}
 		return rtn;
 	}

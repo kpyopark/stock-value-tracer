@@ -1,6 +1,7 @@
 package robot.listenter;
 
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
 import post.Stock;
@@ -9,7 +10,7 @@ import robot.IUpdateListener;
 
 public class ExamUpdateListener implements IUpdateListener {
 
-	public void companyChanged(Company company, Throwable err) {
+	public void companyChanged(CompanyEx company, Throwable err) {
 		if ( company != null ) {
 			if ( err != null  ) { 
 				System.out.println(company.getId() + "[" + company.getName() + "] 정보 수정중 에러 발생[" + err.getMessage() + "]" );

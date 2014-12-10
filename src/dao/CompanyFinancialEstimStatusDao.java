@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatusEstimated;
 
 /**
@@ -37,7 +38,53 @@ CREATE TABLE `tb_company_estim_stat` (
   `RELATED_DATE_LIST` varchar(45) DEFAULT NULL,
   `REGISTERED_DATE` varchar(8) DEFAULT NULL,
   PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`IS_ANNUAL`,`ESTIM_KIND`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Procedure
+CREATE PROCEDURE proc_estimate_financial_report (in in_stock_id varchar(10),in in_registered_date varchar(8))
+BEGIN
+
+set @num=0,@stock_id='';
+	insert into tb_company_estim_stat
+	select stock_id, 
+		max(standard_date) as standard_date, 
+		'Y' as IS_ANNUAL, 
+        'O' as estim_kind,
+        avg(asset_total) as asset_total, 
+        avg(debt_total) as debt_total,
+        avg(capital) as capital,
+        avg(capital_total) as capital_total,
+        avg(sales) as sales,
+        avg(operation_profit) as operation_profit,
+        avg(ordinary_profit) as ordinary_profit,
+        avg(net_profit) as net_profit,
+        avg(invested_capital) as invested_capital,
+        avg(preffered_stock_size) as preffered_stock_size,
+        avg(general_stock_size) as general_stock_size,
+        max(DIVIDENED_RATIO) as dividened_ratio,
+        avg(roe) as roe,
+        avg(roa) as roa,
+        avg(roi) as roi,
+        KOSPI_YN,
+        FIXED_YN,
+        MODIFIED_DATE,
+        CALCULATED_YN AS ESTIMATED_YN,
+        group_concat(standard_date) AS RELATED_DATE_LIST,
+        REGISTERED_DATE
+	from ( 
+		select *,
+			@num := IF(@stock_id = stock_id, @num + 1, 1) as rownum,
+            @stock_id := stock_id as stock_id_group
+        from tb_company_stat 
+		where stock_id = 'A000030' and standard_date <= '20141207'
+		and is_annual = 'N'
+		and fixed_yn = 'Y'
+		order by standard_date desc
+        ) b
+	where rownum <= 4;
+    
+END
+
 
 </pre>
  * @author user
@@ -50,8 +97,10 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 	public CompanyFinancialStatusEstimated updateFinancialReportEstimated(Company company, String registeredDate) {
 		Connection conn = null;
 		PreparedStatement ps = null;
+		PreparedStatement ps2 = null;
 		ResultSet rs = null;
 		CompanyFinancialStatusEstimated rtn = null;
+		System.out.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate);
 		try {
 			conn = getConnection();
 			//System.out.println(financialStat.getRelatedDateList());
@@ -61,13 +110,15 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			ps.setString(cnt++, registeredDate);
 
 			ps.execute();
-
-			ps = conn.prepareStatement("select * from TB_COMPANY_ESTIM_STAT WHERE  STOCK_ID = ? and is_annual = 'Y' and standard_date <= ? ORDER BY 1,2 desc,3 limit 1");
-			cnt = 1;
-			ps.setString(cnt++, company.getId());
-			ps.setString(cnt++, registeredDate);
 			
-			rs = ps.executeQuery();
+			ps2 = conn.prepareStatement("select * from TB_COMPANY_ESTIM_STAT WHERE  STOCK_ID = ? and is_annual = 'Y' and standard_date <= ? ORDER BY 1,2 desc,3 limit 1");
+			cnt = 1;
+			ps2.setString(cnt++, company.getId());
+			ps2.setString(cnt++, registeredDate);
+			
+			rs = ps2.executeQuery();
+			
+			rs.next();
 			
 			rtn = getCompanyFinancialStatusEstimatedFromResultSet(company, rs);
 			
@@ -75,6 +126,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			e.printStackTrace();
 		} finally {
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps2 != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 		}
 		return rtn;
@@ -208,6 +260,13 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 		}
 		return rtn;
 		
+	}
+	
+	public static void main(String[] args) {
+		CompanyFinancialEstimStatusDao dao = new CompanyFinancialEstimStatusDao();
+		CompanyEx company = new CompanyEx();
+		company.setId("A000050");
+		dao.updateFinancialReportEstimated(company, "20141208");
 	}
 	
 }

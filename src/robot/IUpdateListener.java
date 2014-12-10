@@ -1,6 +1,7 @@
 package robot;
 
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
 import post.Stock;
@@ -29,7 +30,7 @@ public interface IUpdateListener {
 	 * @param company
 	 * @param err
 	 */
-	public void companyChanged(Company company, Throwable err);
+	public void companyChanged(CompanyEx company, Throwable err);
 	
 	/**
 	 * 회사의 재무재표가 변경되었을 경우 알려줌.

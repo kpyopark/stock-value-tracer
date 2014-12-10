@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
 import analyzer.StockAnalyzerManager;
-
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
 import post.Stock;
@@ -41,7 +41,7 @@ public class TableSample implements IUpdateListener {
 	Group treeGroup, buttonGroup;
 
 	private StockAnalyzerManager manager = null;
-	private ArrayList<Company> companyList = null;
+	private ArrayList<CompanyEx> companyList = null;
 	
 	public TableSample() {
 	}
@@ -124,8 +124,8 @@ public class TableSample implements IUpdateListener {
 					public void run() {
 						manager.startCompanyFinancialStatusUpdator();
 						//manager.startStockValueUpdator();
-						manager.startAnnualEstimationUpdator();
-						manager.startStockValueEstimationUpdator();
+						//manager.startAnnualEstimationUpdator();
+						//manager.startStockValueEstimationUpdator();
 						//manager.startStockAnalyzer();
 					}
 				}).start();
@@ -231,7 +231,7 @@ public class TableSample implements IUpdateListener {
 		
 	}
 	
-	public void companyChanged(final Company company, Throwable err) {
+	public void companyChanged(final CompanyEx company, Throwable err) {
 		final int rowCount = getRowCount(company);
 		disp.syncExec( new Runnable() {
 			public void run() {

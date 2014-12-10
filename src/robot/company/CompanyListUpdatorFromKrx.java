@@ -134,10 +134,12 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 					// CompanyEx
 					CompanyEx companyFromKrx = krxItemList.get(cnt).getCompany();
 					companyFromKrx.setStandardDate(standardDate);
+					companyFromKrx.setSecuritySector(securityType);
 					int currentDBPosition = -1;
 					if ( ( currentDBPosition = companiesFromDB.indexOf(companyFromKrx) ) != -1 ) {
 						CompanyEx companyEx = companiesFromDB.get(currentDBPosition);
-						if ( !companyEx.getName().equals(companyFromKrx.getName()) ) {
+						if ( !companyEx.getName().equals(companyFromKrx.getName()) 
+								|| companyEx.getSecuritySector() != companyFromKrx.getSecuritySector() ) {
 							dao.insert(companyFromKrx);
 							fireCompanyChanged(companyFromKrx, null);
 						}
