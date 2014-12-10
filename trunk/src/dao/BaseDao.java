@@ -14,7 +14,7 @@ public class BaseDao {
 			ds = new BasicDataSource();
 			ds.setDriverClassName("com.mysql.jdbc.Driver");
 	        ds.setUsername("root");
-	        ds.setPassword("1q2w3e4r");
+	        ds.setPassword("aaaa1111");
 	        ds.setUrl("jdbc:mysql://127.0.0.1:3306/stock");
 		} catch ( Exception e ) { e.printStackTrace(); }
 	}
