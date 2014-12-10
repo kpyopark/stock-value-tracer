@@ -7,13 +7,18 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import common.StringUtil;
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import robot.DataUpdator;
 
 
 import dao.CompanyDao;
+import dao.CompanyExDao;
 import dao.CompanyFinancialStatusDao;
 
 /**
@@ -24,6 +29,7 @@ import dao.CompanyFinancialStatusDao;
 public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	
 	public final static long PRECISION_THRESHOLD = 199999999;
+	public final static long SHARE_SIZE_PRECISION_THRESHOLD = 999;
 	
 	ArrayList<Company> companyList = null;
 	
@@ -109,7 +115,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		ArrayList<CompanyFinancialStatus> financialStatus = ir.getFinancialStatus(company);
 		for ( int cnt = 0 ; cnt < financialStatus.size() ; cnt++ ) {
-			System.out.println("start update for[" + company.getId() + ":" + company.getName() + "]");
+			//System.out.println("start update for[" + company.getId() + ":" + company.getName() + "]");
 			CompanyFinancialStatus stat = financialStatus.get(cnt);
 			CompanyFinancialStatus oldStat = dao.select(stat.getCompany(),stat.getStandardDate(),stat.isQuarter());
 			if ( oldStat == null ) {
@@ -211,7 +217,11 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		Object oldValue = (Object)targetMethod.invoke(oldStatus, (Object[])null);
 		Object newValue = (Object)targetMethod.invoke(newStatus, (Object[])null);
 		if ( oldValue instanceof Long ) {
-			rtn = (((Long)newValue).longValue() != 0 ) && ( Math.abs( ((Long)oldValue).longValue() - ((Long)newValue).longValue() ) > PRECISION_THRESHOLD );
+			if ( field.indexOf("SharesSize") >= 0 ) {
+				rtn = (((Long)newValue).longValue() != 0 ) && ( Math.abs( ((Long)oldValue).longValue() - ((Long)newValue).longValue() ) > SHARE_SIZE_PRECISION_THRESHOLD );
+			} else {
+				rtn = (((Long)newValue).longValue() != 0 ) && ( Math.abs( ((Long)oldValue).longValue() - ((Long)newValue).longValue() ) > PRECISION_THRESHOLD );
+			}
 		} else if ( oldValue instanceof Float ){
 			rtn = (((Float)newValue).floatValue() != (float)0.0 ) && !oldValue.equals(newValue);
 		} else {
@@ -238,7 +248,8 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		testUpdateAllCompany();
+		//testUpdateAllCompany();
+		testUpdateFinancialStatus();
 	}
 	
 	public static void testUpdateFinancialStatus() {
@@ -247,7 +258,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		try {
 			dao = new CompanyDao();
 			Company company = null;
-			company = dao.select("A000140", null);
+			company = dao.select("A070080", null);
 			updator.updateFinancialStatus(company);
 		} catch ( Exception e1 ) { 
 			e1.printStackTrace();
@@ -258,10 +269,21 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	public static void testUpdateAllCompany() {
 		try {
 			FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
-			CompanyDao dao = new CompanyDao();
-			List<Company> companies = dao.selectAllList();
-			for( Company comp : companies ) {
-				updator.updateFinancialStatus(comp);
+			CompanyExDao dao = new CompanyExDao();
+			List<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()));
+			ExecutorService executor = Executors.newFixedThreadPool(20);
+			for( CompanyEx comp : companies ) {
+				if ( comp.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK ) {
+						executor.execute(new Runnable() {
+							public void run() {
+								try {
+									updator.updateFinancialStatus(comp);
+								} catch ( Exception e1 ) {
+									System.out.println(comp.getId() + ":" + "Error");
+								}
+							}
+						});
+				}
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();

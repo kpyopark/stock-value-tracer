@@ -35,8 +35,10 @@ public class FinancialReportResourceFromFnguide {
 		return (TagNode)org;
 	}
 	
-	static String XPATH_FINANCIAL_STATUS_CATEGORY = "//*[@id=\"fhTheadD\"]/tr/th";
-	static String XPATH_FINANCIAL_STATUS_ITEM = "//*[@id=\"fhTbodyD\"]/tr";
+	static String XPATH_FINANCIAL_STATUS_CATEGORY_CONSOLIDATED = "//*[@id=\"fhTheadD\"]/tr/th";
+	static String XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED = "//*[@id=\"fhTbodyD\"]/tr";
+	static String XPATH_FINANCIAL_STATUS_CATEGORY_STANDALONE = "//*[@id=\"fhTheadB\"]/tr/th";
+	static String XPATH_FINANCIAL_STATUS_ITEM_STANDALONE = "//*[@id=\"fhTbodyB\"]/tr";
 	static String XPATH_FINANCIAL_STATUS_ITEM_VALUES(int row) {
 		// in java. index base is 0
 		// but in xpath, index base is 1.
@@ -69,7 +71,7 @@ public class FinancialReportResourceFromFnguide {
 		try {
 			conn = (HttpURLConnection)new URL(ITEM_ID_URL(company.getId())).openConnection();
 			TagNode financeReport = cleaner.clean(conn.getInputStream(), "euc-kr");
-			Object[] items = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_ITEM);
+			Object[] items = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED);
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
 				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
@@ -113,7 +115,10 @@ public class FinancialReportResourceFromFnguide {
 				return list;
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			//System.out.println(new String(baos.toByteArray(),"euc-kr"));
+			String htmlText = new String(baos.toByteArray(), "euc-kr");
+
+			boolean isConsolidated = htmlText.indexOf("input[value=\"B\"]") < 0;
+			
 			TagNode financeReport = cleaner.clean(bais, "euc-kr");
 			{
 				Object[] ficsInfoObjects = financeReport.evaluateXPath(XPATH_FICS_SECTOR);
@@ -130,7 +135,8 @@ public class FinancialReportResourceFromFnguide {
 					}
 				}
 			}
-			Object[] standardDates = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_CATEGORY);
+			
+			Object[] standardDates = financeReport.evaluateXPath(isConsolidated ? XPATH_FINANCIAL_STATUS_CATEGORY_CONSOLIDATED : XPATH_FINANCIAL_STATUS_CATEGORY_STANDALONE);
 			for(int position=1; position < standardDates.length; position++) {
 				if ( node(standardDates[position]).getText().toString().indexOf("Annual") >= 0 ||
 						node(standardDates[position]).getText().toString().indexOf("Net Quarter") >= 0 ) {
@@ -157,7 +163,7 @@ public class FinancialReportResourceFromFnguide {
 					columns.add(position);
 				}
 			}
-			Object[] items = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_ITEM);
+			Object[] items = financeReport.evaluateXPath(isConsolidated ? XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED : XPATH_FINANCIAL_STATUS_ITEM_STANDALONE);
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
 				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
@@ -212,7 +218,7 @@ public class FinancialReportResourceFromFnguide {
 				}
 			}
 		} catch ( Exception e ) {
-			//System.out.println("GETTING FINANCIAL STATUS IS FAILED:" + name + "[" + id + "]" );
+			System.out.println("GETTING FINANCIAL STATUS IS FAILED:" + company.getName() + "[" + company.getId() + "]" );
 			//throw e;
 			e.printStackTrace();
 		} finally {
@@ -246,7 +252,7 @@ public class FinancialReportResourceFromFnguide {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyDao dao = new CompanyDao();
 		try {
-			Company company = dao.select("A000140", null);
+			Company company = dao.select("A000050", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

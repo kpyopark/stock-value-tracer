@@ -13,9 +13,9 @@ import post.InstitutionalDamand;
 /**
 <pre>
 CREATE TABLE `tb_institutional_demand` (
-  `stock_id` varchar(10) COLLATE euckr_bin NOT NULL,
-  `standard_date` varchar(8) COLLATE euckr_bin NOT NULL DEFAULT '',
-  `standard_time` varchar(6) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `stock_id` varchar(10) NOT NULL,
+  `standard_date` varchar(8) NOT NULL DEFAULT '',
+  `standard_time` varchar(6) NOT NULL DEFAULT '',
   `stock_closing_price` bigint(20) DEFAULT NULL,
   `stock_updown_ratio_of_day` float(20,5) DEFAULT NULL,
   `stock_updown_price_of_day` bigint(20) DEFAULT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `tb_institutional_demand` (
   `company_net_demand` bigint(20) DEFAULT NULL,
   `individual_net_demand` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`stock_id`,`standard_date`,`standard_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=euckr COLLATE=euckr_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 </pre>
  * @author user

@@ -7,6 +7,18 @@ import java.sql.SQLException;
 
 import post.Company;
 
+/**
+ * 
+<pre>
+CREATE TABLE TB_WORKDAY
+( STANDARD_DATE VARCHAR(8),
+  PRIMARY KEY ( STANDARD_DATE )
+  ) ENGINE=InnoDB;
+</pre>
+ * 
+ * @author user
+ *
+ */
 public class WorkDayDao extends BaseDao {
 	public boolean insert(String standardDate) throws SQLException {
 		Connection conn = null;
