@@ -152,7 +152,8 @@ public class FinancialReportResourceFromFnguide {
 					else
 						standardDate = standardDate.substring(0,standardDate.indexOf("GAAP"));
 					boolean isPrediction = standardDate.indexOf("(E)") >= 0;
-					standardDate = standardDate.substring(0,4)+standardDate.substring(5,7)+( (standardDate.substring(5,7).equals("03") || standardDate.substring(5,7).equals("12") ) ? "31" : "30" );
+					standardDate = standardDate.substring(0,4)+standardDate.substring(5,7)+ "01";
+					standardDate = StringUtil.getLastDayOfMonth(standardDate);
 
 					CompanyFinancialStatus financeStatus = new CompanyFinancialStatus();
 					financeStatus.setCompany(company);
