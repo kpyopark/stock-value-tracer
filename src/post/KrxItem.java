@@ -36,6 +36,16 @@ public class KrxItem extends BaseStructure {
 	
 	private long maketCapitalization = 0;
 	
+	private String expireDate = "";
+	
+	public String getExpireDate() {
+		return expireDate;
+	}
+
+	public void setExpireDate(String expireDate) {
+		this.expireDate = expireDate;
+	}
+
 	public long getStockPrice() {
 		return stockPrice;
 	}

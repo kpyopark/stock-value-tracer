@@ -2,6 +2,7 @@ package common;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class StringUtil {
@@ -32,6 +33,37 @@ public class StringUtil {
 		String rtn = null;
 		rtn = STANDARD_DATE.format(date);
 		return rtn;
+	}
+	
+	public static boolean isValidDate(String standardDate) {
+		STANDARD_DATE.setLenient(false);
+		try {
+			STANDARD_DATE.parse(standardDate);
+		} catch ( ParseException pe ) {
+			return false;
+		}
+		return true;
+	}
+	
+	public static String getLastDayOfMonth(String standardDate) {
+		Date date = convertToDate(standardDate);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return convertToStandardDate(calendar.getTime());
+	}
+	
+	public static String getLastDayOfQuarter(String standardDate,int offset) {
+		Date date = convertToDate(standardDate);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		// TODO : REPLACE THIS CODE WITH NEW DATETIME CLASS IN JAVA8.
+		// This issue ( add month ) is fixed in JSR 310.
+		// But we dont'use java8 so. this trick is used.
+		calendar.set(Calendar.DAY_OF_MONTH, 15);
+		calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH) + offset);
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		return convertToStandardDate(calendar.getTime());
 	}
 	
 	public static String getNumericValue(String org) {
@@ -80,6 +112,16 @@ public class StringUtil {
 			System.out.println("Not Numeric Content:" + e.getMessage());
 		}
 		return rtn;
+	}
+	
+	public static void main(String[] args) {
+		testGetLastDayOfMonth();
+	}
+	
+	public static void testGetLastDayOfMonth() {
+		System.out.println("20140228".equals(StringUtil.getLastDayOfMonth("20140205")));
+		System.out.println("20110131".equals(StringUtil.getLastDayOfMonth("20140105")));
+		System.out.println(getLastDayOfQuarter("20110131",3));
 	}
 
 }

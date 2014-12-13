@@ -1,10 +1,13 @@
 package robot.company;
 
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
+import internetResource.companyItem.CompanyExpireResourceFromKrx;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -13,9 +16,7 @@ import post.CompanyEx;
 import post.KrxItem;
 import post.Stock;
 import robot.DataUpdator;
-
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.StockDao;
 
@@ -159,6 +160,53 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 	}
 	
+	static class KrxStockMatcher implements Comparator<KrxItem> {
+
+		@Override
+		public int compare(KrxItem o1, KrxItem o2) {
+			return o1.getId().compareTo(o2.getId());
+		}
+		
+	}
+	
+	public void insertCompanyExpirationFromKrxItem() {
+		CompanyExpireResourceFromKrx ir = new CompanyExpireResourceFromKrx();
+		KrxStockMatcher matcher = new KrxStockMatcher();
+		try {
+			String standardDate = StringUtil.convertToStandardDate(new java.util.Date());
+			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
+			ArrayList<KrxItem> krxItemList = ir.getItemList(standardDate);
+			System.out.println(krxItemList.size());
+			Collections.sort(krxItemList,matcher);
+			for ( CompanyEx company : companiesFromDB ) {
+				KrxItem krxCompany = new KrxItem();
+				krxCompany.setId(company.getId());
+				int position = Collections.binarySearch(krxItemList, krxCompany, matcher);
+				//System.out.println(company.getId() + ":" + company.getName() + ":" + position);
+				if ( position >= 0 ) {
+					KrxItem matchedItem = krxItemList.get(position);
+					company.setStandardDate(matchedItem.getExpireDate());
+					company.setClosed(true);
+					System.out.println("closed..:" + company);
+					CompanyEx prevCompanyInfo = dao.select(company.getId(), company.getStandardDate());
+					if ( prevCompanyInfo != null ) {
+						if ( prevCompanyInfo.isClosed() ) {
+							// it's correct information. do nothing.
+						} else {
+							// it's invalid information. delete and insert.
+							prevCompanyInfo.setClosed(true);
+							dao.update(prevCompanyInfo);
+						}
+					} else {
+						dao.insert(company);
+					}
+				}
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void updateLatestCompanyList() {
 		try {
 			String latestStandardDate = dao.getLatestStandardDate();
@@ -178,6 +226,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			List<String> workDays = getWorkDays(fromYear, fromMonth, fromDay,
 					toYear, toMonth, toDay);
 			insertCompanyCodeListAndStockValueForPeriods(workDays);
+			insertCompanyExpirationFromKrxItem();
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
