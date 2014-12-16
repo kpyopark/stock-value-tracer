@@ -249,8 +249,8 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		//testUpdateAllCompany();
-		testUpdateFinancialStatus();
+		testUpdateAllCompany();
+		//testUpdateFinancialStatus();
 	}
 	
 	public static void testUpdateFinancialStatus() {
