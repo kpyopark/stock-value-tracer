@@ -85,7 +85,7 @@ public class CompanyExpireResourceFromKrx {
 		OutputStream os = null;
 		BufferedReader br = null;
 		try {
-			setParams(StringUtil.getLastDayOfQuarter(standardDate, -120), StringUtil.getLastDayOfQuarter(standardDate,0));
+			setParams(StringUtil.getLastDayOfQuarter(standardDate, -180), StringUtil.getLastDayOfQuarter(standardDate,0));
 			conn = (HttpURLConnection)new URL(ITEM_LIST_URL).openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoInput(true);

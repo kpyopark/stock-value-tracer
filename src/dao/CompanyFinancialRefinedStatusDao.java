@@ -11,7 +11,7 @@ import post.CompanyFinancialStatus;
 
 /**
 <pre>
-CREATE TABLE `tb_company_stat` (
+CREATE TABLE `tb_company_stat_refined` (
   `STOCK_ID` varchar(10) NOT NULL DEFAULT '',
   `STANDARD_DATE` varchar(8) NOT NULL DEFAULT '',
   `IS_ANNUAL` varchar(1) NOT NULL DEFAULT '',
@@ -34,15 +34,16 @@ CREATE TABLE `tb_company_stat` (
   `FIXED_YN` varchar(1) DEFAULT NULL,
   `MODIFIED_DATE` date DEFAULT NULL,
   `CALCULATED_YN` varchar(1) DEFAULT 'N',
-  `REGISTERED_DATE` varchar(8) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `REGISTERED_DATE` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`IS_ANNUAL`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 
 </pre>
  * @author user
  *
  */
-public class CompanyFinancialStatusDao extends BaseDao {
+public class CompanyFinancialRefinedStatusDao extends BaseDao {
 	
 	final static long PRECISION_THRESHOLD = 1000000;
 	
@@ -52,7 +53,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),?,DATE_FORMAT(curdate(), '%Y%m%d') )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT_REFINED ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),?,DATE_FORMAT(curdate(), '%Y%m%d') )");
 			int cnt = 1;
 			ps.setString(cnt++, financialStat.getCompany().getId() );
 			ps.setString(cnt++, financialStat.getStandardDate() );
@@ -95,7 +96,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		ResultSet rs = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT WHERE STOCK_ID = ? AND STANDARD_DATE = ? AND IS_ANNUAL = ?");
+			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT_REFINED WHERE STOCK_ID = ? AND STANDARD_DATE = ? AND IS_ANNUAL = ?");
 			ps.setString(1, company.getId() );
 			ps.setString(2, standardDate );
 			ps.setString(3, isQuarter ? "N" : "Y");
@@ -140,7 +141,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		PreparedStatement ps = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("DELETE FROM TB_COMPANY_STAT WHERE STOCK_ID = ? AND STANDARD_DATE = ? AND IS_ANNUAL = ?");
+			ps = conn.prepareStatement("DELETE FROM TB_COMPANY_STAT_REFINED WHERE STOCK_ID = ? AND STANDARD_DATE = ? AND IS_ANNUAL = ?");
 			ps.setString(1, cfs.getCompany().getId() );
 			ps.setString(2, cfs.getStandardDate() );
 			ps.setString(3, cfs.isQuarter() ? "N" : "Y");
@@ -192,7 +193,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		ResultSet rs = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT WHERE STOCK_ID = ? and registered_date <= ? ORDER BY 1,2 desc,3");
+			ps = conn.prepareStatement("SELECT * FROM TB_COMPANY_STAT_REFINED WHERE STOCK_ID = ? and registered_date <= ? ORDER BY 1,2 desc,3");
 			ps.setString(1, company.getId() );
 			ps.setString(2, registeredDate );
 			rs = ps.executeQuery();

@@ -93,20 +93,20 @@ public class StockAnalyzer {
 					stockRankList.get(cnt).getStockEstimation().getLastEps() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getRelatedDateList() + ";" +
 					FinancialStatusEstimator.getLatestOrdinarySharesSize(stockRankList.get(cnt).getCompany(), registeredDate) + ";" +
-					"http://stock.naver.com/sise/ksc_summary.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1)
+					"http://finance.naver.com/item/main.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1)
 					);
 		}
 	}
 	
 	void printStockListToExcel(int rank) {
 		File newExcel = null;
-		newExcel = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xls" );
+		newExcel = new File("F:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xls" );
 		createExcelFile(newExcel, rank);
 	}
 	
 	void printStockListToXML(int rank, String registeredDate) {
 		File newXML = null;
-		newXML = new File("C:\\Users\\user\\Documents\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xml" );
+		newXML = new File("F:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xml" );
 		createXMLFile(newXML, rank, registeredDate);
 	}
 
@@ -313,7 +313,7 @@ public class StockAnalyzer {
 			sb.append("<stockvalue>").append(stockRankList.get(cnt).getStockEstimation().getRecentStockValue()).append("</stockvalue>");
 			sb.append("<date>").append(stockRankList.get(cnt).getStockEstimation().getStandardDate()).append("</date>");
 			sb.append("<size>").append(FinancialStatusEstimator.getLatestOrdinarySharesSize(stockRankList.get(cnt).getCompany(), registeredDate)).append("</size>");
-			sb.append("<linkurl>").append("http://stock.naver.com/sise/ksc_summary.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1)).append("</linkurl>");
+			sb.append("<linkurl>").append("http://finance.naver.com/item/main.nhn?code=" + stockRankList.get(cnt).getCompany().getId().substring(1)).append("</linkurl>");
 			sb.append("</item>\n");
 		}
 		sb.append("</root>");
@@ -405,7 +405,7 @@ public class StockAnalyzer {
 		// 3. Analyze all.
 		String standardDate = STANDARD_DATE_FORMAT.format(new Date());
 		StockAnalyzer stockAnal = new StockAnalyzer(standardDate);
-		stockAnal.getBestStockList(100, standardDate);
+		stockAnal.getBestStockList(500, standardDate);
 	}
 	
 }

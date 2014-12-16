@@ -24,7 +24,7 @@ CREATE TABLE `tb_decade_estim` (
   `AVE_ROA` float(20,5) NOT NULL DEFAULT '0.00000',
   `RELATED_DATE_LIST` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`ESTIM_KIND`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='estimation of next 10 years';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='estimation of next 10 years';
 
 </pre>
  * @author user

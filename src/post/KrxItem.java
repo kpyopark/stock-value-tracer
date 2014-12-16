@@ -171,8 +171,10 @@ public class KrxItem extends BaseStructure {
 	}
 
 	public void setId(String id) {
-		if ( id.indexOf(0) != 'A' )
-		this.id = "A" + id;
+		if ( id.charAt(0) != 'A' )
+			this.id = "A" + id;
+		else
+			this.id = id;
 	}
 
 	public String getName() {
