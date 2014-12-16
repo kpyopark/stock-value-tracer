@@ -168,7 +168,7 @@ public class FinancialReportResourceFromFnguide {
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
 				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
-				if ( header.equals("매출액(억원)") || header.equals("보험료수익(억원)") || header.equals("순영업수익(억원)") || header.equals("이자수익(억원)") ) {
+				if ( header.equals("매출액(억원)") || header.equals("보험료수익(억원)") || header.equals("순영업수익(억원)") || header.equals("이자수익(억원)") || header.equals("영업수익(억원)") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setSales(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}

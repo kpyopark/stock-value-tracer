@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import common.StringUtil;
 import post.Company;
@@ -28,7 +29,7 @@ import dao.CompanyFinancialStatusDao;
  */
 public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	
-	public final static long PRECISION_THRESHOLD = 199999999;
+	public final static long PRECISION_THRESHOLD = 99999999;
 	public final static long SHARE_SIZE_PRECISION_THRESHOLD = 999;
 	
 	ArrayList<Company> companyList = null;
@@ -258,7 +259,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		try {
 			dao = new CompanyDao();
 			Company company = null;
-			company = dao.select("A070080", null);
+			company = dao.select("A039670", null);
 			updator.updateFinancialStatus(company);
 		} catch ( Exception e1 ) { 
 			e1.printStackTrace();
@@ -285,6 +286,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 						});
 				}
 			}
+			executor.awaitTermination(20, TimeUnit.SECONDS);
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

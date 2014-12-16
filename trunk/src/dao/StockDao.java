@@ -11,9 +11,9 @@ import post.Stock;
 /**
 <pre>
 CREATE TABLE `tb_company_stock` (
-  `STOCK_ID` varchar(10) COLLATE euckr_bin NOT NULL DEFAULT '',
-  `STANDARD_DATE` varchar(8) COLLATE euckr_bin NOT NULL DEFAULT '',
-  `STANDARD_TIME` varchar(6) COLLATE euckr_bin NOT NULL DEFAULT '',
+  `STOCK_ID` varchar(10) CHARACTER SET euckr COLLATE euckr_bin NOT NULL DEFAULT '',
+  `STANDARD_DATE` varchar(8) CHARACTER SET euckr COLLATE euckr_bin NOT NULL DEFAULT '',
+  `STANDARD_TIME` varchar(6) CHARACTER SET euckr COLLATE euckr_bin NOT NULL DEFAULT '',
   `STOCK_PRICE` bigint(20) DEFAULT NULL,
   `STOCK_VOLUME` bigint(20) unsigned DEFAULT NULL,
   `CURRENT_ROA` float DEFAULT NULL,
@@ -35,8 +35,8 @@ CREATE TABLE `tb_company_stock` (
   `PAR_VALUE` float DEFAULT NULL,
   `OPEN_PRICE` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`STANDARD_TIME`),
-  KEY `ix_company_stock_standard_date` (`STANDARD_DATE`)
-) ENGINE=MyISAM DEFAULT CHARSET=euckr COLLATE=euckr_bin;
+  KEY `ix_company_stock_stock_id_standard_date_ordinary_share` (`STOCK_ID`,`STANDARD_DATE`,`ORDINARY_SHARES`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 </pre>
  * @author user

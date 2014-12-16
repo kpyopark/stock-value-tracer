@@ -38,29 +38,42 @@ CREATE TABLE `tb_company_estim_stat` (
   `RELATED_DATE_LIST` varchar(45) DEFAULT NULL,
   `REGISTERED_DATE` varchar(8) DEFAULT NULL,
   PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`,`IS_ANNUAL`,`ESTIM_KIND`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
 
 -- Procedure
-CREATE PROCEDURE proc_estimate_financial_report (in in_stock_id varchar(10),in in_registered_date varchar(8))
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_estimate_financial_report`(in in_stock_id varchar(10),in in_registered_date varchar(8))
 BEGIN
+	set @num=0,@stock_id='',@sales=0,@operation_profit=0,@ordinary_profit=0,@net_profit=0;
 
-set @num=0,@stock_id='';
-	insert into tb_company_estim_stat
-	select stock_id, 
+	delete from tb_company_estim_stat
+    where  stock_id = in_stock_id and standard_date = ( 
+			select max(standard_date) 
+            from tb_company_stat_refined
+			where stock_id = in_stock_id 
+            and standard_date <= in_registered_date 
+            and is_annual = 'N' 
+            and fixed_yn = 'Y' 
+		)
+		and is_annual = 'Y' and estim_kind = 'O';
+
+    insert into tb_company_estim_stat
+ 	select stock_id, 
 		max(standard_date) as standard_date, 
 		'Y' as IS_ANNUAL, 
         'O' as estim_kind,
-        avg(asset_total) as asset_total, 
-        avg(debt_total) as debt_total,
-        avg(capital) as capital,
-        avg(capital_total) as capital_total,
-        avg(sales) as sales,
-        avg(operation_profit) as operation_profit,
-        avg(ordinary_profit) as ordinary_profit,
-        avg(net_profit) as net_profit,
-        avg(invested_capital) as invested_capital,
-        avg(preffered_stock_size) as preffered_stock_size,
-        avg(general_stock_size) as general_stock_size,
+        avg(if(asset_total = 0, null, asset_total)) as asset_total, 
+        avg(if(debt_total = 0, null, debt_total)) as debt_total,
+        avg(if(capital = 0, null, capital)) as capital,
+        avg(if(capital_total = 0, null, capital_total)) as capital_total,
+        sum(sales_) as sales,
+        sum(operation_profit_) as operation_profit,
+        sum(ordinary_profit_) as ordinary_profit,
+        sum(net_profit_) as net_profit,
+        avg(if(invested_capital = 0, null, invested_capital)) as invested_capital,
+        avg(if(preffered_stock_size = 0, null, preffered_stock_size)) as preffered_stock_size,
+        avg(if(general_stock_size = 0, null, general_stock_size)) as general_stock_size,
         max(DIVIDENED_RATIO) as dividened_ratio,
         avg(roe) as roe,
         avg(roa) as roa,
@@ -74,16 +87,21 @@ set @num=0,@stock_id='';
 	from ( 
 		select *,
 			@num := IF(@stock_id = stock_id, @num + 1, 1) as rownum,
-            @stock_id := stock_id as stock_id_group
-        from tb_company_stat 
-		where stock_id = 'A000030' and standard_date <= '20141207'
+            @stock_id := stock_id as stock_id_group,
+            @sales := IF(sales <> 0, sales, @sales) as sales_,
+            @operation_profit := IF(operation_profit <> 0, operation_profit, @operation_profit) as operation_profit_,
+            @ordinary_profit := IF(ordinary_profit <> 0, ordinary_profit, @ordinary_profit) as ordinary_profit_,
+            @net_profit := IF(net_profit <> 0, net_profit, @net_profit) as net_profit_
+        from tb_company_stat_refined 
+		where stock_id = in_stock_id and standard_date <= in_registered_date
 		and is_annual = 'N'
 		and fixed_yn = 'Y'
 		order by standard_date desc
         ) b
 	where rownum <= 4;
     
-END
+END$$
+DELIMITER ;
 
 
 </pre>
@@ -123,6 +141,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			rtn = getCompanyFinancialStatusEstimatedFromResultSet(company, rs);
 			
 		} catch ( Exception e ) {
+			System.err.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate);
 			e.printStackTrace();
 		} finally {
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
