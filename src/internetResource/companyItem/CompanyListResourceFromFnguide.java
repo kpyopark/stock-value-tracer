@@ -12,6 +12,11 @@ import common.NotNumericContentException;
 import post.Company;
 import post.CompanyFinancialStatus;
 
+/**
+ * @deprecated
+ * @author user
+ *
+ */
 public class CompanyListResourceFromFnguide {
 	
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");

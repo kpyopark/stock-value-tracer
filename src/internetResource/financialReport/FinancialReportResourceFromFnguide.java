@@ -44,7 +44,7 @@ public class FinancialReportResourceFromFnguide {
 		// but in xpath, index base is 1.
 		return "//*[@id=\"fhTbodyD\"]/tr[" + (row + 1) + "]/th";
 	}
-	
+
 	static String XPATH_FICS_SECTOR = "//*[@id=\"compinfo\"]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[3]/td/table/tbody/tr[2]/td[1]/span[2]";
 	
 	static String[][] GENERAL_REPORT_HEADERS = { 
@@ -253,7 +253,7 @@ public class FinancialReportResourceFromFnguide {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyDao dao = new CompanyDao();
 		try {
-			Company company = dao.select("A000050", null);
+			Company company = dao.select("A017940", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

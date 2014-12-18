@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import common.StringUtil;
-
 import post.Company;
 import post.CompanyEx;
 import robot.company.CompanyListUpdatorFromKrx;
@@ -13,6 +12,7 @@ import robot.IUpdateListener;
 import robot.estimation.AnnualEstimationUpdator;
 import robot.estimation.StockEstimationUpdator;
 import robot.financialReport.FinancialReportListUpdatorFromFnguide;
+import robot.financialReport.FinancialReportRefiner;
 import robot.listenter.ExamUpdateListener;
 import robot.stock.StockValueUpdator;
 import dao.CompanyDao;
@@ -168,6 +168,17 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
+	 * 오류가 발생한 재무 정보를 보정한다.
+	 */
+	public void startFinancialReportRefiner() {
+		try {
+			FinancialReportRefiner.testCheckAllCompanyFinancialStatement();
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * 회사 주가정보를 Web에서 가지고 온다.
 	 */
 	public void startStockValueUpdator() {
@@ -241,6 +252,7 @@ public class StockAnalyzerManager {
 		manager.setUpdateListener(new ExamUpdateListener());
 		//manager.startCompanyListUpdator();
 		//manager.startCompanyFinancialStatusUpdator();
+		//manager.startFinancialReportRefiner();
 		//manager.startStockValueUpdator();
 		manager.startAnnualEstimationUpdator();
 		manager.startStockValueEstimationUpdator();
