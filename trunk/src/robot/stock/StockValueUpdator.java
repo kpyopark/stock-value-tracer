@@ -4,12 +4,15 @@ import internetResource.stock.StockResource;
 
 import java.util.ArrayList;
 
+import common.StringUtil;
 import post.Company;
+import post.CompanyEx;
 import post.Stock;
 import robot.DataUpdator;
 
 
 import dao.CompanyDao;
+import dao.CompanyExDao;
 import dao.StockDao;
 
 /**
@@ -65,9 +68,9 @@ public class StockValueUpdator extends DataUpdator {
 	public static void main(String[] args) {
 		try {
 			StockValueUpdator updator = new StockValueUpdator();
-			ArrayList<Company> companyList = null;
-			CompanyDao dao = new CompanyDao();
-			companyList = dao.selectAllList(); 
+			ArrayList<CompanyEx> companyList = null;
+			CompanyExDao dao = new CompanyExDao();
+			companyList = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date())); 
 			for ( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) {
 				updator.updateStockInfoFromWeb(companyList.get(cnt));
 			}

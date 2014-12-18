@@ -2,6 +2,7 @@ package robot.company;
 
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
 import internetResource.companyItem.CompanyExpireResourceFromKrx;
+import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,12 +13,15 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import post.Company;
 import post.CompanyEx;
+import post.CompanyFinancialStatus;
 import post.KrxItem;
 import post.Stock;
 import robot.DataUpdator;
 import common.StringUtil;
 import dao.CompanyExDao;
+import dao.CompanyFinancialStatusDao;
 import dao.StockDao;
 
 public class CompanyListUpdatorFromKrx extends DataUpdator {
@@ -227,10 +231,39 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 					toYear, toMonth, toDay);
 			insertCompanyCodeListAndStockValueForPeriods(workDays);
 			insertCompanyExpirationFromKrxItem();
+			updateFicsSectorInfo();
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
-		
+	}
+	
+	public void updateFicsSectorInfo() {
+		CompanyExDao dao = new CompanyExDao();
+		try {
+			ArrayList<CompanyEx> companyList = dao.selectAllList(dao.getLatestStandardDate());
+			FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
+			boolean needUpdate;
+			for( CompanyEx fromDB : companyList ) {
+				CompanyEx fromWeb = new CompanyEx();
+				needUpdate = false;
+				fromWeb.copyStructure(fromDB);
+				ir.getFinancialStatus(fromWeb);
+				if ( fromWeb.getFicsIndustry() != null && !fromWeb.getFicsIndustry().equals(fromDB.getFicsIndustry())) {
+					needUpdate = true;
+				}
+				if ( fromWeb.getFicsIndustryGroup() != null && !fromWeb.getFicsIndustryGroup().equals(fromDB.getFicsIndustryGroup())) {
+					needUpdate = true;
+				}
+				if ( fromWeb.getFicsSector() != null && !fromWeb.getFicsSector().equals(fromDB.getFicsSector())) {
+					needUpdate = true;
+				}
+				if ( needUpdate ) {
+					dao.update(fromWeb);
+				}
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {
