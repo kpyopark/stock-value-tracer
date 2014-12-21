@@ -250,10 +250,10 @@ public class StockAnalyzerManager {
 	public static void main(String[] args) {
 		StockAnalyzerManager manager = new StockAnalyzerManager();
 		manager.setUpdateListener(new ExamUpdateListener());
-		//manager.startCompanyListUpdator();
-		//manager.startCompanyFinancialStatusUpdator();
-		//manager.startFinancialReportRefiner();
-		//manager.startStockValueUpdator();
+		manager.startCompanyListUpdator();
+		manager.startCompanyFinancialStatusUpdator();
+		manager.startFinancialReportRefiner();
+		manager.startStockValueUpdator();
 		manager.startAnnualEstimationUpdator();
 		manager.startStockValueEstimationUpdator();
 		manager.startStockAnalyzer();
