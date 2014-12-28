@@ -127,7 +127,7 @@ public class StockAnalyzerManager {
 	 */
 	public void startCompanyFinancialStatusUpdator() {
 		try {
-			ArrayList<Company> failedCompany = new ArrayList<Company>();
+			final ArrayList<Company> failedCompany = new ArrayList<Company>();
 			final FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
 			updator.addUpdateListener(listener);
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {

@@ -269,18 +269,19 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	
 	public static void testUpdateAllCompany() {
 		try {
-			FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
+			final FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
 			CompanyExDao dao = new CompanyExDao();
 			List<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()));
 			ExecutorService executor = Executors.newFixedThreadPool(20);
 			for( CompanyEx comp : companies ) {
+				final CompanyEx finalComp = comp;
 				if ( comp.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK ) {
 						executor.execute(new Runnable() {
 							public void run() {
 								try {
-									updator.updateFinancialStatus(comp);
+									updator.updateFinancialStatus(finalComp);
 								} catch ( Exception e1 ) {
-									System.out.println(comp.getId() + ":" + "Error");
+									System.out.println(finalComp.getId() + ":" + "Error");
 								}
 							}
 						});

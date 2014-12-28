@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.sun.org.glassfish.gmbal.Description;
-
 import post.Company;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
