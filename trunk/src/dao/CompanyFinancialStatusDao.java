@@ -79,7 +79,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		} catch ( SQLException sqle ) {
 			throw sqle;
 		} catch ( Exception e ) {
-			System.out.println("=============FINALCIAL DATE:" + financialStat.getStandardDate() );
+			System.out.println("=============FINANCIAL DATE:" + financialStat.getStandardDate() );
 			e.printStackTrace();
 		} finally {
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
@@ -176,6 +176,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 		rtn.setKOSPI("Y".equals(rs.getString("KOSPI_YN")));
 		rtn.setFixed("Y".equals(rs.getString("FIXED_YN")));
 		rtn.setCalculated("Y".equals(rs.getString("CALCULATED_YN")));
+		rtn.setRegisteredDate(rs.getString("REGISTERED_DATE"));
 		return rtn;
 	}
 	

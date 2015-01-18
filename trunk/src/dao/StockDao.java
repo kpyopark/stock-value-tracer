@@ -195,6 +195,56 @@ public class StockDao extends BaseDao {
 	private static final String SELECT_STATEMENT_02 = "SELECT * FROM TB_COMPANY_STOCK WHERE STOCK_ID = ? AND STANDARD_DATE = ? ORDER BY STANDARD_TIME DESC";
 	private static final String SELECT_STATEMENT_03 = "SELECT * FROM TB_COMPANY_STOCK WHERE STOCK_ID = ? AND STANDARD_DATE = ? AND STANDARD_TIME =?";
 	
+	private static final String SELECT_LATEST_STATEMENT_01 = "SELECT * FROM TB_COMPANY_STOCK WHERE STOCK_ID = ? ORDER BY STANDARD_DATE DESC, STANDARD_TIME DESC";
+	private static final String SELECT_LATEST_STATEMENT_02 = "SELECT * FROM TB_COMPANY_STOCK WHERE STOCK_ID = ? AND STANDARD_DATE <= ? ORDER BY STANDARD_TIME DESC";
+	private static final String SELECT_LATEST_STATEMENT_03 = "SELECT * FROM TB_COMPANY_STOCK WHERE STOCK_ID = ? AND STANDARD_DATE <= ? AND STANDARD_TIME <= ? ORDER BY STANDARD_DATE DESC, STANDARD_TIME DESC";
+	
+	public Stock getLatestStockValue(Company company, String standardDate, String standardTime) throws SQLException {
+		Stock rtn = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			if ( standardDate != null && standardTime != null ) {
+				ps = conn.prepareStatement(SELECT_LATEST_STATEMENT_03);
+				ps.setString(1, company.getId() );
+				ps.setString(2, standardDate);
+				ps.setString(3, standardTime);
+			} else if ( standardDate != null ) {
+				ps = conn.prepareStatement(SELECT_LATEST_STATEMENT_02);
+				ps.setString(1, company.getId() );
+				ps.setString(2, standardDate);
+			} else {
+				ps = conn.prepareStatement(SELECT_LATEST_STATEMENT_01);
+				ps.setString(1, company.getId() );
+			}
+			rs = ps.executeQuery();
+			
+			if( rs.next() ) {
+				rtn = new Stock();
+				rtn.setCompany(company);
+				rtn.setValue(rs.getInt("STOCK_PRICE"));
+				rtn.setVolume(rs.getInt("STOCK_VOLUME"));
+				rtn.setStandardDate(rs.getString("STANDARD_DATE"));
+				rtn.setStandardTime(rs.getString("STANDARD_TIME"));
+				rtn.setTodayHigh(rs.getInt("TODAY_HIGH"));
+				rtn.setTodayLow(rs.getInt("TODAY_LOW"));
+				rtn.setOrdinaryShares(rs.getLong("ORDINARY_SHARES"));
+				rtn.setMarketCapitalization(rs.getLong("MARKET_CAPITALIZATION"));
+				rtn.setParValue(rs.getFloat("PAR_VALUE"));
+				rtn.setOpenPrice(rs.getInt("OPEN_PRICE"));
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
+	
 	public boolean delete(Stock stock) {
 		boolean rtn = false;
 		Connection conn = null;

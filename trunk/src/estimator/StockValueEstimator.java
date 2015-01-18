@@ -36,18 +36,19 @@ public class StockValueEstimator {
 		CompanyFinancialEstimStatusDao estimStatusDao = new CompanyFinancialEstimStatusDao();
 		try {
 			CompanyFinancialStatusEstimated estimStatus = estimStatusDao.select(company,standardDate, null);
-			Stock stock = stockDao.select(company, null, null);
+			Stock stock = stockDao.getLatestStockValue(company, standardDate, null);
 			if ( estimStatus != null && stock != null ) {
 				estimation = caculateStockEstimation(estimStatus, stock);
+				estimation.setStandardDate(standardDate);
 			} else {
 				if ( estimStatus == null )
-					System.out.println("해당 추산치가 존재하지 않습니다. ["+company.getName() + ":" + company.getId() + "]");
+					System.out.println("해당 추산치가 존재하지 않습니다. ["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
 				if ( stock == null )
-					System.out.println("해당 주가정보가 존재하지 않습니다. ["+company.getName() + ":" + company.getId() + "]");
+					System.out.println("해당 주가정보가 존재하지 않습니다. ["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
-			System.out.println("해당 정보를 가지고 오는 도중 에러가 발생하였습니다.["+company.getName() + ":" + company.getId() + "]");
+			System.out.println("해당 정보를 가지고 오는 도중 에러가 발생하였습니다.["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
 		}
 		return estimation;
 	}
@@ -69,7 +70,7 @@ public class StockValueEstimator {
 		if ( cfs.getNetProfit() > 0 ) {
 			if ( cfs.getOrdinarySharesSize() > 0 ) {
 				cse.setRecentEps(cfs.getNetProfit() / cfs.getOrdinarySharesSize());
-				if ( stock.getStandardDate().compareTo(standardDate) == 0 && stock.getValue() > 0 ) {
+				if ( stock.getValue() > 0 ) {
 					cse.setAvePer(stock.getValue()/cse.getRecentEps());
 				} else {
 					cse.setRecentEps(0);
@@ -102,7 +103,7 @@ public class StockValueEstimator {
 		}
 		cse.setExpectationRation((float)0.15);
 		cse.setRecentStockValue(stock.getValue());
-		cse.setStandardDate(cfs.getStandardDate());
+		cse.setStandardDate(stock.getStandardDate());
 		if ( cfs instanceof CompanyFinancialStatusEstimated ) {
 			cse.setRelatedDateList(((CompanyFinancialStatusEstimated)cfs).getRelatedDateList());
 		} else {
@@ -116,7 +117,7 @@ public class StockValueEstimator {
 		CompanyFinancialEstimStatusDao estimStatusDao = new CompanyFinancialEstimStatusDao();
 		StockDao stockDao = new StockDao();
 		Company company = new Company();
-		company.setId("A025890");
+		company.setId("A006390");
 		CompanyFinancialStatusEstimated estimStatus = estimStatusDao.select(company,null, null);
 		Stock stock = stockDao.select(company, null, null);
 		System.out.println(estimStatus);

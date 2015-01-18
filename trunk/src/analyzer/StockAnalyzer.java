@@ -18,9 +18,11 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import post.Company;
+import post.CompanyEx;
 import post.StockEstimated;
 import post.StockRank;
 import dao.CompanyDao;
+import dao.CompanyExDao;
 import dao.CompanyFinancialStatusDao;
 import dao.CompanyStockEstimationDao;
 import estimator.FinancialStatusEstimator;
@@ -35,11 +37,11 @@ public class StockAnalyzer {
 	
 	String standardDate;
 
-	ArrayList<Company> companyList = null;
+	ArrayList<CompanyEx> companyList = null;
 	ArrayList<StockEstimated> stockEstimList = new ArrayList<StockEstimated>();
 	ArrayList<StockRank> stockRankList = new ArrayList<StockRank>();
 	CompanyStockEstimationDao stockEstimDao = new CompanyStockEstimationDao();
-	CompanyDao companyDao = new CompanyDao();
+	CompanyExDao companyDao = new CompanyExDao();
 	CompanyFinancialStatusDao financialStatusDao = new CompanyFinancialStatusDao();
 	
 	public StockAnalyzer(String standardDate) throws Exception {

@@ -80,8 +80,17 @@ public class CompanyFinancialStatus extends BaseStructure {
 	
 	private boolean isCalculated = false;
 	
+	
+	private String registeredDate = "";
+	
 	//
 	
+	public String getRegisteredDate() {
+		return registeredDate;
+	}
+	public void setRegisteredDate(String registeredDate) {
+		this.registeredDate = registeredDate;
+	}
 	public long getAssets() {
 		return assets;
 	}

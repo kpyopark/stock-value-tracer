@@ -127,7 +127,7 @@ public class StockAnalyzerManager {
 	 */
 	public void startCompanyFinancialStatusUpdator() {
 		try {
-			final ArrayList<Company> failedCompany = new ArrayList<Company>();
+			ArrayList<Company> failedCompany = new ArrayList<Company>();
 			final FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
 			updator.addUpdateListener(listener);
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
@@ -223,8 +223,9 @@ public class StockAnalyzerManager {
 		try {
 			StockEstimationUpdator updator = new StockEstimationUpdator();
 			updator.addUpdateListener(listener);
+			String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
-				updator.updateStockEstimated(companyList.get(cnt));
+				updator.updateStockEstimated(companyList.get(cnt), registeredDate);
 			}
 			updator.removeUpdateListener(listener);
 		} catch ( Exception e ) {
@@ -241,7 +242,7 @@ public class StockAnalyzerManager {
 		try {
 			String standardDate = STANDARD_DATE_FORMAT.format(new Date());
 			StockAnalyzer stockAnal = new StockAnalyzer(standardDate);
-			stockAnal.getBestStockList(100, standardDate);
+			stockAnal.getBestStockList(300, standardDate);
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -250,11 +251,11 @@ public class StockAnalyzerManager {
 	public static void main(String[] args) {
 		StockAnalyzerManager manager = new StockAnalyzerManager();
 		manager.setUpdateListener(new ExamUpdateListener());
-		manager.startCompanyListUpdator();
-		manager.startCompanyFinancialStatusUpdator();
-		manager.startFinancialReportRefiner();
-		manager.startStockValueUpdator();
-		manager.startAnnualEstimationUpdator();
+		//manager.startCompanyListUpdator();
+		//manager.startCompanyFinancialStatusUpdator();
+		//manager.startFinancialReportRefiner();
+		//manager.startStockValueUpdator();
+		//manager.startAnnualEstimationUpdator();
 		manager.startStockValueEstimationUpdator();
 		manager.startStockAnalyzer();
 	}

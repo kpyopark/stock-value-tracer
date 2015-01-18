@@ -45,6 +45,16 @@ public class StringUtil {
 		return true;
 	}
 	
+	public static String addDate(String standardDate, int addDate) {
+		java.util.Date newDate = null;
+		try {
+			newDate = STANDARD_DATE.parse(standardDate);
+			newDate.setDate(newDate.getDate() + addDate);
+		} catch ( ParseException pe ) {
+		}
+		return STANDARD_DATE.format(newDate);
+	}
+	
 	public static String getLastDayOfMonth(String standardDate) {
 		Date date = convertToDate(standardDate);
 		Calendar calendar = Calendar.getInstance();
@@ -64,6 +74,11 @@ public class StringUtil {
 		calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH) + offset);
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		return convertToStandardDate(calendar.getTime());
+	}
+	
+	public static String getNextAnnualStandardDate(String standardDate) {
+		int nextYear = Integer.parseInt(standardDate.substring(0, 4)) + 1;
+		return nextYear + standardDate.substring(4);
 	}
 	
 	public static String getNumericValue(String org) {
