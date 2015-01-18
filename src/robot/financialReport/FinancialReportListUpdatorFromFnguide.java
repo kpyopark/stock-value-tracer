@@ -249,8 +249,8 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		testUpdateAllCompany();
-		//testUpdateFinancialStatus();
+		//testUpdateAllCompany();
+		testUpdateFinancialStatus();
 	}
 	
 	public static void testUpdateFinancialStatus() {
@@ -259,7 +259,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		try {
 			dao = new CompanyDao();
 			Company company = null;
-			company = dao.select("A039670", null);
+			company = dao.select("A006390", null);
 			updator.updateFinancialStatus(company);
 		} catch ( Exception e1 ) { 
 			e1.printStackTrace();
@@ -269,19 +269,18 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	
 	public static void testUpdateAllCompany() {
 		try {
-			final FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
+			FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
 			CompanyExDao dao = new CompanyExDao();
 			List<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()));
 			ExecutorService executor = Executors.newFixedThreadPool(20);
 			for( CompanyEx comp : companies ) {
-				final CompanyEx finalComp = comp;
 				if ( comp.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK ) {
 						executor.execute(new Runnable() {
 							public void run() {
 								try {
-									updator.updateFinancialStatus(finalComp);
+									updator.updateFinancialStatus(comp);
 								} catch ( Exception e1 ) {
-									System.out.println(finalComp.getId() + ":" + "Error");
+									System.out.println(comp.getId() + ":" + "Error");
 								}
 							}
 						});

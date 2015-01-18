@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import common.PeriodUtil;
 
 import post.Company;
 import post.CompanyEx;
@@ -118,7 +121,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 		PreparedStatement ps2 = null;
 		ResultSet rs = null;
 		CompanyFinancialStatusEstimated rtn = null;
-		System.out.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate);
+		//System.out.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate);
 		try {
 			conn = getConnection();
 			//System.out.println(financialStat.getRelatedDateList());
@@ -141,8 +144,8 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			rtn = getCompanyFinancialStatusEstimatedFromResultSet(company, rs);
 			
 		} catch ( Exception e ) {
-			System.err.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate);
-			e.printStackTrace();
+			System.err.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate + " failed.");
+			//e.printStackTrace();
 		} finally {
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 			if ( ps2 != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
@@ -176,6 +179,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 		rtn.setFixed("Y".equals(rs.getString("FIXED_YN")));
 		rtn.setEstimatedYn(rs.getString("ESTIMATED_YN"));
 		rtn.setRelatedDateList(rs.getString("RELATED_DATE_LIST"));
+		rtn.setRegisteredDate(rs.getString("REGISTERED_DATE"));
 		return rtn;
 	}
 	
@@ -186,7 +190,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 		try {
 			conn = getConnection();
 			//System.out.println(financialStat.getRelatedDateList());
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_ESTIM_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ESTIM_KIND,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN,ESTIMATED_YN,RELATED_DATE_LIST ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_ESTIM_STAT ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ESTIM_KIND,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN,ESTIMATED_YN,RELATED_DATE_LIST,REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )");
 			int cnt = 1;
 			ps.setString(cnt++, financialStat.getCompany().getId() );
 			ps.setString(cnt++, financialStat.getStandardDate() );
@@ -211,7 +215,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			ps.setString(cnt++, financialStat.isFixed() ? "Y" : "N" );
 			ps.setString(cnt++, financialStat.getEstimatedYn() );
 			ps.setString(cnt++, financialStat.getRelatedDateList());
-
+			ps.setString(cnt++, financialStat.getRegisteredDate());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -282,10 +286,14 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 	}
 	
 	public static void main(String[] args) {
+		testUpdateFinancialReportEstimated();
+	}
+	
+	public static void testUpdateFinancialReportEstimated() {
 		CompanyFinancialEstimStatusDao dao = new CompanyFinancialEstimStatusDao();
 		CompanyEx company = new CompanyEx();
-		company.setId("A000050");
-		dao.updateFinancialReportEstimated(company, "20141208");
+		company.setId("A006390");
+		dao.updateFinancialReportEstimated(company, "20150117");
 	}
 	
 }

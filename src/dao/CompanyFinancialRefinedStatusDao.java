@@ -53,7 +53,7 @@ public class CompanyFinancialRefinedStatusDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT_REFINED ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),?,DATE_FORMAT(curdate(), '%Y%m%d') )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT_REFINED ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),?,? )");
 			int cnt = 1;
 			ps.setString(cnt++, financialStat.getCompany().getId() );
 			ps.setString(cnt++, financialStat.getStandardDate() );
@@ -76,6 +76,7 @@ public class CompanyFinancialRefinedStatusDao extends BaseDao {
 			ps.setString(cnt++, financialStat.isKOSPI() ? "Y" : "N" );
 			ps.setString(cnt++, financialStat.isFixed() ? "Y" : "N" );
 			ps.setString(cnt++,  financialStat.isCalculated() ? "Y": "N");
+			ps.setString(cnt++,  financialStat.getRegisteredDate());
 			rtn = ps.execute();
 		} catch ( SQLException sqle ) {
 			throw sqle;
@@ -177,6 +178,7 @@ public class CompanyFinancialRefinedStatusDao extends BaseDao {
 		rtn.setKOSPI("Y".equals(rs.getString("KOSPI_YN")));
 		rtn.setFixed("Y".equals(rs.getString("FIXED_YN")));
 		rtn.setCalculated("Y".equals(rs.getString("CALCULATED_YN")));
+		rtn.setRegisteredDate(rs.getString("REGISTERED_DATE"));
 		return rtn;
 	}
 	

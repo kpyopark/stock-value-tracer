@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
@@ -25,7 +26,8 @@ public class FinancialReportRefiner extends DataUpdator {
 		String baseDateToFuture = StringUtil.getLastDayOfQuarter(StringUtil.convertToStandardDate(new java.util.Date()), 3);
 		for(String standardDate: periods) {
 			CompanyFinancialStatus cfs = matchedAnnualStatus.get(standardDate);
-			if ( "20120101".compareTo(standardDate) < 0 && baseDateToFuture.compareTo(standardDate) > 0) {
+			//if ( "20120101".compareTo(standardDate) < 0 && baseDateToFuture.compareTo(standardDate) > 0) {
+			if ( "20000101".compareTo(standardDate) < 0 && baseDateToFuture.compareTo(standardDate) > 0) {
 				String prevQuarter = standardDate;
 				rtn.put(prevQuarter, cfs);
 				prevQuarter = StringUtil.getLastDayOfQuarter(prevQuarter, -3);
@@ -56,17 +58,42 @@ public class FinancialReportRefiner extends DataUpdator {
 		//
 		// If no, the quarter report will be calculated from annual report or other quarter reports.
 		//
+		// ---------- The above Algorithm should be modified --------
+		// 
+		// because of new feature that we calculates annual reports from quarter report at some points.
+		//
+		// So. we will add a new annual period.
+		// 
+		// for example, we want to calculate annual report at the time '2013-04-23'.
+		//
+		// we would retrieve the financial reports which registered before '2013-04-23'.
+		//
+		// There must be a annual report '2012-12-31' in the retrieved list.
+		//
+		// So, we would add a next annual report '2013-12-31' in the list.
+		// 
+		// and recalculate it.
+		System.out.println("COMPANY:[" + company.getId() + "]:" + company.getName());
+
+		String latestAnnualReportStandardDate = null;
+		
 		for(CompanyFinancialStatus cfs : cfsList) {
 			if ( cfs.isQuarter() ) {
 				matchedQuarterReports.put(cfs.getStandardDate(), cfs);
 			} else {
+				if ( latestAnnualReportStandardDate == null )
+					latestAnnualReportStandardDate = cfs.getStandardDate();
 				matchedAnnualStatus.put(cfs.getStandardDate(),cfs);
 			}
 		}
+		
+		if ( latestAnnualReportStandardDate != null ) matchedAnnualStatus.put(StringUtil.getNextAnnualStandardDate(latestAnnualReportStandardDate),null);
 		HashMap<String, CompanyFinancialStatus> validListFromAnnual = makePeriodListFromAnnual(matchedAnnualStatus);
 
 		ArrayList<String> datelistFromAnnualReports = new ArrayList<String>(validListFromAnnual.keySet());
 		Collections.sort(datelistFromAnnualReports);
+
+		System.out.println("PERIOD[" + datelistFromAnnualReports + "]");
 		
 		for (String validDate: datelistFromAnnualReports ) {
 			CompanyFinancialStatus cfs = null;
@@ -82,8 +109,10 @@ public class FinancialReportRefiner extends DataUpdator {
 					cfs.setQuarter(true);
 				}
 				CompanyFinancialStatus annualCfs = validListFromAnnual.get(validDate);
-				if ( annualCfs == null )
+				if ( annualCfs == null ) {
 					System.out.println("	--> there is no annual reports");
+					continue;
+				}
 				if ( ! hasAssetReport(cfs) ) {
 					if ( hasAssetReport(annualCfs)) {
 						// System.out.println("	--> asset info: derived report can be calculated.");
@@ -103,9 +132,13 @@ public class FinancialReportRefiner extends DataUpdator {
 						calculateQuarterSalesFromAnnualReport(cfs, annualCfs);
 					} else {
 						System.out.println("Stock info:" + cfs.getCompany().getId() + ":" + cfs.getStandardDate() + ":" + cfs.getCompany().getName());
-						System.out.println("	--> sales info: THERE IS NO WAY TO SOLVE. BUT THIS REPORT WILL BE USED.");
-						calculateQuarterSalesFromAnnualReport(cfs, annualCfs);
+						System.out.println("	--> sales info: THERE IS NO WAY TO SOLVE. Don't use invalid reports.");
+						//System.out.println("	--> sales info: THERE IS NO WAY TO SOLVE. BUT THIS REPORT WILL BE USED.");
+						//calculateQuarterSalesFromAnnualReport(cfs, annualCfs);
 					}
+				}
+				if ( cfs.getRegisteredDate() == null || cfs.getRegisteredDate().length() != 8 ) {
+					cfs.setRegisteredDate(StringUtil.addDate(cfs.getStandardDate(),50));
 				}
 				if ( isValidReport( cfs ) ) {
 					validQuarterReports.add(cfs);
@@ -168,7 +201,6 @@ public class FinancialReportRefiner extends DataUpdator {
 		String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
 		companyList = dao.selectAllList(registeredDate);
 		for ( CompanyEx company : companyList ) {
-			System.out.println("company");
 			ArrayList<CompanyFinancialStatus> financialStatusList = null;
 			financialStatusList = financialDao.getFinancialStatus(company, registeredDate);
 			List<CompanyFinancialStatus> cfsList = retrieveValidQuarterReports(company, financialStatusList);
@@ -188,7 +220,7 @@ public class FinancialReportRefiner extends DataUpdator {
 		CompanyEx company = new CompanyEx();
 		CompanyFinancialStatusDao financialDao = new CompanyFinancialStatusDao();
 		String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
-		company.setId("A003350");
+		company.setId("A006390");
 		ArrayList<CompanyFinancialStatus> financialStatusList = null;
 		financialStatusList = financialDao.getFinancialStatus(company, registeredDate);
 		List<CompanyFinancialStatus> cfsList = retrieveValidQuarterReports(company, financialStatusList);
