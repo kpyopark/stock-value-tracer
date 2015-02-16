@@ -24,6 +24,37 @@ public class StockEstimated extends BaseStructure {
 	private float aveRoe = (float) 0.0;
 	
 	private float aveRoa = (float) 0.0;
+	
+	private float avePbr = (float) 0.0;
+	
+	private float earningYield = (float) 0.0;
+	
+	private float debtRatio = (float) 0.0;
+	
+	public float getDebtRatio() {
+		return debtRatio;
+	}
+
+	public void setDebtRatio(float debtRatio) {
+		this.debtRatio = debtRatio;
+	}
+
+	public float getEarningYield() {
+		return earningYield;
+	}
+
+	public void setEarningYield(float earningYield) {
+		this.earningYield = earningYield;
+	}
+
+	public float getAvePbr() {
+		return avePbr;
+	}
+
+	public void setAvePbr(float avePbr) {
+		this.avePbr = avePbr;
+	}
+
 	/**
 	 * devidendRatio : πË¥Á¿≤ 
 	 */

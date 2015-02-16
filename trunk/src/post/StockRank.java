@@ -26,6 +26,22 @@ public class StockRank extends BaseStructure {
 	
 	private int roaRank = Integer.MAX_VALUE;
 	
+	private int pbrRank = Integer.MAX_VALUE;
+	
+	public int getPbrRank() {
+		return pbrRank;
+	}
+	public void setPbrRank(int pbrRank) {
+		this.pbrRank = pbrRank;
+	}
+	public int getEarningYieldRank() {
+		return EarningYieldRank;
+	}
+	public void setEarningYieldRank(int earningYieldRank) {
+		EarningYieldRank = earningYieldRank;
+	}
+	private int EarningYieldRank = Integer.MAX_VALUE;
+	
 	public int getRoaRank() {
 		return roaRank;
 	}

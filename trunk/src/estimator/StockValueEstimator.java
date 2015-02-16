@@ -67,39 +67,37 @@ public class StockValueEstimator {
 		cse.setCompany(company);
 		
 		cse.setAveDividendRatio(cfs.getDividendRatio());
-		if ( cfs.getNetProfit() > 0 ) {
-			if ( cfs.getOrdinarySharesSize() > 0 ) {
-				cse.setRecentEps(cfs.getNetProfit() / cfs.getOrdinarySharesSize());
-				if ( stock.getValue() > 0 ) {
-					cse.setAvePer(stock.getValue()/cse.getRecentEps());
-				} else {
-					cse.setRecentEps(0);
-					cse.setAvePer(10000);
-					System.out.println("주가가 등록되어 있지 않습니다. 확인 필요.[" + stock + "]");
-				}
+		cse.setAveRoa(((float)cfs.getNetProfit())/cfs.getAssets());
+		cse.setDebtRatio((float)cfs.getDebt()/cfs.getAssets());
+		if ( cfs.getOrdinarySharesSize() > 0 ) {
+			cse.setAvePbr(((float)(cfs.getOrdinarySharesSize() * stock.getValue()))/cfs.getAssets());
+			cse.setRecentEps(cfs.getNetProfit() / cfs.getOrdinarySharesSize());
+			if ( stock.getValue() > 0 ) {
+				cse.setAvePer(stock.getValue()/cse.getRecentEps());
+				cse.setEarningYield(cse.getRecentEps()/stock.getValue());
 			} else {
 				cse.setRecentEps(0);
 				cse.setAvePer(10000);
-				System.out.println("보통주가 등록되어 있지 않습니다. 확인 필요.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
+				cse.setEarningYield((float)-100.0);
+				System.out.println("주가가 등록되어 있지 않습니다. 확인 필요.[" + stock + "]");
 			}
+		} else {
+			cse.setAvePbr(10000);
+			cse.setRecentEps(0);
+			cse.setAvePer(10000);
+			cse.setEarningYield((float)-100.0);
+			System.out.println("보통주가 등록되어 있지 않습니다. 확인 필요.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
+		}
+		if ( cfs.getNetProfit() > 0 ) {
 			if( cfs.getGrossCapital() > 0 ) {
 				cse.setAveRoe(((float)cfs.getNetProfit())/cfs.getGrossCapital());
 			} else {
 				cse.setAveRoe(0);
 				System.out.println("총자본금이 등록되어 있지 않습니다.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
 			}
-			if( cfs.getAssets() > 0 ) {
-				cse.setAveRoa(((float)cfs.getNetProfit())/cfs.getAssets());
-			} else {
-				cse.setAveRoa(0);
-				System.out.println("자산이 등록되어 있지 않습니다.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
-			}
 			cse.setLastEps((float)(cse.getRecentEps()*Math.pow(1+cse.getAveRoe(),10)));
 		} else {
-			cse.setRecentEps(-1);
-			cse.setAvePer(10000);
 			cse.setAveRoe(-1);
-			cse.setAveRoa(-1);
 		}
 		cse.setExpectationRation((float)0.15);
 		cse.setRecentStockValue(stock.getValue());
