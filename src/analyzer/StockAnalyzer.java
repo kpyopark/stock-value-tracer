@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.apache.commons.collections4.list.TreeList;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -39,7 +41,8 @@ public class StockAnalyzer {
 
 	ArrayList<CompanyEx> companyList = null;
 	ArrayList<StockEstimated> stockEstimList = new ArrayList<StockEstimated>();
-	ArrayList<StockRank> stockRankList = new ArrayList<StockRank>();
+	TreeList<StockRank> stockRankList = new TreeList<StockRank>();
+	//ArrayList<StockRank> stockRankList = new ArrayList<StockRank>();
 	CompanyStockEstimationDao stockEstimDao = new CompanyStockEstimationDao();
 	CompanyExDao companyDao = new CompanyExDao();
 	CompanyFinancialStatusDao financialStatusDao = new CompanyFinancialStatusDao();
@@ -76,7 +79,7 @@ public class StockAnalyzer {
 	}
 	
 	private void printStockListToConsole(int rank, String registeredDate) {
-		System.out.println("Name;Id;Per;Roa;Roe;Tot;Est;AvePer;AveRoe;AveRoa;AveDividendRatio;RecentEps;RecentStockValue;LastEps;Date;size;URL");
+		System.out.println("Name;Id;Per;Roa;Roe;Pbr;E.Y;Tot;Est;AvePer;AveRoe;AveRoa;AvePbr;EarningYeild;DebtRatio:AveDividendRatio;RecentEps;RecentStockValue;LastEps;Date;size;URL");
 		for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
 			//System.out.println( stockRankList.get(cnt));
 			System.out.println(stockRankList.get(cnt).getCompany().getName() + ";" +
@@ -84,11 +87,16 @@ public class StockAnalyzer {
 					stockRankList.get(cnt).getPerRank() + ";" + 
 					stockRankList.get(cnt).getRoaRank() + ";" +
 					stockRankList.get(cnt).getRoeRank() + ";" +
+					stockRankList.get(cnt).getPbrRank() + ";" +
+					stockRankList.get(cnt).getEarningYieldRank() + ";" +
 					stockRankList.get(cnt).getTotRank() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getEstimKind() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAvePer() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAveRoe() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAveRoa() + ";" +
+					stockRankList.get(cnt).getStockEstimation().getAvePbr() + ";" +
+					stockRankList.get(cnt).getStockEstimation().getEarningYield() + ";" +
+					stockRankList.get(cnt).getStockEstimation().getDebtRatio() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAveDividendRatio() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getRecentEps() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getRecentStockValue() + ";" +
@@ -185,8 +193,11 @@ public class StockAnalyzer {
 	}
 	*/
 	public void getBestStockList(int rank, String registeredDate) throws java.sql.SQLException {
-		calculateRankByRoe();
+		//calculateRankByRoe();
 		calculateRankByRoa();
+		calculateRankByAdjustRoe();
+		calculateRankByEarningYield();
+		calculateRankByPbr();
 		calculateRankByPer();
 		calculateTotRank();
 		printStockListToConsole(rank, registeredDate);
@@ -194,6 +205,7 @@ public class StockAnalyzer {
 		printStockListToXML(rank, registeredDate);
 	}
 	
+	@Deprecated
 	private void calculateRankByRoe() {
 		java.util.Collections.sort(stockEstimList,new RoeComparator());
 		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
@@ -209,7 +221,7 @@ public class StockAnalyzer {
 			}
 		}
 	}
-
+	
 	private void calculateRankByRoa() {
 		java.util.Collections.sort(stockEstimList,new RoaComparator());
 		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
@@ -223,6 +235,59 @@ public class StockAnalyzer {
 				stockRank.setRoaRank(cnt+1);
 				stockRankList.add(stockRank);
 			}
+		}
+	}
+
+	private void calculateRankByAdjustRoe() {
+		java.util.Collections.sort(stockEstimList,new AdjustRoeComparator());
+		int rank = 1;
+		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
+			StockRank stockRank = new StockRank();
+			stockRank.setCompany(stockEstimList.get(cnt).getCompany());
+			if ( stockRankList.contains(stockRank) ) {
+				stockRank = stockRankList.get(stockRankList.indexOf(stockRank));
+			} else {
+				stockRank.setStockEstimation(stockEstimList.get(cnt));
+				stockRankList.add(stockRank);
+			}
+			if ( stockEstimList.get(cnt).getAveRoe() >= 0 ) {
+				rank = cnt+1;
+			}
+			stockRank.setRoeRank(rank);
+		}
+	}
+
+	private void calculateRankByPbr() {
+		java.util.Collections.sort(stockEstimList,new PbrComparator());
+		int rank = 1;
+		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
+			StockRank stockRank = new StockRank();
+			stockRank.setCompany(stockEstimList.get(cnt).getCompany());
+			if ( stockRankList.contains(stockRank) ) {
+				stockRank = stockRankList.get(stockRankList.indexOf(stockRank));
+			} else {
+				stockRank.setStockEstimation(stockEstimList.get(cnt));
+				stockRankList.add(stockRank);
+			}
+			if ( stockEstimList.get(cnt).getAvePbr() >= 0 ) {
+				rank = cnt+1;
+			}
+			stockRank.setPbrRank(rank);
+		}
+	}
+
+	private void calculateRankByEarningYield() {
+		java.util.Collections.sort(stockEstimList,new EarningYieldComparator());
+		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
+			StockRank stockRank = new StockRank();
+			stockRank.setCompany(stockEstimList.get(cnt).getCompany());
+			if ( stockRankList.contains(stockRank) ) {
+				stockRank = stockRankList.get(stockRankList.indexOf(stockRank));
+			} else {
+				stockRank.setStockEstimation(stockEstimList.get(cnt));
+				stockRankList.add(stockRank);
+			}
+			stockRank.setEarningYieldRank(cnt+1);
 		}
 	}
 
@@ -246,7 +311,8 @@ public class StockAnalyzer {
 		Iterator iter = stockRankList.iterator();
 		while( iter.hasNext() ) {
 			StockRank stockRank = (StockRank)iter.next();
-			stockRank.setTotRank(stockRank.getPerRank()+stockRank.getRoaRank());
+			//stockRank.setTotRank(stockRank.getPerRank()+stockRank.getRoaRank());
+			stockRank.setTotRank((int)(stockRank.getRoaRank() * 0.3 + stockRank.getRoeRank() * 0.5 + stockRank.getEarningYieldRank() * 0.8 + stockRank.getPbrRank() * 0.2));
 		}
 		java.util.Collections.sort(stockRankList,new TotComparator());
 	}
@@ -333,8 +399,9 @@ public class StockAnalyzer {
 
 	}
 	
-	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE",
+	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE","PBR","E.Y",
 		"TOT","EST","SECTOR","GROUP","INDUSTRY","AVEPER","AVEROE","AVEROA",
+		"AVEPBR", "EARNING_RATIO", "DEBT_RATIO",
 		"AVEDIV","REPS","RSTOCK","LEPS","DATE","URL"
 	};
 	
@@ -363,6 +430,8 @@ public class StockAnalyzer {
 		row.createCell(column++).setCellValue(rankInfo.getPerRank());
 		row.createCell(column++).setCellValue(rankInfo.getRoaRank());
 		row.createCell(column++).setCellValue(rankInfo.getRoeRank());
+		row.createCell(column++).setCellValue(rankInfo.getPbrRank());
+		row.createCell(column++).setCellValue(rankInfo.getEarningYieldRank());
 		row.createCell(column++).setCellValue(rankInfo.getTotRank());
 		row.createCell(column++).setCellValue(rankInfo.getStockEstimation().getEstimKind());
 		row.createCell(column++).setCellValue(rankInfo.getCompany().getFicsSector());
@@ -376,6 +445,15 @@ public class StockAnalyzer {
 		cell.setCellStyle(percentStyle);
 		cell = row.createCell(column++);
 		cell.setCellValue(rankInfo.getStockEstimation().getAveRoa());
+		cell.setCellStyle(percentStyle);
+		cell = row.createCell(column++);
+		cell.setCellValue(rankInfo.getStockEstimation().getAvePbr());
+		cell.setCellStyle(percentStyle);
+		cell = row.createCell(column++);
+		cell.setCellValue(rankInfo.getStockEstimation().getEarningYield());
+		cell.setCellStyle(percentStyle);
+		cell = row.createCell(column++);
+		cell.setCellValue(rankInfo.getStockEstimation().getDebtRatio());
 		cell.setCellStyle(percentStyle);
 		cell = row.createCell(column++);
 		cell.setCellValue(rankInfo.getStockEstimation().getAveDividendRatio());
@@ -426,6 +504,43 @@ class RoaComparator implements java.util.Comparator<StockEstimated> {
 	}
 }
 
+class AdjustRoeComparator implements java.util.Comparator<StockEstimated> {
+
+	/**
+	 * 
+	 * @param debtRatio
+	 * @param roe
+	 * @return
+	 * 
+	 * When Debt/Asset ratio is between 0 and 0.5, the the value of roe is exactly same to it's value
+	 * When debt/asset ratio is between 0.5 and 0.9, the value of roe is decreased. at the point 0.9. the value of roe is 0. it's meaningless.
+	 *      y = -2.5x + 2.25 ( adjusted factor )
+	 * 
+	 * But. The debt ratio also effects the earning of the company. so. this methods the enlarge the effect of debt too much.
+	 */
+	private static float calculateAdjustRoe(float debtRatio, float roe) {
+		if ( roe < 0 )
+			return roe;
+		if ( debtRatio >= 0 && debtRatio <= 0.5 )
+			return roe;
+		else if ( debtRatio > 0.5 && debtRatio < 0.9 )
+			return ( debtRatio * (float)-2.5 + (float)2.25 ) * roe;
+		else
+			return 0;
+	}
+	
+	public int compare(StockEstimated src, StockEstimated tgt) {
+		return calculateAdjustRoe( src.getDebtRatio(), src.getAveRoe() ) > calculateAdjustRoe(tgt.getDebtRatio(), src.getAveRoe() ) ? 1 : -1;
+	}
+}
+
+class PbrComparator implements java.util.Comparator<StockEstimated> {
+	public int compare(StockEstimated src, StockEstimated tgt) {
+		return src.getAvePbr() > tgt.getAvePbr() ? 1 :
+			src.getAvePbr() == tgt.getAvePbr() ? 0 : -1;
+	}
+}
+
 class PerComparator implements java.util.Comparator<StockEstimated> {
 	public int compare(StockEstimated src, StockEstimated tgt) {
 		//if ( src.getAvePer() == 0 ) return 1;
@@ -433,7 +548,13 @@ class PerComparator implements java.util.Comparator<StockEstimated> {
 			src.getAvePer() == tgt.getAvePer() ? 0 : -1;
 	}
 }
- 
+
+class EarningYieldComparator implements java.util.Comparator<StockEstimated> {
+	public int compare(StockEstimated src, StockEstimated tgt) {
+		return ( src.getEarningYield() < tgt.getEarningYield() ? 1 : -1 );
+	}
+}
+
 class TotComparator implements java.util.Comparator<StockRank> {
 	public int compare(StockRank src, StockRank tgt) {
 		return src.getTotRank() > tgt.getTotRank() ? 1 :
