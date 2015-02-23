@@ -25,7 +25,7 @@ public class StockEstimated extends BaseStructure {
 	
 	private float aveRoa = (float) 0.0;
 	
-	private float avePbr = (float) 0.0;
+	private float aveBpp = (float) 0.0;
 	
 	private float earningYield = (float) 0.0;
 	
@@ -47,12 +47,12 @@ public class StockEstimated extends BaseStructure {
 		this.earningYield = earningYield;
 	}
 
-	public float getAvePbr() {
-		return avePbr;
+	public float getAveBpp() {
+		return aveBpp;
 	}
 
-	public void setAvePbr(float avePbr) {
-		this.avePbr = avePbr;
+	public void setAveBpp(float aveBpp) {
+		this.aveBpp = aveBpp;
 	}
 
 	/**

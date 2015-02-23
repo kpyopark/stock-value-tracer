@@ -70,7 +70,7 @@ public class StockValueEstimator {
 		cse.setAveRoa(((float)cfs.getNetProfit())/cfs.getAssets());
 		cse.setDebtRatio((float)cfs.getDebt()/cfs.getAssets());
 		if ( cfs.getOrdinarySharesSize() > 0 ) {
-			cse.setAvePbr(((float)(cfs.getOrdinarySharesSize() * stock.getValue()))/cfs.getAssets());
+			cse.setAveBpp(((float)cfs.getGrossCapital()/cfs.getOrdinarySharesSize())/stock.getValue());
 			cse.setRecentEps(cfs.getNetProfit() / cfs.getOrdinarySharesSize());
 			if ( stock.getValue() > 0 ) {
 				cse.setAvePer(stock.getValue()/cse.getRecentEps());
@@ -82,7 +82,7 @@ public class StockValueEstimator {
 				System.out.println("주가가 등록되어 있지 않습니다. 확인 필요.[" + stock + "]");
 			}
 		} else {
-			cse.setAvePbr(10000);
+			cse.setAveBpp(-100);
 			cse.setRecentEps(0);
 			cse.setAvePer(10000);
 			cse.setEarningYield((float)-100.0);
