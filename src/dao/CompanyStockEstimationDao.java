@@ -40,7 +40,7 @@ public class CompanyStockEstimationDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_DECADE_ESTIM ( STOCK_ID,STANDARD_DATE,ESTIM_KIND,AVE_PER,AVE_ROE,AVE_ROA,AVE_DIVIDEND_RATIO,RECENT_EPS,RECENT_STOCK_VALUE,LAST_EPS,EXPECTATION_RATIO,RELATED_DATE_LIST,AVE_PBR, EARNING_YIELD, DEBT_RATIO ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )");
+			ps = conn.prepareStatement("INSERT INTO TB_DECADE_ESTIM ( STOCK_ID,STANDARD_DATE,ESTIM_KIND,AVE_PER,AVE_ROE,AVE_ROA,AVE_DIVIDEND_RATIO,RECENT_EPS,RECENT_STOCK_VALUE,LAST_EPS,EXPECTATION_RATIO,RELATED_DATE_LIST,AVE_BPP, EARNING_YIELD, DEBT_RATIO ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,? )");
 			int cnt = 1;
 			ps.setString(cnt++, estimatedCfs.getCompany().getId() );
 			ps.setString(cnt++, estimatedCfs.getStandardDate() );
@@ -54,7 +54,7 @@ public class CompanyStockEstimationDao extends BaseDao {
 			ps.setFloat(cnt++, estimatedCfs.getLastEps() );
 			ps.setFloat(cnt++, estimatedCfs.getLastEps() );
 			ps.setString(cnt++, estimatedCfs.getRelatedDateList() );
-			ps.setFloat(cnt++, estimatedCfs.getAvePbr() );
+			ps.setFloat(cnt++, estimatedCfs.getAveBpp() );
 			ps.setFloat(cnt++, estimatedCfs.getEarningYield() );
 			ps.setFloat(cnt++, estimatedCfs.getDebtRatio() );
 			rtn = ps.execute();
@@ -193,7 +193,7 @@ public class CompanyStockEstimationDao extends BaseDao {
 		rtn.setLastEps(rs.getFloat("LAST_EPS"));
 		rtn.setExpectationRation(rs.getFloat("EXPECTATION_RATIO"));
 		rtn.setRelatedDateList(rs.getString("RELATED_DATE_LIST"));
-		rtn.setAvePbr(rs.getFloat("AVE_PBR"));
+		rtn.setAveBpp(rs.getFloat("AVE_BPP"));
 		rtn.setEarningYield(rs.getFloat("EARNING_YIELD"));
 		rtn.setDebtRatio(rs.getFloat("DEBT_RATIO"));
 		return rtn;
