@@ -1,23 +1,19 @@
 package robot.estimation;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.sun.org.glassfish.gmbal.Description;
+import post.Company;
+import post.CompanyEx;
+import post.CompanyFinancialStatusEstimated;
+import robot.DataUpdator;
 
 import common.PeriodUtil;
 import common.StringUtil;
-import post.Company;
-import post.CompanyEx;
-import post.CompanyFinancialStatus;
-import post.CompanyFinancialStatusEstimated;
-import robot.DataUpdator;
-import dao.CompanyDao;
+
 import dao.CompanyExDao;
 import dao.CompanyFinancialEstimStatusDao;
-import estimator.FinancialStatusEstimator;
 
 /**
  * CompanyListUpdator 정보에서 취합한 분기정보를 토대로 일년간의 기초자료를 생성한다.

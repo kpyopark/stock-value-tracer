@@ -269,11 +269,11 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	
 	public static void testUpdateAllCompany() {
 		try {
-			FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
+			final FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
 			CompanyExDao dao = new CompanyExDao();
 			List<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()));
 			ExecutorService executor = Executors.newFixedThreadPool(20);
-			for( CompanyEx comp : companies ) {
+			for( final CompanyEx comp : companies ) {
 				if ( comp.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK ) {
 						executor.execute(new Runnable() {
 							public void run() {
