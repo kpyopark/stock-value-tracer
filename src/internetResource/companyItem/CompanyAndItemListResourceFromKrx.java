@@ -17,13 +17,12 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.StockDao;
-
 import post.Company;
 import post.CompanyEx;
 import post.KrxItem;
+import post.KrxSecurityType;
 import post.Stock;
 
 public class CompanyAndItemListResourceFromKrx {
@@ -49,19 +48,22 @@ public class CompanyAndItemListResourceFromKrx {
 		{"isu_cd",""},				// 11
 	};
 	
-	static void setParams(int securityType, String standardDate, String id) {
+	static void setParams(KrxSecurityType securityType, String standardDate, String id) {
 		switch (securityType) {
-		case 0 :
+		case STOCK :
 			ITEM_LIST_PARAMS[8][0] = "secugrp1";
 			break;
-		case 1 :
+		case ETF :
 			ITEM_LIST_PARAMS[8][0] = "secugrp2";
 			break;
-		case 2 :
+		case ELW :
 			ITEM_LIST_PARAMS[8][0] = "secugrp3";
 			break;
-		case 3 :
+		case ETN :
 			ITEM_LIST_PARAMS[8][0] = "secugrp4";
+			break;
+		case ETC :
+			ITEM_LIST_PARAMS[8][0] = "secugrp5";
 			break;
 		default :
 			ITEM_LIST_PARAMS[8][0] = "secugrp1";
@@ -125,7 +127,7 @@ public class CompanyAndItemListResourceFromKrx {
 		return oneItem;
 	}
 	
-	private TagNode getRootTagNode(int securityType, String standardDate, String id) {
+	private TagNode getRootTagNode(KrxSecurityType securityType, String standardDate, String id) {
 		TagNode itemListXML = null;
 		HttpURLConnection conn = null;
 		OutputStream os = null;
@@ -168,12 +170,13 @@ public class CompanyAndItemListResourceFromKrx {
 	 * @return
 	 * @throws Exception
 	 */
-	public ArrayList<KrxItem> getItemList(int securityType, String standardDate, String id) throws Exception {
+	public ArrayList<KrxItem> getItemList(KrxSecurityType securityType, String standardDate, String id) throws Exception {
 		ArrayList<KrxItem> list = new ArrayList<KrxItem>();
 		try {
 			Object[] tags = getRootTagNode(securityType, standardDate, id).evaluateXPath(XPATH_ONE_ITEM_RECORD);
 			for ( int line = 0 ; line < tags.length ; line++ ) {
 				KrxItem item = getKrxItem((TagNode)tags[line]);
+				item.setStandardDate(standardDate);
 				list.add(item);
 			}
 		} catch ( Exception e ) {
@@ -185,7 +188,7 @@ public class CompanyAndItemListResourceFromKrx {
 	public void updateSecuritySectorForEtf(String standardDate) throws Exception {
 		ArrayList<KrxItem> list = new ArrayList<KrxItem>();
 		try {
-			Object[] tags = getRootTagNode(1, standardDate, null).evaluateXPath(XPATH_ONE_ITEM_RECORD);
+			Object[] tags = getRootTagNode(KrxSecurityType.ETF, standardDate, null).evaluateXPath(XPATH_ONE_ITEM_RECORD);
 			for ( int line = 0 ; line < tags.length ; line++ ) {
 				KrxItem item = getKrxItem((TagNode)tags[line]);
 				list.add(item);
@@ -200,7 +203,7 @@ public class CompanyAndItemListResourceFromKrx {
 		HttpURLConnection conn = null;
 		OutputStream os = null;
 		try {
-			setParams(0, workDay, "A005930" /* Samsung Electronics */);
+			setParams(KrxSecurityType.STOCK, workDay, "A005930" /* Samsung Electronics */);
 			conn = (HttpURLConnection)new URL(ITEM_LIST_URL).openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoInput(true);

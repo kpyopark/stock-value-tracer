@@ -10,28 +10,30 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import post.Company;
 import post.CompanyEx;
-import post.CompanyFinancialStatus;
 import post.KrxItem;
+import post.KrxSecurityType;
 import post.Stock;
 import robot.DataUpdator;
+
 import common.StringUtil;
+
 import dao.CompanyExDao;
-import dao.CompanyFinancialStatusDao;
+import dao.KrxItemDao;
 import dao.StockDao;
 
 public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	CompanyExDao dao = null;
 	StockDao stockDao = null;
+	KrxItemDao krxDao = null;
 
 	public CompanyListUpdatorFromKrx() {
 		dao = new CompanyExDao();
-		stockDao = new StockDao();		
+		stockDao = new StockDao();
+		krxDao = new KrxItemDao();
 	}
 
 	public void insertETFstockFrom2002Year() {
@@ -47,7 +49,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			String standardDate = workDays.get(dayCnt);
 			System.out.println("Start for the date - " + standardDate + " -");
 			try {
-				ArrayList<KrxItem> companyAndStock = ir.getItemList(1 /* ETF */, standardDate, null);
+				ArrayList<KrxItem> companyAndStock = ir.getItemList(KrxSecurityType.ETF, standardDate, null);
 				System.out.println("    # of etf :" + companyAndStock.size());
 				for ( int cnt = 0 ; cnt < companyAndStock.size(); cnt++ ) {
 					CompanyEx company = companyAndStock.get(cnt).getCompany();
@@ -87,7 +89,15 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			insertCompanyAndStockFromKrxItem(standardDate);
 		}
 	}
-	
+
+	public void insertKrxItemsForPeriods(List<String> workDays) {
+		for( int dayCnt = 0 ; dayCnt < workDays.size(); dayCnt++ ) {
+			String standardDate = workDays.get(dayCnt);
+			System.out.println("Start for the date - " + standardDate + " -");
+			insertKrxItem(standardDate);
+		}
+	}
+
 	public static List<String> getWorkDays(int fromYear, int fromMonth, int fromDay, int toYear, int toMonth, int toDay) {
 		List<String> rtn = new ArrayList<String>();
 		Calendar calendar = Calendar.getInstance();
@@ -124,22 +134,40 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		stock.setStandardTime(standardTime);
 		stock.setTodayHigh((int)krxStockInfo.getTodayHigh());
 		stock.setTodayLow((int)krxStockInfo.getTodayLow());
-		stock.setValue((int)krxStockInfo.getClosePrice());
+		stock.setValue((int)krxStockInfo.getStockPrice());
 		stock.setVolume(krxStockInfo.getVolume());
 		return stock;
+	}
+	
+	public void insertKrxItem(String standardDate) {
+		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
+		try {
+			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
+				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
+				for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
+					//if ( krxDao.select(krxItemList.get(cnt), standardDate) != null ) {
+						// skip
+					//} else {
+						krxDao.insert(krxItemList.get(cnt));
+					//}
+				}
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void insertCompanyAndStockFromKrxItem(String standardDate) {
 		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
 		try {
 			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
-			for ( int securityType = 0 ; securityType < 2 ;  securityType++ ) {
+			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
 				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
 				for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
 					// CompanyEx
 					CompanyEx companyFromKrx = krxItemList.get(cnt).getCompany();
 					companyFromKrx.setStandardDate(standardDate);
-					companyFromKrx.setSecuritySector(securityType);
+					companyFromKrx.setSecuritySector(securityType.getType());
 					int currentDBPosition = -1;
 					if ( ( currentDBPosition = companiesFromDB.indexOf(companyFromKrx) ) != -1 ) {
 						CompanyEx companyEx = companiesFromDB.get(currentDBPosition);
@@ -156,6 +184,11 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 						// skip
 					} else {
 						stockDao.insert(stock);
+					}
+					if ( krxDao.select(krxItemList.get(cnt), standardDate) != null ) {
+						// skip
+					} else {
+						krxDao.insert(krxItemList.get(cnt));
 					}
 				}
 			}
@@ -237,6 +270,26 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 	}
 	
+	public void updateKrxItemsFrom1996() {
+		try {
+			int fromYear, fromMonth, fromDay, toYear, toMonth, toDay;
+			Calendar calendar = Calendar.getInstance();
+			fromYear = 1995;
+			fromMonth = 4;
+			fromDay = 1;
+			calendar.clear();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			toYear = calendar.get(Calendar.YEAR);
+			toMonth = calendar.get(Calendar.MONTH);
+			toDay = calendar.get(Calendar.DAY_OF_MONTH);
+			List<String> workDays = getWorkDays(fromYear, fromMonth, fromDay,
+					toYear, toMonth, toDay);
+			insertKrxItemsForPeriods(workDays);
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void updateFicsSectorInfo() {
 		CompanyExDao dao = new CompanyExDao();
 		try {
@@ -268,7 +321,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateLatestCompanyList();
+		updator.updateKrxItemsFrom1996();
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

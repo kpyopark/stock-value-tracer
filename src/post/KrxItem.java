@@ -6,6 +6,16 @@ public class KrxItem extends BaseStructure {
 	
 	private String name = "";
 	
+	private String standardDate = "";
+	
+	public String getStandardDate() {
+		return standardDate;
+	}
+
+	public void setStandardDate(String standardDate) {
+		this.standardDate = standardDate;
+	}
+
 	private long stockPrice = 0;
 	
 	private long netChange = 0;
@@ -22,7 +32,7 @@ public class KrxItem extends BaseStructure {
 	
 	private long openPrice = 0;
 	
-	private long closePrice = 0;
+	//private long closePrice = 0;    // closePrice = stopPrice in this web API. ( last value of stock is closed value )
 	
 	private long todayHigh = 0;
 	
@@ -38,6 +48,16 @@ public class KrxItem extends BaseStructure {
 	
 	private String expireDate = "";
 	
+	private KrxSecurityType securityType = KrxSecurityType.STOCK;
+	
+	public KrxSecurityType getSecurityType() {
+		return securityType;
+	}
+
+	public void setSecurityType(KrxSecurityType securityType) {
+		this.securityType = securityType;
+	}
+
 	public String getExpireDate() {
 		return expireDate;
 	}
@@ -110,13 +130,13 @@ public class KrxItem extends BaseStructure {
 		this.openPrice = openPrice;
 	}
 
-	public long getClosePrice() {
-		return closePrice;
-	}
+	//public long getClosePrice() {
+	//	return closePrice;
+	//}
 
-	public void setClosePrice(long closePrice) {
-		this.closePrice = closePrice;
-	}
+	//public void setClosePrice(long closePrice) {
+	//	this.closePrice = closePrice;
+	//}
 
 	public long getTodayHigh() {
 		return todayHigh;
