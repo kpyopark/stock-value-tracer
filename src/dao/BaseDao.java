@@ -16,6 +16,9 @@ public class BaseDao {
 	        ds.setUsername("root");
 	        ds.setPassword("aaaa1111");
 	        ds.setUrl("jdbc:mysql://127.0.0.1:3306/stock");
+	        ds.setMaxActive(120);
+	        ds.setDefaultAutoCommit(true);
+	        ds.setInitialSize(120);
 		} catch ( Exception e ) { e.printStackTrace(); }
 	}
 	

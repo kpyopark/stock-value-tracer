@@ -152,7 +152,7 @@ public class KrxItemDao extends BaseDao {
 				rtn.setId(rs.getString("STOCK_ID"));
 				rtn.setName(rs.getString("COMPANY_NAME"));
 				rtn.setStandardDate(rs.getString("STANDARD_DATE")) ;
-				rtn.setSecurityType(KrxSecurityType.getKrxSecurityTypeFromInt(rs.getInt("STANDARD_DATE"))) ;
+				rtn.setSecurityType(KrxSecurityType.getKrxSecurityTypeFromInt(rs.getInt("SECURITY_TYPE"))) ;
 				rtn.setStockPrice(rs.getLong("STOCK_PRICE"));
 				rtn.setNetChange(rs.getLong("NET_CHANGE"));
 				rtn.setNetChangeRatio(rs.getFloat("NET_CHANGE_RATIO"));

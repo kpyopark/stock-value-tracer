@@ -177,6 +177,7 @@ public class CompanyAndItemListResourceFromKrx {
 			for ( int line = 0 ; line < tags.length ; line++ ) {
 				KrxItem item = getKrxItem((TagNode)tags[line]);
 				item.setStandardDate(standardDate);
+				item.setSecurityType(securityType);
 				list.add(item);
 			}
 		} catch ( Exception e ) {
