@@ -1,9 +1,11 @@
 package common;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 public class PeriodUtil {
 	public static ArrayList<String> getQuarterPeriodsListFromAnnualPeriodsList(ArrayList<String> annualPeriodList) {
@@ -78,4 +80,31 @@ public class PeriodUtil {
 		}
 		System.out.println(results.containsAll(Arrays.asList(expectedSet)));
 	}
+	
+	public static List<String> getWorkDays(int fromYear, int fromMonth, int fromDay, int toYear, int toMonth, int toDay) {
+		List<String> rtn = new ArrayList<String>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.clear();
+		calendar.set(toYear,  toMonth, toDay);
+		int lastJulianDate = calendar.get(Calendar.DAY_OF_YEAR);
+		calendar.clear();
+		calendar.set(fromYear, fromMonth, fromDay);
+		SimpleDateFormat standardFormat = new SimpleDateFormat("yyyyMMdd");
+		while(true) {
+			if ( calendar.get(Calendar.YEAR) > toYear )
+				break;
+			if ( calendar.get(Calendar.YEAR) == toYear && calendar.get(Calendar.DAY_OF_YEAR) >= lastJulianDate )
+				break;
+			if ( ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ) && ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ) ) {
+				rtn.add(standardFormat.format(calendar.getTime()));
+			}
+			calendar.add(Calendar.DAY_OF_YEAR, 1);
+		}
+		return rtn;
+	}
+	
+	public static List<String> getWorkDaysForOneYear(int year, int month /* from 0 - January */, int day /* from 1 base. */) {
+		return getWorkDays(year, Calendar.JANUARY, 1, year, month, day);
+	}
+
 }

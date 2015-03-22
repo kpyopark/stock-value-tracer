@@ -16,6 +16,7 @@ import java.util.List;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import common.PeriodUtil;
 import common.StringUtil;
 import dao.CompanyExDao;
 import dao.StockDao;
@@ -48,34 +49,36 @@ public class CompanyAndItemListResourceFromKrx {
 		{"isu_cd",""},				// 11
 	};
 	
-	static void setParams(KrxSecurityType securityType, String standardDate, String id) {
+	private static String[][] getParams(KrxSecurityType securityType, String standardDate, String id) {
+		String[][] params = ITEM_LIST_PARAMS.clone();
 		switch (securityType) {
 		case STOCK :
-			ITEM_LIST_PARAMS[8][0] = "secugrp1";
+			params[8][0] = "secugrp1";
 			break;
 		case ETF :
-			ITEM_LIST_PARAMS[8][0] = "secugrp2";
+			params[8][0] = "secugrp2";
 			break;
 		case ELW :
-			ITEM_LIST_PARAMS[8][0] = "secugrp3";
+			params[8][0] = "secugrp3";
 			break;
 		case ETN :
-			ITEM_LIST_PARAMS[8][0] = "secugrp4";
+			params[8][0] = "secugrp4";
 			break;
 		case ETC :
-			ITEM_LIST_PARAMS[8][0] = "secugrp5";
+			params[8][0] = "secugrp5";
 			break;
 		default :
-			ITEM_LIST_PARAMS[8][0] = "secugrp1";
+			params[8][0] = "secugrp1";
 			break;
 		}
-		ITEM_LIST_PARAMS[10][1] = standardDate;
+		params[10][1] = standardDate;
 		if ( id != null ) {
-			ITEM_LIST_PARAMS[11][0] = "isu_cd";
-			ITEM_LIST_PARAMS[11][1] = id;
+			params[11][0] = "isu_cd";
+			params[11][1] = id;
 		} else {
-			ITEM_LIST_PARAMS[11][0] = "temp";
+			params[11][0] = "temp";
 		}
+		return params;
 	}
 	
 	static private enum ColumnList {
@@ -100,7 +103,7 @@ public class CompanyAndItemListResourceFromKrx {
 		return (TagNode)org;
 	}	
 	
-	private static KrxItem getKrxItem(TagNode item) {
+	private static KrxItem getKrxItem(TagNode item) throws Exception {
 		KrxItem oneItem = new KrxItem();
 		try {
 			TagNode[] children = item.getChildTags();
@@ -123,6 +126,7 @@ public class CompanyAndItemListResourceFromKrx {
 		} catch ( Exception e ) {
 			e.printStackTrace();
 			System.out.println("There is invalid items:" + oneItem.getId() + ":" + oneItem.getName() );
+			throw e;
 		}
 		return oneItem;
 	}
@@ -133,14 +137,14 @@ public class CompanyAndItemListResourceFromKrx {
 		OutputStream os = null;
 		BufferedReader br = null;
 		try {
-			setParams(securityType, standardDate, id);
+			String[][] params = getParams(securityType, standardDate, id);
 			conn = (HttpURLConnection)new URL(ITEM_LIST_URL).openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
 			StringBuffer postParameter = new StringBuffer();
-			for( int paramCount = 0 ; paramCount < ITEM_LIST_PARAMS.length ; paramCount++ ) {
-				postParameter.append("&").append(ITEM_LIST_PARAMS[paramCount][0]).append("=").append(ITEM_LIST_PARAMS[paramCount][1]);
+			for( int paramCount = 0 ; paramCount < params.length ; paramCount++ ) {
+				postParameter.append("&").append(params[paramCount][0]).append("=").append(params[paramCount][1]);
 			}
 			os = conn.getOutputStream();
 			os.write(postParameter.substring(1).getBytes());
@@ -181,6 +185,7 @@ public class CompanyAndItemListResourceFromKrx {
 				list.add(item);
 			}
 		} catch ( Exception e ) {
+			System.out.println("Security Type:" + securityType + ": Date :" + standardDate + ": ID :" + id);
 			throw e;
 		}
 		return list;
@@ -204,14 +209,14 @@ public class CompanyAndItemListResourceFromKrx {
 		HttpURLConnection conn = null;
 		OutputStream os = null;
 		try {
-			setParams(KrxSecurityType.STOCK, workDay, "A005930" /* Samsung Electronics */);
+			String[][] params = getParams(KrxSecurityType.STOCK, workDay, "A005930" /* Samsung Electronics */);
 			conn = (HttpURLConnection)new URL(ITEM_LIST_URL).openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoInput(true);
 			conn.setDoOutput(true);
 			StringBuffer postParameter = new StringBuffer();
-			for( int paramCount = 0 ; paramCount < ITEM_LIST_PARAMS.length ; paramCount++ ) {
-				postParameter.append("&").append(ITEM_LIST_PARAMS[paramCount][0]).append("=").append(ITEM_LIST_PARAMS[paramCount][1]);
+			for( int paramCount = 0 ; paramCount < params.length ; paramCount++ ) {
+				postParameter.append("&").append(params[paramCount][0]).append("=").append(params[paramCount][1]);
 			}
 			os = conn.getOutputStream();
 			os.write(postParameter.substring(1).getBytes());
@@ -225,6 +230,20 @@ public class CompanyAndItemListResourceFromKrx {
 			if ( conn != null ) try { conn.disconnect(); } catch ( Exception e1 ) {e1.printStackTrace();}
 		}
 		return contains;
+	}
+	
+	public static void main(String[] args) {
+		CompanyAndItemListResourceFromKrx webResource = new CompanyAndItemListResourceFromKrx();
+		try {
+			List<String> testDates = PeriodUtil.getWorkDaysForOneYear(2011,2, 8);
+			for ( String standardDate : testDates ) {
+				System.out.println("Test Date:" + standardDate);
+				ArrayList<KrxItem> getItemList = webResource.getItemList(KrxSecurityType.STOCK, standardDate, null);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

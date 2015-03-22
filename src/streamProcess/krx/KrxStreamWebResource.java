@@ -27,7 +27,7 @@ public class KrxStreamWebResource {
 	ArrayBlockingQueue<KrxWebResourceTask> webResourceTask = null;
 	ArrayBlockingQueue<KrxItem> krxItemQueue = null;
 	
-	static int MAX_WEBRESOURCE = 20;
+	static int MAX_WEBRESOURCE = 30;
 	static int MAX_QUEUE_SIZE = 30;
 	boolean needExit = false;
 	

@@ -21,6 +21,7 @@ import post.Stock;
 import robot.DataUpdator;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
+import common.PeriodUtil;
 import common.StringUtil;
 import dao.CompanyExDao;
 import dao.KrxItemDao;
@@ -42,10 +43,10 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
 		List<String> workDays = new ArrayList<String>();
 		for( int year = 2002 ; year < 2014 ; year++ ) {
-			workDays.addAll(getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
+			workDays.addAll(PeriodUtil.getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
 		}
 		Calendar calendar = Calendar.getInstance();
-		workDays.addAll(getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
 		for( int dayCnt = 0 ; dayCnt < workDays.size(); dayCnt++ ) {
 			String standardDate = workDays.get(dayCnt);
 			System.out.println("Start for the date - " + standardDate + " -");
@@ -76,9 +77,9 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		List<String> workDays = new ArrayList<String>();
 		Calendar calendar = Calendar.getInstance();
 		if ( year == Calendar.getInstance().get(Calendar.YEAR) ) {
-			workDays.addAll(getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
+			workDays.addAll(PeriodUtil.getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
 		} else {
-			workDays.addAll(getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
+			workDays.addAll(PeriodUtil.getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
 		}
 		insertCompanyCodeListAndStockValueForPeriods(workDays);
 	}
@@ -110,32 +111,6 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 		inserter.stopStream();
 		webResource.stopStream();
-	}
-
-	public static List<String> getWorkDays(int fromYear, int fromMonth, int fromDay, int toYear, int toMonth, int toDay) {
-		List<String> rtn = new ArrayList<String>();
-		Calendar calendar = Calendar.getInstance();
-		calendar.clear();
-		calendar.set(toYear,  toMonth, toDay);
-		int lastJulianDate = calendar.get(Calendar.DAY_OF_YEAR);
-		calendar.clear();
-		calendar.set(fromYear, fromMonth, fromDay);
-		SimpleDateFormat standardFormat = new SimpleDateFormat("yyyyMMdd");
-		while(true) {
-			if ( calendar.get(Calendar.YEAR) > toYear )
-				break;
-			if ( calendar.get(Calendar.YEAR) == toYear && calendar.get(Calendar.DAY_OF_YEAR) >= lastJulianDate )
-				break;
-			if ( ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ) && ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ) ) {
-				rtn.add(standardFormat.format(calendar.getTime()));
-			}
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-		}
-		return rtn;
-	}
-	
-	public static List<String> getWorkDaysForOneYear(int year, int month /* from 0 - January */, int day /* from 1 base. */) {
-		return getWorkDays(year, Calendar.JANUARY, 1, year, month, day);
 	}
 
 	private static Stock getStockFromKrxItem(KrxItem krxStockInfo, CompanyEx company, String standardDate, String standardTime) {
@@ -256,7 +231,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			toYear = calendar.get(Calendar.YEAR);
 			toMonth = calendar.get(Calendar.MONTH);
 			toDay = calendar.get(Calendar.DAY_OF_MONTH);
-			List<String> workDays = getWorkDays(fromYear, fromMonth, fromDay,
+			List<String> workDays = PeriodUtil.getWorkDays(fromYear, fromMonth, fromDay,
 					toYear, toMonth, toDay);
 			insertCompanyCodeListAndStockValueForPeriods(workDays);
 			insertCompanyExpirationFromKrxItem();
@@ -266,19 +241,19 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 	}
 	
-	public void updateKrxItemsFrom1996() {
+	public void updateKrxItemsFromYear(int year) {
 		try {
 			int fromYear, fromMonth, fromDay, toYear, toMonth, toDay;
 			Calendar calendar = Calendar.getInstance();
-			fromYear = 1996;
+			fromYear = year;
 			fromMonth = Calendar.JANUARY;
-			fromDay = 1;
+			fromDay = 0;
 			calendar.clear();
 			calendar.setTimeInMillis(System.currentTimeMillis());
 			toYear = calendar.get(Calendar.YEAR);
 			toMonth = calendar.get(Calendar.MONTH);
 			toDay = calendar.get(Calendar.DAY_OF_MONTH);
-			List<String> workDays = getWorkDays(fromYear, fromMonth, fromDay,
+			List<String> workDays = PeriodUtil.getWorkDays(fromYear, fromMonth, fromDay,
 					toYear, toMonth, toDay);
 			insertKrxItemsForPeriods(workDays);
 		} catch ( Exception e ) {
@@ -317,7 +292,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateKrxItemsFrom1996();
+		updator.updateKrxItemsFromYear(2011);
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	
