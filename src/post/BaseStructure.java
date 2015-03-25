@@ -1,10 +1,11 @@
 package post;
 
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Observable;
 
-public class BaseStructure extends Observable {
+public class BaseStructure extends Observable implements Serializable {
 	
 	public BaseStructure() {
 		
