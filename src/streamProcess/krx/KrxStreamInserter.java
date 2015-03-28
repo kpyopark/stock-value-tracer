@@ -1,5 +1,8 @@
 package streamProcess.krx;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -76,17 +79,46 @@ public class KrxStreamInserter {
 	class KrxItemInserter implements Runnable {
 		KrxItemDao dao = null;
 		BlockingQueue<KrxItem> source = null;
+		/*static*/ final int MAX_BULK_SIZE = 200;
+		
 		public KrxItemInserter(BlockingQueue<KrxItem> source_) {
 			source = source_;
 			dao = new KrxItemDao();
 		}
+		private void tryToBulkInsert(List<KrxItem> krxItems) {
+			try {
+				dao.insert(krxItems);
+			} catch ( SQLException sqle ) {
+				List<KrxItem> oneItemList = new ArrayList<KrxItem>();
+				for(KrxItem krxItem:krxItems) {
+					try {
+						oneItemList.clear();
+						oneItemList.add(krxItem);
+						dao.insert(oneItemList);
+					} catch (SQLException sqle2) {
+						sqle2.printStackTrace();
+					}
+				}
+			} finally {
+				krxItems.clear();
+			}
+		}
 		public void run() {
+			List<KrxItem> bulk = new ArrayList<KrxItem>();
+			int size = 0;
 			while(!needExit) {
 				try {
 					KrxItem newItem = source.poll(1, TimeUnit.SECONDS);
 					if ( newItem != null ) {
-						//System.out.println("insert :" + newItem.getId() + ":" + newItem.getStandardDate() );
-						dao.insert(newItem);
+						bulk.add(newItem);
+						size++;
+						if ( size > MAX_BULK_SIZE ) {
+							tryToBulkInsert(bulk);
+							size = 0;
+						}
+					} else {
+						tryToBulkInsert(bulk);
+						size = 0;
 					}
 				} catch ( Exception e ) { e.printStackTrace();}
 			}

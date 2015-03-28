@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import post.KrxItem;
 import post.KrxSecurityType;
@@ -37,14 +38,15 @@ CREATE TABLE `tb_company_stock_daily` (
  *
  */
 public class KrxItemDao extends BaseDao {
-	
-	public boolean insert(KrxItem krxItem) throws SQLException {
+
+	public boolean insert(List<KrxItem> krxItems) throws SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		boolean rtn = false;
 		int inxCnt = 1;
 		try {
 			conn = getConnection();
+			conn.setAutoCommit(false);
 			ps = conn.prepareStatement(
 					"INSERT INTO `stock`.`tb_company_stock_daily` \n" +
 							"(`STOCK_ID`,                                 \n" +
@@ -87,30 +89,35 @@ public class KrxItemDao extends BaseDao {
 							"? -- <{MARKET_CAPITAL: }>                    \n" +
 							")                                            \n"
 					);
-			
-			ps.setString(inxCnt++, krxItem.getId() );
-			ps.setString(inxCnt++, krxItem.getName() );
-			ps.setString(inxCnt++, krxItem.getStandardDate() );
-			ps.setString(inxCnt++, krxItem.getSecurityType().getType()+"" );
-			ps.setLong(inxCnt++, krxItem.getStockPrice());
-			ps.setLong(inxCnt++, krxItem.getNetChange());
-			ps.setFloat(inxCnt++, krxItem.getNetChangeRatio());
-			ps.setLong(inxCnt++, krxItem.getAsk());
-			ps.setLong(inxCnt++, krxItem.getBid());
-			ps.setLong(inxCnt++, krxItem.getTodayHigh());
-			ps.setLong(inxCnt++, krxItem.getTodayLow());
-			ps.setLong(inxCnt++, krxItem.getVolume());
-			ps.setLong(inxCnt++, krxItem.getVolumnAmount());
-			ps.setLong(inxCnt++, krxItem.getOpenPrice());
-			ps.setFloat(inxCnt++, krxItem.getParValue());
-			ps.setString(inxCnt++, krxItem.getCurrency());
-			ps.setLong(inxCnt++, krxItem.getOrdinaryShare());
-			ps.setLong(inxCnt++, krxItem.getMaketCapitalization());
-			
-			rtn = ps.execute();
+			for ( KrxItem krxItem : krxItems) {
+				inxCnt = 1;
+				ps.setString(inxCnt++, krxItem.getId() );
+				ps.setString(inxCnt++, krxItem.getName() );
+				ps.setString(inxCnt++, krxItem.getStandardDate() );
+				ps.setString(inxCnt++, krxItem.getSecurityType().getType()+"" );
+				ps.setLong(inxCnt++, krxItem.getStockPrice());
+				ps.setLong(inxCnt++, krxItem.getNetChange());
+				ps.setFloat(inxCnt++, krxItem.getNetChangeRatio());
+				ps.setLong(inxCnt++, krxItem.getAsk());
+				ps.setLong(inxCnt++, krxItem.getBid());
+				ps.setLong(inxCnt++, krxItem.getTodayHigh());
+				ps.setLong(inxCnt++, krxItem.getTodayLow());
+				ps.setLong(inxCnt++, krxItem.getVolume());
+				ps.setLong(inxCnt++, krxItem.getVolumnAmount());
+				ps.setLong(inxCnt++, krxItem.getOpenPrice());
+				ps.setFloat(inxCnt++, krxItem.getParValue());
+				ps.setString(inxCnt++, krxItem.getCurrency());
+				ps.setLong(inxCnt++, krxItem.getOrdinaryShare());
+				ps.setLong(inxCnt++, krxItem.getMaketCapitalization());
+				
+				rtn = ps.execute();
+			}
+			conn.commit();
 		} catch ( Exception e ) {
 			e.printStackTrace();
+			conn.rollback();
 		} finally {
+			conn.setAutoCommit(true);
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 		}

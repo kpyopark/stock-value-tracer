@@ -175,6 +175,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
 			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
 				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
+				ArrayList<KrxItem> insertList = new ArrayList<KrxItem>();
 				for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
 					// CompanyEx
 					CompanyEx companyFromKrx = krxItemList.get(cnt).getCompany();
@@ -200,7 +201,9 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 					if ( krxDao.select(krxItemList.get(cnt), standardDate) != null ) {
 						// skip
 					} else {
-						krxDao.insert(krxItemList.get(cnt));
+						insertList.clear();
+						insertList.add(krxItemList.get(cnt));
+						krxDao.insert(insertList);
 					}
 				}
 			}
@@ -333,7 +336,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateKrxItemsFromYear(1995);
+		updator.updateKrxItemsFromYear(2006);
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

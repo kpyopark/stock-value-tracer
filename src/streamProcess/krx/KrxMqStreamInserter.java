@@ -1,7 +1,10 @@
 package streamProcess.krx;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -96,6 +99,7 @@ public class KrxMqStreamInserter {
 		KrxItemDao dao = null;
 		Connection mqCon = null;
 		Channel insertQueueChannel = null;
+		/* static */ final int MAX_BULK_SIZE = 100;
 		public KrxItemInserter() throws IOException {
 			dao = new KrxItemDao();
 			createQueues();
@@ -114,6 +118,25 @@ public class KrxMqStreamInserter {
 			try { mqCon.close(); } catch (IOException ioe) {}
 		}
 
+		private void tryToBulkInsert(List<KrxItem> krxItems) {
+			try {
+				dao.insert(krxItems);
+			} catch ( SQLException sqle ) {
+				List<KrxItem> oneItemList = new ArrayList<KrxItem>();
+				for(KrxItem krxItem:krxItems) {
+					try {
+						oneItemList.clear();
+						oneItemList.add(krxItem);
+						dao.insert(oneItemList);
+					} catch (SQLException sqle2) {
+						sqle2.printStackTrace();
+					}
+				}
+			} finally {
+				krxItems.clear();
+			}
+		}
+
 		public void run() {
 			Kryo serializer = new Kryo();
 			serializer.register(KrxItem.class);
@@ -125,14 +148,24 @@ public class KrxMqStreamInserter {
 				ioe.printStackTrace();
 				needExit = true;
 			}
+			List<KrxItem> bulk = new ArrayList<KrxItem>();
+			int size = 0;
 			while(!needExit) {
 				try {
-					QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-					KrxItem newItem = QueueUtil.getInstanceFromBytes(serializer, delivery.getBody(), KrxItem.class);
-					if ( newItem != null ) {
-						//System.out.println("insert :" + newItem.getId() + ":" + newItem.getStandardDate() );
-						dao.insert(newItem);
+					QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000);
+					if ( delivery != null && delivery.getBody() != null ) {
+						KrxItem newItem = QueueUtil.getInstanceFromBytes(serializer, delivery.getBody(), KrxItem.class);
+						bulk.add(newItem);
+						size++;
+						if ( size > MAX_BULK_SIZE ) {
+							tryToBulkInsert(bulk);
+							size = 0;
+						}
+					} else {
+						tryToBulkInsert(bulk);
+						size = 0;
 					}
+
 				} catch ( Exception e ) { e.printStackTrace();}
 			}
 			closeQueue();
