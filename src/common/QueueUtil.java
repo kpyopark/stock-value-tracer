@@ -6,8 +6,12 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class QueueUtil {
 	
+	public static String QUEUE_WEBRESOURCE = "WEBRESOURCE";
 	public static String QUEUE_SELECTKRX = "SELECTKRX";
 	public static String QUEUE_INSERTKRX = "INSERTKRX";
+	
+	public static int QUEUE_SELECTKRX_MAX_DEPTH = 3000;
+	public static int QUEUE_INSERTKRX_MAX_DEPTH = 5000;
 
 	public static byte[] getBytesFromObject(Kryo kryo, byte[] buffer, int buffSize, Object object) {
 		Output output = new Output(buffer, buffSize);

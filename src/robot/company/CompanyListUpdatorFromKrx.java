@@ -4,6 +4,7 @@ import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
 import internetResource.companyItem.CompanyExpireResourceFromKrx;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,9 +20,15 @@ import post.KrxItem;
 import post.KrxSecurityType;
 import post.Stock;
 import robot.DataUpdator;
+import streamProcess.StreamEvent;
+import streamProcess.StreamEventListener;
+import streamProcess.StreamWatcher;
+import streamProcess.krx.KrxMqStreamInserter;
+import streamProcess.krx.KrxMqStreamWebResource;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
 import common.PeriodUtil;
+import common.QueueUtil;
 import common.StringUtil;
 import dao.CompanyExDao;
 import dao.KrxItemDao;
@@ -111,6 +118,40 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 		inserter.stopStream();
 		webResource.stopStream();
+	}
+	
+	public void insertKrxItemsMqForPeriods(List<String> workDays) throws IOException {
+		final KrxMqStreamWebResource webResource = new KrxMqStreamWebResource();
+		final KrxMqStreamInserter inserter = new KrxMqStreamInserter();
+		webResource.startStream();
+		inserter.startStream();
+		try {
+			for( int dayCnt = 0 ; dayCnt < workDays.size(); dayCnt++ ) {
+				String standardDate = workDays.get(dayCnt);
+				System.out.println("Start for the date - " + standardDate + " - ");
+				for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
+					webResource.addWebResourceTask(standardDate, securityType);
+				}
+			}
+		} catch ( InterruptedException ie ) {
+			ie.printStackTrace();
+		}
+		StreamWatcher.getStreamWatcher().addStreamEventListener(QueueUtil.QUEUE_WEBRESOURCE, new StreamEventListener() {
+			@Override
+			public void eventHandler(StreamEvent event) {
+				if ( event.getType() == StreamEvent.EVENT_QUEUE_EMPTY )
+					webResource.stopStream();
+			}
+		});
+		StreamWatcher.getStreamWatcher().addStreamEventListener(QueueUtil.QUEUE_INSERTKRX, new StreamEventListener() {
+			@Override
+			public void eventHandler(StreamEvent event) {
+				if ( event.getType() == StreamEvent.EVENT_QUEUE_EMPTY ) {
+					inserter.stopStream();
+				}
+			}
+			
+		});
 	}
 
 	private static Stock getStockFromKrxItem(KrxItem krxStockInfo, CompanyEx company, String standardDate, String standardTime) {
@@ -255,7 +296,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			toDay = calendar.get(Calendar.DAY_OF_MONTH);
 			List<String> workDays = PeriodUtil.getWorkDays(fromYear, fromMonth, fromDay,
 					toYear, toMonth, toDay);
-			insertKrxItemsForPeriods(workDays);
+			insertKrxItemsMqForPeriods(workDays);
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -292,7 +333,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateKrxItemsFromYear(2011);
+		updator.updateKrxItemsFromYear(1995);
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

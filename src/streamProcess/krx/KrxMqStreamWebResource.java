@@ -36,52 +36,50 @@ public class KrxMqStreamWebResource {
 	}
 	
 	ArrayBlockingQueue<KrxWebResourceTask> webResourceTask = null;
-	Connection mqCon = null;
-	Channel selectQueueChannel = null;
 	
-	static int MAX_WEBRESOURCE = 30;
-	static int MAX_QUEUE_SIZE = 30;
+	static int MAX_WEBRESOURCE = 10;
+	static int MAX_QUEUE_SIZE = 15;
 	boolean needExit = false;
 	
 	ExecutorService webResourceService = null;
 	
 	public KrxMqStreamWebResource() throws IOException {
 		webResourceTask = new ArrayBlockingQueue<KrxWebResourceTask>(MAX_QUEUE_SIZE);
-		createDestinationQueue();
 	}
 
-	public void createDestinationQueue() throws IOException {
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
-		mqCon = factory.newConnection();
-		selectQueueChannel = mqCon.createChannel();
-		Map<String, Object> args = new HashMap<String, Object>();
-		args.put("x-max-length", 5000);
-		selectQueueChannel.queueDeclare(QueueUtil.QUEUE_SELECTKRX, false, false, false, args);
-		selectQueueChannel.queuePurge(QueueUtil.QUEUE_SELECTKRX);
-	}
-	
-	public void closeQueue() throws IOException {
-		try {
-			if ( selectQueueChannel != null ) 
-				selectQueueChannel.close();
-		} finally {
-			if ( mqCon != null )
-				mqCon.close();
-		}
-	}
-	
 	public void addWebResourceTask(String standardDate, KrxSecurityType type) throws InterruptedException {
 		webResourceTask.put(new KrxWebResourceTask(standardDate, type));
 	}
 	
 	class KrxItemCrawlerService implements Runnable {
 		BlockingQueue<KrxWebResourceTask> source = null;
-		Channel dst = null;
+		Connection mqCon = null;
+		Channel selectQueueChannel = null;
 		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();		
-		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_, Channel dst_) {
+		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_) throws IOException {
 			source = source_;
-			dst = dst_;
+			createDestinationQueue();
+		}
+
+		public void createDestinationQueue() throws IOException {
+			ConnectionFactory factory = new ConnectionFactory();
+			factory.setHost("localhost");
+			mqCon = factory.newConnection();
+			selectQueueChannel = mqCon.createChannel();
+			Map<String, Object> args = new HashMap<String, Object>();
+			args.put("x-max-length", QueueUtil.QUEUE_SELECTKRX_MAX_DEPTH);
+			//selectQueueChannel.queueDelete(QueueUtil.QUEUE_SELECTKRX);
+			selectQueueChannel.queueDeclare(QueueUtil.QUEUE_SELECTKRX, false, false, false, args);
+			selectQueueChannel.queuePurge(QueueUtil.QUEUE_SELECTKRX);
+		}
+		public void closeQueue() throws IOException {
+			try {
+				if ( selectQueueChannel != null ) 
+					selectQueueChannel.close();
+			} finally {
+				if ( mqCon != null )
+					mqCon.close();
+			}
 		}
 		
 		public void run() {
@@ -95,24 +93,33 @@ public class KrxMqStreamWebResource {
 						//System.out.println("Web Resource :" + newItem.standarddate + ":" + newItem.type.getType());
 						ArrayList<KrxItem> krxItemList = ir.getItemList(newItem.type, newItem.standarddate, null);
 						for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
-							dst.basicPublish("", QueueUtil.QUEUE_SELECTKRX, null, QueueUtil.getBytesFromObject(serializer, bufferForSerialization, 4096, krxItemList.get(cnt)));
+							selectQueueChannel.basicPublish("", QueueUtil.QUEUE_SELECTKRX, null, QueueUtil.getBytesFromObject(serializer, bufferForSerialization, 4096, krxItemList.get(cnt)));
 						}
 					}
-				} catch ( Exception e ) {}
+				} catch ( Exception e ) { e.printStackTrace(); }
 			}
+			try {
+				closeQueue();
+			} catch ( Exception e ) { e.printStackTrace(); }
 		}
 		
 	}
 
 	public void startStream() {
 		needExit = false;
-		webResourceService = Executors.newFixedThreadPool(MAX_WEBRESOURCE);
-		for ( int cnt = 0; cnt < MAX_WEBRESOURCE ; cnt++ ) {
-			webResourceService.execute(new KrxItemCrawlerService(webResourceTask, selectQueueChannel));
+		try {
+			webResourceService = Executors.newFixedThreadPool(MAX_WEBRESOURCE);
+			for ( int cnt = 0; cnt < MAX_WEBRESOURCE ; cnt++ ) {
+				webResourceService.execute(new KrxItemCrawlerService(webResourceTask));
+			}
+			StreamWatcher watcher = StreamWatcher.getStreamWatcher();
+			watcher.addWatchTarget(QueueUtil.QUEUE_WEBRESOURCE, webResourceTask);
+			watcher.addWatchTarget(QueueUtil.QUEUE_SELECTKRX);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			needExit = true;
+			stopStream();
 		}
-		StreamWatcher watcher = StreamWatcher.getStreamWatcher();
-		watcher.addWatchTarget("webResource", webResourceTask);
-		watcher.addWatchTarget(QueueUtil.QUEUE_SELECTKRX);
 	}
 	
 	public void stopStream() {
@@ -122,7 +129,7 @@ public class KrxMqStreamWebResource {
 			webResourceService.awaitTermination(2000, TimeUnit.MILLISECONDS);
 		} catch ( Exception e ) {}
 		StreamWatcher watcher = StreamWatcher.getStreamWatcher();
-		watcher.removeWatchTarget("webResource");
+		watcher.removeWatchTarget(QueueUtil.QUEUE_WEBRESOURCE);
 		watcher.removeWatchTarget(QueueUtil.QUEUE_SELECTKRX);
 	}
 
