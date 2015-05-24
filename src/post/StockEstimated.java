@@ -3,6 +3,10 @@ package post;
 public class StockEstimated extends BaseStructure {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5537462004157319506L;
+	/**
 	 * 회사정보
 	 */
 	private Company company = null;

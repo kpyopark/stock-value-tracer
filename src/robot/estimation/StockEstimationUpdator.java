@@ -2,15 +2,14 @@ package robot.estimation;
 
 import java.util.ArrayList;
 
-import com.mysql.jdbc.UpdatableResultSet;
-
-import common.PeriodUtil;
-import common.StringUtil;
 import post.Company;
 import post.CompanyEx;
 import post.StockEstimated;
 import robot.DataUpdator;
-import dao.CompanyDao;
+
+import common.PeriodUtil;
+import common.StringUtil;
+
 import dao.CompanyExDao;
 import dao.CompanyStockEstimationDao;
 import estimator.StockValueEstimator;

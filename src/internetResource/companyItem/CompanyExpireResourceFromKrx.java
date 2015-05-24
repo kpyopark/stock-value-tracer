@@ -6,23 +6,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import common.StringUtil;
-import dao.CompanyExDao;
-import dao.StockDao;
-import post.Company;
-import post.CompanyEx;
 import post.KrxItem;
-import post.Stock;
+
+import common.StringUtil;
 
 public class CompanyExpireResourceFromKrx {
 	
@@ -85,7 +77,7 @@ public class CompanyExpireResourceFromKrx {
 		OutputStream os = null;
 		BufferedReader br = null;
 		try {
-			setParams(StringUtil.getLastDayOfQuarter(standardDate, -180), StringUtil.getLastDayOfQuarter(standardDate,0));
+			setParams(StringUtil.getLastDayOfQuarter(standardDate, -4), StringUtil.getLastDayOfQuarter(standardDate,0));
 			conn = (HttpURLConnection)new URL(ITEM_LIST_URL).openConnection();
 			conn.setRequestMethod("POST");
 			conn.setDoInput(true);
@@ -151,7 +143,7 @@ public class CompanyExpireResourceFromKrx {
 	
 	public static void main(String[] args) throws Exception {
 		CompanyExpireResourceFromKrx krx = new CompanyExpireResourceFromKrx();
-		ArrayList<KrxItem> list = krx.getItemList(StringUtil.convertToStandardDate(new java.util.Date()));
+		ArrayList<KrxItem> list = krx.getItemList("20150402");
 		for ( KrxItem item: list) {
 			System.out.println(item);
 		}

@@ -4,6 +4,11 @@ package post;
 public class Stock extends BaseStructure {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6545279609045392980L;
+
+	/**
 	 * «ÿ¥Á ¡÷
 	 */
 	private Company company = null;

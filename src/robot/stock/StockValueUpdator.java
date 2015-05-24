@@ -4,14 +4,13 @@ import internetResource.stock.StockResource;
 
 import java.util.ArrayList;
 
-import common.StringUtil;
 import post.Company;
 import post.CompanyEx;
 import post.Stock;
 import robot.DataUpdator;
 
+import common.StringUtil;
 
-import dao.CompanyDao;
 import dao.CompanyExDao;
 import dao.StockDao;
 

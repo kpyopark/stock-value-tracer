@@ -67,9 +67,9 @@ public class KrxStreamInserter {
 					KrxItem newItem = source.poll(1, TimeUnit.SECONDS);
 					if ( newItem != null ) {
 						//System.out.println("check :" + newItem.getId() + ":" + newItem.getStandardDate() );
-						//if ( dao.select(newItem, newItem.getStandardDate()) == null ) {
+						if ( dao.select(newItem, newItem.getStandardDate()) == null ) {
 							dst.put(newItem);
-						//}
+						}
 					}
 				} catch ( Exception e ) { e.printStackTrace();}
 			}

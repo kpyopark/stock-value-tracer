@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import post.Company;
-import post.CompanyFinancialStatus;
 import post.InstitutionalDamand;
 
 /**

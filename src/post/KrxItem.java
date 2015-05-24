@@ -2,6 +2,11 @@ package post;
 
 public class KrxItem extends BaseStructure {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2892275854624581192L;
+
 	private String id = "";
 	
 	private String name = "";

@@ -11,11 +11,11 @@ import org.apache.http.client.HttpClient;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import common.NotNumericContentException;
-import common.StringUtil;
-
 import post.Company;
 import post.CompanyFinancialStatus;
+
+import common.StringUtil;
+
 import dao.CompanyDao;
 
 public class FinancialReportResourceFromFnguide {
@@ -35,10 +35,10 @@ public class FinancialReportResourceFromFnguide {
 		return (TagNode)org;
 	}
 	
-	static String XPATH_FINANCIAL_STATUS_CATEGORY_CONSOLIDATED = "//*[@id=\"fhTheadD\"]/tr/th";
-	static String XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED = "//*[@id=\"fhTbodyD\"]/tr";
-	static String XPATH_FINANCIAL_STATUS_CATEGORY_STANDALONE = "//*[@id=\"fhTheadB\"]/tr/th";
-	static String XPATH_FINANCIAL_STATUS_ITEM_STANDALONE = "//*[@id=\"fhTbodyB\"]/tr";
+	static String XPATH_FINANCIAL_STATUS_CATEGORY_CONSOLIDATED = "//*[@id=\"highlight_D_A\"]/table/thead/tr[2]/th";
+	static String XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED = "//*[@id=\"highlight_D_A\"]/table/tbody/tr";
+	static String XPATH_FINANCIAL_STATUS_CATEGORY_STANDALONE = "//*[@id=\"highlight_B_A\"]/table/thead/tr[2]/th";
+	static String XPATH_FINANCIAL_STATUS_ITEM_STANDALONE = "//*[@id=\"highlight_B_A\"]/table/tbody/tr";
 	static String XPATH_FINANCIAL_STATUS_ITEM_VALUES(int row) {
 		// in java. index base is 0
 		// but in xpath, index base is 1.
@@ -48,18 +48,18 @@ public class FinancialReportResourceFromFnguide {
 	static String XPATH_FICS_SECTOR = "//*[@id=\"compinfo\"]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[3]/td/table/tbody/tr[2]/td[1]/span[2]";
 	
 	static String[][] GENERAL_REPORT_HEADERS = { 
-		{ "매출액(억원)" ,"보험료수익(억원)", "순영업수익(억원)", "이자수익(억원)", "SALES" }, // "SALES", "" }, 
-		{ "영업이익(억원)","영업손익(억원)", "OPERATION_PROFIT" },
+		{ "매출액" ,"보험료수익", "순영업수익", "이자수익", "영업수익", "SALES" }, // "SALES", "" }, 
+		{ "영업이익","영업손익", "OPERATION_PROFIT" },
 		//{ "영업손익(억원)","OPERATION_PROFIT" }, // FOR ASSUARANCE INDUSTRY
 		//{ "조정영업이익(억원)", "" } ,
-		{ "당기순이익(억원)", "NET_PROFIT" },
+		{ "당기순이익", "NET_PROFIT" },
 		//{"지배주주귀속(억원)", "" },
 		//{"비지배주주귀속(억원)", ""},
-		{"자산총계(억원)", "ASSET_TOTAL" },
-		{"부채총계(억원)" ,"DEBT_TOTAL" },
-		{"자본총계(억원)" ,"CAPITAL_TOTAL" },
-		{"자본금(억원)" ,"CAPITAL" },
-		{"발행주식수(천주)", "GENERAL_STOCK_SIZE" }
+		{"자산총계", "ASSET_TOTAL" },
+		{"부채총계" ,"DEBT_TOTAL" },
+		{"자본총계" ,"CAPITAL_TOTAL" },
+		{"자본금" ,"CAPITAL" },
+		{"발행주식수", "GENERAL_STOCK_SIZE" }
 	};
 	
 	public boolean checkSpecialGeneralFinancialReport(Company company) throws Exception {
@@ -70,7 +70,7 @@ public class FinancialReportResourceFromFnguide {
 		for ( int tempCnt = 0 ; tempCnt < existHeaders.length; tempCnt++ ) existHeaders[tempCnt] = false;
 		try {
 			conn = (HttpURLConnection)new URL(ITEM_ID_URL(company.getId())).openConnection();
-			TagNode financeReport = cleaner.clean(conn.getInputStream(), "euc-kr");
+			TagNode financeReport = cleaner.clean(conn.getInputStream(), "utf-8");
 			Object[] items = financeReport.evaluateXPath(XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED);
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
@@ -115,11 +115,11 @@ public class FinancialReportResourceFromFnguide {
 				return list;
 			}
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			String htmlText = new String(baos.toByteArray(), "euc-kr");
+			String htmlText = new String(baos.toByteArray(), "utf-8");
 
 			boolean isConsolidated = htmlText.indexOf("input[value=\"B\"]") < 0;
 			
-			TagNode financeReport = cleaner.clean(bais, "euc-kr");
+			TagNode financeReport = cleaner.clean(bais, "utf-8");
 			{
 				Object[] ficsInfoObjects = financeReport.evaluateXPath(XPATH_FICS_SECTOR);
 				if ( ficsInfoObjects.length > 0 ) {
@@ -137,82 +137,79 @@ public class FinancialReportResourceFromFnguide {
 			}
 			
 			Object[] standardDates = financeReport.evaluateXPath(isConsolidated ? XPATH_FINANCIAL_STATUS_CATEGORY_CONSOLIDATED : XPATH_FINANCIAL_STATUS_CATEGORY_STANDALONE);
-			for(int position=1; position < standardDates.length; position++) {
-				if ( node(standardDates[position]).getText().toString().indexOf("Annual") >= 0 ||
-						node(standardDates[position]).getText().toString().indexOf("Net Quarter") >= 0 ) {
-					boolean isAnnual = node(standardDates[position]).getText().toString().indexOf("Annual") >= 0;
-					String standardDate = "";
-					if ( isAnnual ) 
-						standardDate = node(standardDates[position]).getText().toString().replace("Annual", "");
-					else
-						standardDate = node(standardDates[position]).getText().toString().replace("Net Quarter", "");
-					boolean isIFRS = standardDate.indexOf("IFRS") >= 0;
-					if ( isIFRS )
-						standardDate = standardDate.substring(0,standardDate.indexOf("IFRS"));
-					else
-						standardDate = standardDate.substring(0,standardDate.indexOf("GAAP"));
-					boolean isPrediction = standardDate.indexOf("(E)") >= 0;
+			for(int position=0; position < standardDates.length; position++) {
+				String standardDate = "";
+				boolean isAnnual = true;
+				if ( position >=0 && position <= 3 ) {
+					// annual statement
+					isAnnual = true;
+				} else if ( position >=4 && position <= 7 ) {
+					// quarter statement
+					isAnnual = false;
+				}
+				standardDate = node(standardDates[position]).getText().toString();
+				boolean isPrediction = standardDate.indexOf("(E)") >= 0;
+				if ( standardDate != null && standardDate.length() > 6 ) {
 					standardDate = standardDate.substring(0,4)+standardDate.substring(5,7)+ "01";
 					standardDate = StringUtil.getLastDayOfMonth(standardDate);
-
 					CompanyFinancialStatus financeStatus = new CompanyFinancialStatus();
 					financeStatus.setCompany(company);
 					financeStatus.setStandardDate(standardDate);
 					financeStatus.setQuarter(!isAnnual);
 					financeStatus.setFixed(!isPrediction);
 					list.add(financeStatus);
-					columns.add(position);
+					columns.add(position+1);
 				}
 			}
 			Object[] items = financeReport.evaluateXPath(isConsolidated ? XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED : XPATH_FINANCIAL_STATUS_ITEM_STANDALONE);
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
 				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
-				if ( header.equals("매출액(억원)") || header.equals("보험료수익(억원)") || header.equals("순영업수익(억원)") || header.equals("이자수익(억원)") || header.equals("영업수익(억원)") ) {
+				if ( header.equals("매출액") || header.equals("보험료수익") || header.equals("순영업수익") || header.equals("이자수익") || header.equals("영업수익") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setSales(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("영업이익(억원)") || header.equals("영업손익(억원)") ) {
+				} else if ( header.equals("영업이익") || header.equals("영업손익") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setOperatingProfit(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("당기순이익(억원)") ) {
+				} else if ( header.equals("당기순이익") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setNetProfit(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("자산총계(억원)") ) {
+				} else if ( header.equals("자산총계") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setAssets(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("부채총계(억원)") ) {
+				} else if ( header.equals("부채총계") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setDebt(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("자본총계(억원)") ) {
+				} else if ( header.equals("자본총계") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setGrossCapital(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("자본금(억원)") ) {
+				} else if ( header.equals("자본금") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setCapital(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("부채비율(%)") ) {
+				} else if ( header.equals("부채비율") ) {
 					//
-				} else if ( header.equals("유보율(%)") ) {
+				} else if ( header.equals("유보율") ) {
 					//
-				} else if ( header.equals("발행주식수(천주)") ) {
+				} else if ( header.equals("발행주식수") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setOrdinarySharesSize(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString())* 1000);
 					}
-				} else if ( header.equals("ROA(%)") ) {
+				} else if ( header.indexOf("ROA") >= 0 ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setRoa(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
-				} else if ( header.equals("ROE(%)") ) {
+				} else if ( header.indexOf("ROE") >= 0 ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setRoe(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
-				} else if ( header.equals("배당수익률(%)") ) {
+				} else if ( header.indexOf("배당수익률") >= 0 ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setDividendRatio(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
@@ -230,7 +227,7 @@ public class FinancialReportResourceFromFnguide {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		testFinancialStatusAPI();
+		testCheckSpecialGeneralFinancialReport();
 	}
 	
 	public static void testCheckSpecialGeneralFinancialReport() {
@@ -253,7 +250,7 @@ public class FinancialReportResourceFromFnguide {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyDao dao = new CompanyDao();
 		try {
-			Company company = dao.select("A078140", null);
+			Company company = dao.select("A042940", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

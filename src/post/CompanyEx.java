@@ -2,6 +2,10 @@ package post;
 
 public class CompanyEx extends Company {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2856177873627462114L;
 	public static int SECURITY_ORDINARY_STOCK = 0;
 	public static int SECURITY_ETF_DEFFERED = 1;
 	public static int SECURITY_ELW_DEFFERED = 2;

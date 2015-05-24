@@ -1,6 +1,10 @@
 package post;
 
 public class CompanyFinancialStatusEstimated extends CompanyFinancialStatus {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4960950488390560930L;
 	private boolean isEstimated = true;
 	/**
 	 * 추산치가 나온 출처. O = 스스로한 계산치, F = fnguide , Y = yahoo , D = datacom

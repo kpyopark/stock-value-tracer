@@ -5,15 +5,12 @@ import internetResource.companyItem.CompanyExpireResourceFromKrx;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import post.CompanyEx;
 import post.KrxItem;
@@ -27,9 +24,11 @@ import streamProcess.krx.KrxMqStreamInserter;
 import streamProcess.krx.KrxMqStreamWebResource;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
+
 import common.PeriodUtil;
 import common.QueueUtil;
 import common.StringUtil;
+
 import dao.CompanyExDao;
 import dao.KrxItemDao;
 import dao.StockDao;
@@ -175,6 +174,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
 			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
 				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
+				System.out.println("- standard date - " + standardDate + " - security type - " + securityType +  " - size - " + krxItemList.size() );
 				ArrayList<KrxItem> insertList = new ArrayList<KrxItem>();
 				for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
 					// CompanyEx
@@ -228,14 +228,14 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			String standardDate = StringUtil.convertToStandardDate(new java.util.Date());
 			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
 			ArrayList<KrxItem> krxItemList = ir.getItemList(standardDate);
-			System.out.println(krxItemList.size());
+			System.out.println(krxItemList);
 			Collections.sort(krxItemList,matcher);
 			for ( CompanyEx company : companiesFromDB ) {
 				KrxItem krxCompany = new KrxItem();
 				krxCompany.setId(company.getId());
 				int position = Collections.binarySearch(krxItemList, krxCompany, matcher);
-				//System.out.println(company.getId() + ":" + company.getName() + ":" + position);
 				if ( position >= 0 ) {
+					System.out.println(company.getId() + ":" + company.getName() + ":" + position);
 					KrxItem matchedItem = krxItemList.get(position);
 					company.setStandardDate(matchedItem.getExpireDate());
 					company.setClosed(true);
@@ -336,7 +336,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateKrxItemsFromYear(2006);
+		updator.updateKrxItemsFromYear(2015);
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

@@ -3,6 +3,11 @@ package post;
 public class CompanyIndex extends BaseStructure {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5428195949612166023L;
+
+	/**
 	 * 영업이익율
 	 */
 	private float operatingProfitRatio = (float)0.0;

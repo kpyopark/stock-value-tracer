@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-import analyzer.StockAnalyzerManager;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
@@ -29,6 +28,7 @@ import post.CompanyFinancialStatusEstimated;
 import post.Stock;
 import post.StockEstimated;
 import robot.IUpdateListener;
+import analyzer.StockAnalyzerManager;
 
 public class TableSample implements IUpdateListener {
 	

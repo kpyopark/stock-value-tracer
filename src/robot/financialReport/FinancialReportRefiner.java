@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
+import post.KrxSecurityType;
 import robot.DataUpdator;
-import common.PeriodUtil;
+
 import common.StringUtil;
+
 import dao.CompanyExDao;
 import dao.CompanyFinancialRefinedStatusDao;
 import dao.CompanyFinancialStatusDao;
@@ -201,16 +202,18 @@ public class FinancialReportRefiner extends DataUpdator {
 		String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
 		companyList = dao.selectAllList(registeredDate);
 		for ( CompanyEx company : companyList ) {
-			ArrayList<CompanyFinancialStatus> financialStatusList = null;
-			financialStatusList = financialDao.getFinancialStatus(company, registeredDate);
-			List<CompanyFinancialStatus> cfsList = retrieveValidQuarterReports(company, financialStatusList);
-			for ( CompanyFinancialStatus cfs : cfsList) {
-				CompanyFinancialStatus oldcfs = cfsRefinedDao.select(company, cfs.getStandardDate(), cfs.isQuarter());
-				if ( oldcfs != null ) {
-					cfsRefinedDao.delete(oldcfs);
-					cfsRefinedDao.insert(cfs);
-				} else {
-					cfsRefinedDao.insert(cfs);
+			if ( company.getSecuritySector() == KrxSecurityType.STOCK.getType() ) {
+				ArrayList<CompanyFinancialStatus> financialStatusList = null;
+				financialStatusList = financialDao.getFinancialStatus(company, registeredDate);
+				List<CompanyFinancialStatus> cfsList = retrieveValidQuarterReports(company, financialStatusList);
+				for ( CompanyFinancialStatus cfs : cfsList) {
+					CompanyFinancialStatus oldcfs = cfsRefinedDao.select(company, cfs.getStandardDate(), cfs.isQuarter());
+					if ( oldcfs != null ) {
+						cfsRefinedDao.delete(oldcfs);
+						cfsRefinedDao.insert(cfs);
+					} else {
+						cfsRefinedDao.insert(cfs);
+					}
 				}
 			}
 		}

@@ -6,25 +6,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import common.PeriodUtil;
-import common.StringUtil;
-import dao.CompanyExDao;
-import dao.StockDao;
-import post.Company;
-import post.CompanyEx;
 import post.KrxItem;
 import post.KrxSecurityType;
-import post.Stock;
+
+import common.PeriodUtil;
+import common.StringUtil;
 
 public class CompanyAndItemListResourceFromKrx {
 	
@@ -235,10 +228,11 @@ public class CompanyAndItemListResourceFromKrx {
 	public static void main(String[] args) {
 		CompanyAndItemListResourceFromKrx webResource = new CompanyAndItemListResourceFromKrx();
 		try {
-			List<String> testDates = PeriodUtil.getWorkDaysForOneYear(2011,2, 8);
+			List<String> testDates = PeriodUtil.getWorkDaysForOneYear(2015,4, 1);
 			for ( String standardDate : testDates ) {
 				System.out.println("Test Date:" + standardDate);
-				ArrayList<KrxItem> getItemList = webResource.getItemList(KrxSecurityType.STOCK, standardDate, null);
+				ArrayList<KrxItem> itemList = webResource.getItemList(KrxSecurityType.STOCK, standardDate, null);
+				System.out.println("Item List Size:" + itemList.size());
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();

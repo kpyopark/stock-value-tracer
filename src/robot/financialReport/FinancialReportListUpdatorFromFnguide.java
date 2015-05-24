@@ -11,12 +11,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import common.StringUtil;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import robot.DataUpdator;
 
+import common.StringUtil;
 
 import dao.CompanyDao;
 import dao.CompanyExDao;

@@ -3,6 +3,11 @@ package post;
 public class StockRank extends BaseStructure {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5067583453728158614L;
+
+	/**
 	 * 주가 대상 회사 
 	 */
 	private Company company = null;

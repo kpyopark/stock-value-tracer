@@ -121,7 +121,7 @@ public class StringUtil {
 			return 0;
 		content = content.trim();
 		try {
-			rtn = Float.parseFloat(content.replaceAll("%", "").replaceAll(",",""));
+			rtn = Float.parseFloat(content.replaceAll("%", "").replaceAll(",","").replaceAll("#######",""));
 		} catch ( Exception e ) {
 			e.printStackTrace();
 			System.out.println("Not Numeric Content:" + e.getMessage() + ".but skipped.");

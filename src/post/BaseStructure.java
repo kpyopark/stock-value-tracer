@@ -7,6 +7,11 @@ import java.util.Observable;
 
 public class BaseStructure extends Observable implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1913388697739296789L;
+
 	public BaseStructure() {
 		
 	}

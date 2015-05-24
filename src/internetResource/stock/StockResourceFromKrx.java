@@ -54,7 +54,6 @@ public class StockResourceFromKrx {
 	private String getSecretKey() {
 		String secretKey = "";
 		HttpURLConnection conn = null;
-		OutputStream os = null;
 		BufferedReader br = null;
 		TagNode secKeyXML = null;
 		try {

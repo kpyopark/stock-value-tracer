@@ -2,6 +2,11 @@ package post;
 
 public class Company extends BaseStructure {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -126697417460984305L;
+
 	public String getFicsSector() {
 		return ficsSector;
 	}

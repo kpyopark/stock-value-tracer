@@ -2,6 +2,10 @@ package post;
 
 public class StatementOfFinancialPosition extends BaseStructure {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6961386931449967473L;
 	private Company company;
 	private String standardDate;
 	private boolean isAnnual;

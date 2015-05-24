@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import post.Company;
-import post.CompanyEx;
 
 /**
 <pre>

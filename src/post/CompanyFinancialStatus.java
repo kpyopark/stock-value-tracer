@@ -3,6 +3,10 @@ package post;
 public class CompanyFinancialStatus extends BaseStructure {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1397366767529694042L;
+	/**
 	 * 회사정보
 	 */
 	private Company company = null;

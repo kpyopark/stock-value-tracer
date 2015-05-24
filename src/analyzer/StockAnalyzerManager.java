@@ -4,18 +4,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import common.StringUtil;
 import post.Company;
 import post.CompanyEx;
-import robot.company.CompanyListUpdatorFromKrx;
+import post.KrxSecurityType;
 import robot.IUpdateListener;
+import robot.company.CompanyListUpdatorFromKrx;
 import robot.estimation.AnnualEstimationUpdator;
 import robot.estimation.StockEstimationUpdator;
 import robot.financialReport.FinancialReportListUpdatorFromFnguide;
 import robot.financialReport.FinancialReportRefiner;
 import robot.listenter.ExamUpdateListener;
 import robot.stock.StockValueUpdator;
-import dao.CompanyDao;
+
+import common.StringUtil;
+
 import dao.CompanyExDao;
 
 class ThreadPool {
@@ -132,30 +134,31 @@ public class StockAnalyzerManager {
 			updator.addUpdateListener(listener);
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
 				final CompanyEx company = companyList.get(cnt);
-				threadPool.run(new Runnable() {
-					public void run() {
-						try {
-							CompanyEx orgCompany = new CompanyEx();
-							orgCompany.copyStructure(company);
-							if (orgCompany.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK) {
-								System.out.println("Ordinary Stock:" + company);
-								updator.updateFinancialStatus(company);
-								if ( ( orgCompany.isClosed() != company.isClosed() ) ||
-										( orgCompany.getFicsSector() != null && orgCompany.getFicsSector().equals(company.getFicsSector() ) ) ||
-										( orgCompany.getFicsIndustryGroup() != null && orgCompany.getFicsIndustryGroup().equals(company.getFicsIndustryGroup() ) ) ||
-										( orgCompany.getFicsIndustry() != null && orgCompany.getFicsIndustry().equals(company.getFicsIndustry() ) ) ||
-										( orgCompany.isClosed() != company.isClosed() ) ) {
-									dao.update(company);
+				if ( company.getSecuritySector() == KrxSecurityType.STOCK.getType() )
+					threadPool.run(new Runnable() {
+						public void run() {
+							try {
+								CompanyEx orgCompany = new CompanyEx();
+								orgCompany.copyStructure(company);
+								if (orgCompany.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK) {
+									System.out.println("Ordinary Stock:" + company);
+									updator.updateFinancialStatus(company);
+									if ( ( orgCompany.isClosed() != company.isClosed() ) ||
+											( orgCompany.getFicsSector() != null && orgCompany.getFicsSector().equals(company.getFicsSector() ) ) ||
+											( orgCompany.getFicsIndustryGroup() != null && orgCompany.getFicsIndustryGroup().equals(company.getFicsIndustryGroup() ) ) ||
+											( orgCompany.getFicsIndustry() != null && orgCompany.getFicsIndustry().equals(company.getFicsIndustry() ) ) ||
+											( orgCompany.isClosed() != company.isClosed() ) ) {
+										dao.update(company);
+									}
+								} else {
+									System.out.println("Deffered Stock:" + company);
 								}
-							} else {
-								System.out.println("Deffered Stock:" + company);
+							} catch ( Exception e ) {
+								e.printStackTrace();
+								failedCompany.add(company);
 							}
-						} catch ( Exception e ) {
-							e.printStackTrace();
-							failedCompany.add(company);
 						}
-					}
-				});
+					});
 			}
 			threadPool.notifyAllThreads();
 			updator.removeUpdateListener(listener);
@@ -186,7 +189,8 @@ public class StockAnalyzerManager {
 			StockValueUpdator updator = new StockValueUpdator();
 			updator.addUpdateListener(listener);
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
-				updator.updateStockInfoFromWeb(companyList.get(cnt));
+				if (companyList.get(cnt).getSecuritySector() == 0 ) 
+					updator.updateStockInfoFromWeb(companyList.get(cnt));
 			}
 			updator.removeUpdateListener(listener);
 		} catch ( Exception e ) {
@@ -225,7 +229,9 @@ public class StockAnalyzerManager {
 			updator.addUpdateListener(listener);
 			String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
-				updator.updateStockEstimated(companyList.get(cnt), registeredDate);
+				if ( companyList.get(cnt).getSecuritySector() == KrxSecurityType.STOCK.getType() ) {
+					updator.updateStockEstimated(companyList.get(cnt), registeredDate);
+				}
 			}
 			updator.removeUpdateListener(listener);
 		} catch ( Exception e ) {

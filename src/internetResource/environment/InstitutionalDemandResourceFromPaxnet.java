@@ -3,24 +3,18 @@ package internetResource.environment;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
-import org.htmlparser.Parser;
+
+import post.Company;
+import post.InstitutionalDamand;
 
 import common.StringUtil;
 import common.TimeWatch;
 
-import post.Company;
-import post.CompanyFinancialStatus;
-import post.InstitutionalDamand;
 import dao.CompanyDao;
 import dao.InstitutionalDemandDao;
 

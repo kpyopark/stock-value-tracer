@@ -289,7 +289,6 @@ public class FinancialStatementResourceFromPaxnet {
 	public static void main(String[] args) {
 		TimeWatch timewatch = new TimeWatch();
 		HttpURLConnection conn = null;
-		HashMap<String, FinancialStatementItemStat>statementItems = new HashMap<String, FinancialStatementItemStat>();
 		ArrayList<Company> badCompanyList = new ArrayList<Company>();
 		try {
 			timewatch.start();

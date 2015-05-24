@@ -7,10 +7,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import common.NotNumericContentException;
-
 import post.Company;
 import post.CompanyFinancialStatus;
+
+import common.NotNumericContentException;
 
 /**
  * @deprecated
@@ -120,7 +120,7 @@ public class CompanyListResourceFromFnguide {
 		} catch ( Exception e ) {
 			throw e;
 		} finally {
-			if ( conn == null ) try { conn.disconnect(); } catch ( Exception e1 ) {e1.printStackTrace();}
+			if ( conn != null ) try { conn.disconnect(); } catch ( Exception e1 ) {e1.printStackTrace();}
 			if ( br != null ) try { br.close(); } catch ( Exception e1 ) {e1.printStackTrace();}
 			//else if ( is != null ) try { is.close(); } catch ( Exception e1 ) {e1.printStackTrace();}
 		}

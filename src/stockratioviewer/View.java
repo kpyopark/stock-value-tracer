@@ -1,8 +1,6 @@
 package stockratioviewer;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -17,9 +15,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import analyzer.StockAnalyzerManager;
-
 import post.Company;
+import analyzer.StockAnalyzerManager;
 
 public class View extends ViewPart {
 	public static final String ID = "StockRatioViewer.view";

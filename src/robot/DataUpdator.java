@@ -2,7 +2,6 @@ package robot;
 
 import java.util.Iterator;
 
-import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;

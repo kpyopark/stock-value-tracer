@@ -2,6 +2,10 @@ package post;
 
 public class InstitutionalDamand extends BaseStructure {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4316470156895192175L;
 	Company company;
 	String standardDate;
 	String standardTime;

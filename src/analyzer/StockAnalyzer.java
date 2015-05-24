@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.apache.commons.collections4.list.TreeList;
@@ -19,11 +18,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import post.Company;
 import post.CompanyEx;
 import post.StockEstimated;
 import post.StockRank;
-import dao.CompanyDao;
 import dao.CompanyExDao;
 import dao.CompanyFinancialStatusDao;
 import dao.CompanyStockEstimationDao;
@@ -110,13 +107,13 @@ public class StockAnalyzer {
 	
 	void printStockListToExcel(int rank) {
 		File newExcel = null;
-		newExcel = new File("F:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xls" );
+		newExcel = new File("E:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xls" );
 		createExcelFile(newExcel, rank);
 	}
 	
 	void printStockListToXML(int rank, String registeredDate) {
 		File newXML = null;
-		newXML = new File("F:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xml" );
+		newXML = new File("E:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xml" );
 		createXMLFile(newXML, rank, registeredDate);
 	}
 
@@ -308,7 +305,7 @@ public class StockAnalyzer {
 	}
 	
 	private void calculateTotRank() {
-		Iterator iter = stockRankList.iterator();
+		Iterator<StockRank> iter = stockRankList.iterator();
 		while( iter.hasNext() ) {
 			StockRank stockRank = (StockRank)iter.next();
 			//stockRank.setTotRank(stockRank.getPerRank()+stockRank.getRoaRank());
@@ -406,13 +403,13 @@ public class StockAnalyzer {
 	};
 	
 	private void printHeader(HSSFRow row) {
-		for ( short column = 0; column < HEADERS.length ; column++ ) {
+		for ( int column = 0; column < HEADERS.length ; column++ ) {
 			row.createCell(column).setCellValue(HEADERS[column]);
 		}
 	}
 	
 	private void printData(HSSFWorkbook wb, HSSFRow row, StockRank rankInfo) {
-		short column = 0;
+		int column = 0;
 	    HSSFCellStyle textStyle = wb.createCellStyle();
 	    HSSFCellStyle perStyle = wb.createCellStyle();
 	    HSSFCellStyle percentStyle = wb.createCellStyle();
