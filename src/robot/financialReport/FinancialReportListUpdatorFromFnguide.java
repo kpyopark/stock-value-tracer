@@ -259,7 +259,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		try {
 			dao = new CompanyDao();
 			Company company = null;
-			company = dao.select("A006390", null);
+			company = dao.select("A005390", null);
 			updator.updateFinancialStatus(company);
 		} catch ( Exception e1 ) { 
 			e1.printStackTrace();

@@ -227,7 +227,8 @@ public class FinancialReportResourceFromFnguide {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		testCheckSpecialGeneralFinancialReport();
+		//testCheckSpecialGeneralFinancialReport();
+		testFinancialStatusAPI();
 	}
 	
 	public static void testCheckSpecialGeneralFinancialReport() {
@@ -250,7 +251,7 @@ public class FinancialReportResourceFromFnguide {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyDao dao = new CompanyDao();
 		try {
-			Company company = dao.select("A042940", null);
+			Company company = dao.select("A005930", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

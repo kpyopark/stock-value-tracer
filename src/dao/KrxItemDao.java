@@ -155,25 +155,7 @@ public class KrxItemDao extends BaseDao {
 			rs = ps.executeQuery();
 			
 			if( rs.next() ) {
-				rtn = new KrxItem();
-				rtn.setId(rs.getString("STOCK_ID"));
-				rtn.setName(rs.getString("COMPANY_NAME"));
-				rtn.setStandardDate(rs.getString("STANDARD_DATE")) ;
-				rtn.setSecurityType(KrxSecurityType.getKrxSecurityTypeFromInt(rs.getInt("SECURITY_TYPE"))) ;
-				rtn.setStockPrice(rs.getLong("STOCK_PRICE"));
-				rtn.setNetChange(rs.getLong("NET_CHANGE"));
-				rtn.setNetChangeRatio(rs.getFloat("NET_CHANGE_RATIO"));
-				rtn.setAsk(rs.getLong("ASK_PRICE"));
-				rtn.setBid(rs.getLong("BID_PRICE"));
-				rtn.setTodayHigh(rs.getLong("TODAY_HIGH"));
-				rtn.setTodayLow(rs.getLong("TODAY_LOW"));
-				rtn.setVolume(rs.getLong("VOLUME"));
-				rtn.setVolumnAmount(rs.getLong("VOLUME_AMOUNT"));
-				rtn.setOpenPrice(rs.getLong("OPEN_PRICE"));
-				rtn.setParValue(rs.getFloat("PAR_VALUE"));
-				rtn.setCurrency(rs.getString("CURRENCY"));
-				rtn.setOrdinaryShare(rs.getLong("ORDINARY_SHARE"));
-				rtn.setMaketCapitalization(rs.getLong("MARKET_CAPITAL"));
+				rtn = getKrxItemFromResultSet(rs);
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -187,7 +169,75 @@ public class KrxItemDao extends BaseDao {
 	
 	private static final String SELECT_STATEMENT_01 = "SELECT * FROM TB_COMPANY_STOCK_DAILY WHERE STOCK_ID = ? ORDER BY STANDARD_DATE DESC";
 	private static final String SELECT_STATEMENT_02 = "SELECT * FROM TB_COMPANY_STOCK_DAILY WHERE STOCK_ID = ? AND STANDARD_DATE = ?";
+	private static final String SELECT_NEARLEST_STATEMENT_01 = "SELECT * " +
+			"FROM TB_COMPANY_STOCK_DAILY " +
+			"WHERE  STOCK_ID = ? " +
+			"       AND STANDARD_DATE = ( SELECT MAX(STANDARD_DATE) FROM TB_COMPANY_STOCK_DAILY WHERE STOCK_ID = ? AND STANDARD_DATE < ? )";
 	
+	
+	public static KrxItem getKrxItemFromResultSet(ResultSet rs) throws SQLException {
+		KrxItem rtn = new KrxItem();
+		rtn.setId(rs.getString("STOCK_ID"));
+		rtn.setName(rs.getString("COMPANY_NAME"));
+		rtn.setStandardDate(rs.getString("STANDARD_DATE")) ;
+		rtn.setSecurityType(KrxSecurityType.getKrxSecurityTypeFromInt(rs.getInt("SECURITY_TYPE"))) ;
+		rtn.setStockPrice(rs.getLong("STOCK_PRICE"));
+		rtn.setNetChange(rs.getLong("NET_CHANGE"));
+		rtn.setNetChangeRatio(rs.getFloat("NET_CHANGE_RATIO"));
+		rtn.setAsk(rs.getLong("ASK_PRICE"));
+		rtn.setBid(rs.getLong("BID_PRICE"));
+		rtn.setTodayHigh(rs.getLong("TODAY_HIGH"));
+		rtn.setTodayLow(rs.getLong("TODAY_LOW"));
+		rtn.setVolume(rs.getLong("VOLUME"));
+		rtn.setVolumnAmount(rs.getLong("VOLUME_AMOUNT"));
+		rtn.setOpenPrice(rs.getLong("OPEN_PRICE"));
+		rtn.setParValue(rs.getFloat("PAR_VALUE"));
+		rtn.setCurrency(rs.getString("CURRENCY"));
+		rtn.setOrdinaryShare(rs.getLong("ORDINARY_SHARE"));
+		rtn.setMaketCapitalization(rs.getLong("MARKET_CAPITAL"));
+		return rtn;
+	}
+	
+	/**
+	 * 
+	 * 주식의 종류, 날짜, 시간에 맞추어 주가정보를 가지고 온다.
+	 * 
+	 * 시간이 없다면, 최종 시간의 정보를
+	 * 날짜가 없다면, 최종 날짜의 정보를 가지고 온다.
+	 * 
+	 * @param id
+	 * @param standardDate
+	 * @param standardTime
+	 * @return
+	 * @throws SQLException
+	 */
+	public KrxItem selectNearlestValue(KrxItem krxItem, String standardDate) throws SQLException {
+		KrxItem rtn = null;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(SELECT_NEARLEST_STATEMENT_01);
+			ps.setString(1, krxItem.getId() );
+			ps.setString(2, krxItem.getId() );
+			ps.setString(3, standardDate);
+				
+			rs = ps.executeQuery();
+			
+			if( rs.next() ) {
+				rtn = getKrxItemFromResultSet(rs);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
+
 	public boolean delete(KrxItem krxItem) {
 		boolean rtn = false;
 		Connection conn = null;
@@ -207,6 +257,25 @@ public class KrxItemDao extends BaseDao {
 		return rtn;
 	}
 	
-	
+	public String getLatestStandardDate() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String rtn = null;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("SELECT MAX(STANDARD_DATE) FROM TB_COMPANY_STOCK_DAILY WHERE STOCK_ID = 'A005930'");
+			rs = ps.executeQuery();
+			if(rs.next())
+				rtn = rs.getString(1);
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch (Exception e1) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
 	
 }

@@ -260,7 +260,7 @@ public class StockAnalyzerManager {
 		manager.startCompanyListUpdator();
 		manager.startCompanyFinancialStatusUpdator();
 		manager.startFinancialReportRefiner();
-		manager.startStockValueUpdator();
+		// manager.startStockValueUpdator(); // --> Above method - startCompanyListUpdate() - has feature to update all stock value. so this API don't need to be called.
 		manager.startAnnualEstimationUpdator();
 		manager.startStockValueEstimationUpdator();
 		manager.startStockAnalyzer();

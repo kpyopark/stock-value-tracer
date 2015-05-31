@@ -24,19 +24,19 @@ public class FinancialReportRefiner extends DataUpdator {
 		ArrayList<String> periods = new ArrayList<String>(matchedAnnualStatus.keySet());
 		Collections.sort(periods);
 		Collections.reverse(periods);
-		String baseDateToFuture = StringUtil.getLastDayOfQuarter(StringUtil.convertToStandardDate(new java.util.Date()), 3);
+		String baseDateToFuture = StringUtil.getLastDayOfQuarter(StringUtil.convertToStandardDate(new java.util.Date()), 4);
 		for(String standardDate: periods) {
 			CompanyFinancialStatus cfs = matchedAnnualStatus.get(standardDate);
 			//if ( "20120101".compareTo(standardDate) < 0 && baseDateToFuture.compareTo(standardDate) > 0) {
-			if ( "20000101".compareTo(standardDate) < 0 && baseDateToFuture.compareTo(standardDate) > 0) {
+			if ( "20000101".compareTo(standardDate) < 0 ) {
 				String prevQuarter = standardDate;
-				rtn.put(prevQuarter, cfs);
+				if( baseDateToFuture.compareTo(prevQuarter) > 0) rtn.put(prevQuarter, cfs);
 				prevQuarter = StringUtil.getLastDayOfQuarter(prevQuarter, -3);
-				rtn.put(prevQuarter, cfs);
+				if( baseDateToFuture.compareTo(prevQuarter) > 0) rtn.put(prevQuarter, cfs);
 				prevQuarter = StringUtil.getLastDayOfQuarter(prevQuarter, -3);
-				rtn.put(prevQuarter, cfs);
+				if( baseDateToFuture.compareTo(prevQuarter) > 0) rtn.put(prevQuarter, cfs);
 				prevQuarter = StringUtil.getLastDayOfQuarter(prevQuarter, -3);
-				rtn.put(prevQuarter, cfs);
+				if( baseDateToFuture.compareTo(prevQuarter) > 0) rtn.put(prevQuarter, cfs);
 			}
 		}
 		return rtn;
@@ -190,8 +190,8 @@ public class FinancialReportRefiner extends DataUpdator {
 	}
 	
 	public static void main(String[] args) throws SQLException {
-		testCheckAllCompanyFinancialStatement();
-		//testCheckCfs();
+		//testCheckAllCompanyFinancialStatement();
+		testCheckCfs();
 	}
 	
 	public static void testCheckAllCompanyFinancialStatement() throws SQLException {
@@ -223,7 +223,7 @@ public class FinancialReportRefiner extends DataUpdator {
 		CompanyEx company = new CompanyEx();
 		CompanyFinancialStatusDao financialDao = new CompanyFinancialStatusDao();
 		String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
-		company.setId("A006390");
+		company.setId("A005930");
 		ArrayList<CompanyFinancialStatus> financialStatusList = null;
 		financialStatusList = financialDao.getFinancialStatus(company, registeredDate);
 		List<CompanyFinancialStatus> cfsList = retrieveValidQuarterReports(company, financialStatusList);

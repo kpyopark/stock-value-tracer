@@ -261,7 +261,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public void updateLatestCompanyList() {
 		try {
-			String latestStandardDate = dao.getLatestStandardDate();
+			String latestStandardDate = krxDao.getLatestStandardDate();
 			int fromYear, fromMonth, fromDay, toYear, toMonth, toDay;
 			Date latestDate = StringUtil.convertToDate(latestStandardDate);
 			Calendar calendar = Calendar.getInstance();
