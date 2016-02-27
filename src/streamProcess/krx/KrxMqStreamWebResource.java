@@ -1,6 +1,7 @@
 package streamProcess.krx;
 
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
+import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+
 import common.QueueUtil;
 
 public class KrxMqStreamWebResource {
@@ -55,7 +57,7 @@ public class KrxMqStreamWebResource {
 		BlockingQueue<KrxWebResourceTask> source = null;
 		Connection mqCon = null;
 		Channel selectQueueChannel = null;
-		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();		
+		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();		
 		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_) throws IOException {
 			source = source_;
 			createDestinationQueue();

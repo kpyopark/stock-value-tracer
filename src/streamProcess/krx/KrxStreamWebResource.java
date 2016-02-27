@@ -1,6 +1,7 @@
 package streamProcess.krx;
 
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
+import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -49,7 +50,7 @@ public class KrxStreamWebResource {
 	class KrxItemCrawlerService implements Runnable {
 		BlockingQueue<KrxWebResourceTask> source = null;
 		BlockingQueue<KrxItem> dst = null;
-		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();		
+		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();		
 		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_, BlockingQueue<KrxItem> dst_) {
 			source = source_;
 			dst = dst_;

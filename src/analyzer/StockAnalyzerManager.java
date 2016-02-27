@@ -248,7 +248,7 @@ public class StockAnalyzerManager {
 		try {
 			String standardDate = STANDARD_DATE_FORMAT.format(new Date());
 			StockAnalyzer stockAnal = new StockAnalyzer(standardDate);
-			stockAnal.getBestStockList(300, standardDate);
+			stockAnal.getBestStockList(500, standardDate);
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -260,7 +260,6 @@ public class StockAnalyzerManager {
 		manager.startCompanyListUpdator();
 		manager.startCompanyFinancialStatusUpdator();
 		manager.startFinancialReportRefiner();
-		// manager.startStockValueUpdator(); // --> Above method - startCompanyListUpdate() - has feature to update all stock value. so this API don't need to be called.
 		manager.startAnnualEstimationUpdator();
 		manager.startStockValueEstimationUpdator();
 		manager.startStockAnalyzer();

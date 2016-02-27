@@ -65,6 +65,7 @@ public class StockValueEstimator {
 		Company company = cfs.getCompany();
 		StockEstimated cse = new StockEstimated();
 		cse.setCompany(company);
+		cse.setCfs(cfs);
 		
 		cse.setAveDividendRatio(cfs.getDividendRatio());
 		cse.setAveRoa(((float)cfs.getNetProfit())/cfs.getAssets());

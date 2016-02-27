@@ -10,6 +10,20 @@ public class StockEstimated extends BaseStructure {
 	 * 회사정보
 	 */
 	private Company company = null;
+	
+	/**
+	 * 재무 상태표
+	 */
+	private CompanyFinancialStatus cfs = null;
+	
+	public CompanyFinancialStatus getCfs() {
+		return cfs;
+	}
+
+	public void setCfs(CompanyFinancialStatus cfs) {
+		this.cfs = cfs;
+	}
+
 	/**
 	 * 기준일자
 	 */

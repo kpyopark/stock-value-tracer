@@ -1,6 +1,7 @@
 package robot.company;
 
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
+import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
 import internetResource.companyItem.CompanyExpireResourceFromKrx;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
@@ -24,11 +25,9 @@ import streamProcess.krx.KrxMqStreamInserter;
 import streamProcess.krx.KrxMqStreamWebResource;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
-
 import common.PeriodUtil;
 import common.QueueUtil;
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.KrxItemDao;
 import dao.StockDao;
@@ -46,7 +45,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	}
 	
 	public void insertETFstockFrom2002Year() {
-		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
+		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();
 		List<String> workDays = new ArrayList<String>();
 		for( int year = 2002 ; year < 2014 ; year++ ) {
 			workDays.addAll(PeriodUtil.getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
@@ -169,7 +168,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	}
 
 	public void insertCompanyAndStockFromKrxItem(String standardDate) {
-		CompanyAndItemListResourceFromKrx ir = new CompanyAndItemListResourceFromKrx();
+		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();
 		try {
 			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
 			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {

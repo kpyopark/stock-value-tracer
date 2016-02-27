@@ -27,7 +27,7 @@ import dao.CompanyStockEstimationDao;
 import estimator.FinancialStatusEstimator;
 
 public class StockAnalyzer {
-
+	
 	static SimpleDateFormat FILE_DATE_FORMAT = null;
 	
 	static {
@@ -105,10 +105,10 @@ public class StockAnalyzer {
 		}
 	}
 	
-	void printStockListToExcel(int rank) {
+	void printStockListToExcel(int rank, String registeredDate) {
 		File newExcel = null;
 		newExcel = new File("E:\\Document\\00.순매수-순매도\\beststock_" + FILE_DATE_FORMAT.format(new Date()) + ".xls" );
-		createExcelFile(newExcel, rank);
+		createExcelFile(newExcel, rank, registeredDate);
 	}
 	
 	void printStockListToXML(int rank, String registeredDate) {
@@ -198,7 +198,7 @@ public class StockAnalyzer {
 		calculateRankByPer();
 		calculateTotRank();
 		printStockListToConsole(rank, registeredDate);
-		printStockListToExcel(rank);
+		printStockListToExcel(rank, registeredDate);
 		printStockListToXML(rank, registeredDate);
 	}
 	
@@ -314,7 +314,7 @@ public class StockAnalyzer {
 		java.util.Collections.sort(stockRankList,new TotComparator());
 	}
 	
-	private void createExcelFile(File targetFile, int rank) {
+	private void createExcelFile(File targetFile, int rank, String registeredDate) {
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		
@@ -326,7 +326,7 @@ public class StockAnalyzer {
 		for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
 			//System.out.println( stockRankList.get(cnt));
 		    HSSFRow row = sheet1.createRow((short)cnt+1);
-			printData(wb,row,stockRankList.get(cnt));
+			printData(wb,row,stockRankList.get(cnt), registeredDate);
 		}
 
 	    FileOutputStream fileOut = null;
@@ -399,7 +399,7 @@ public class StockAnalyzer {
 	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE","BPP","E.Y",
 		"TOT","EST","SECTOR","GROUP","INDUSTRY","AVEPER","AVEROE","AVEROA",
 		"AVEBPP", "EARNING_RATIO", "DEBT_RATIO",
-		"AVEDIV","REPS","RSTOCK","LEPS","DATE","URL"
+		"AVEDIV","REPS","RSTOCK","LEPS","SHARESIZE","M.C","DATE","URL"
 	};
 	
 	private void printHeader(HSSFRow row) {
@@ -408,7 +408,7 @@ public class StockAnalyzer {
 		}
 	}
 	
-	private void printData(HSSFWorkbook wb, HSSFRow row, StockRank rankInfo) {
+	private void printData(HSSFWorkbook wb, HSSFRow row, StockRank rankInfo, String registeredDate) {
 		int column = 0;
 	    HSSFCellStyle textStyle = wb.createCellStyle();
 	    HSSFCellStyle perStyle = wb.createCellStyle();
@@ -463,6 +463,13 @@ public class StockAnalyzer {
 		cell.setCellStyle(numStyle);
 		cell = row.createCell(column++);
 		cell.setCellValue(rankInfo.getStockEstimation().getLastEps());
+		cell.setCellStyle(numStyle);
+		long shareSize = FinancialStatusEstimator.getLatestOrdinarySharesSize(rankInfo.getCompany(), registeredDate);
+		cell = row.createCell(column++);
+		cell.setCellValue(shareSize);
+		cell.setCellStyle(numStyle);
+		cell = row.createCell(column++);
+		cell.setCellValue(shareSize * rankInfo.getStockEstimation().getRecentStockValue());
 		cell.setCellStyle(numStyle);
 		cell = row.createCell(column++);
 		cell.setCellValue(rankInfo.getStockEstimation().getRelatedDateList());

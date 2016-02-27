@@ -24,4 +24,20 @@ public enum KrxSecurityType {
 	public int getType() {
 		return secuityType;
 	}
+	
+	public String getNewSecurityType() {
+		switch (secuityType) {
+		case 0 :
+			return "ST";
+		case 1 : 
+			return "EF";
+		case 2 :
+			return "EW";
+		case 3 :
+			return "EN";
+		case 4 :
+			return "Y";
+		}
+		return "ST";
+	}
 }

@@ -150,6 +150,7 @@ public class FinancialReportResourceFromFnguide {
 				standardDate = node(standardDates[position]).getText().toString();
 				boolean isPrediction = standardDate.indexOf("(E)") >= 0;
 				if ( standardDate != null && standardDate.length() > 6 ) {
+					standardDate = standardDate.substring(standardDate.indexOf("20"));
 					standardDate = standardDate.substring(0,4)+standardDate.substring(5,7)+ "01";
 					standardDate = StringUtil.getLastDayOfMonth(standardDate);
 					CompanyFinancialStatus financeStatus = new CompanyFinancialStatus();
