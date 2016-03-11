@@ -1,8 +1,7 @@
 package robot.company;
 
-import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
-import internetResource.companyItem.CompanyExpireResourceFromKrx;
+import internetResource.companyItem.CompanyExpireResourceFromKrx2016;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
 import java.io.IOException;
@@ -15,6 +14,7 @@ import java.util.List;
 
 import post.CompanyEx;
 import post.KrxItem;
+import post.KrxMarketType;
 import post.KrxSecurityType;
 import post.Stock;
 import robot.DataUpdator;
@@ -25,9 +25,11 @@ import streamProcess.krx.KrxMqStreamInserter;
 import streamProcess.krx.KrxMqStreamWebResource;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
+
 import common.PeriodUtil;
 import common.QueueUtil;
 import common.StringUtil;
+
 import dao.CompanyExDao;
 import dao.KrxItemDao;
 import dao.StockDao;
@@ -221,12 +223,12 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	}
 	
 	public void insertCompanyExpirationFromKrxItem() {
-		CompanyExpireResourceFromKrx ir = new CompanyExpireResourceFromKrx();
+		CompanyExpireResourceFromKrx2016 ir = new CompanyExpireResourceFromKrx2016();
 		KrxStockMatcher matcher = new KrxStockMatcher();
 		try {
 			String standardDate = StringUtil.convertToStandardDate(new java.util.Date());
 			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
-			ArrayList<KrxItem> krxItemList = ir.getItemList(standardDate);
+			ArrayList<KrxItem> krxItemList = ir.getItemList(KrxMarketType.ALL, standardDate);
 			System.out.println(krxItemList);
 			Collections.sort(krxItemList,matcher);
 			for ( CompanyEx company : companiesFromDB ) {

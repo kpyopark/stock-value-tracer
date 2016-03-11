@@ -195,7 +195,7 @@ public class StockAnalyzer {
 		//calculateRankByAdjustRoe();
 		calculateRankByEarningYield();
 		calculateRankByBpp();
-		calculateRankByPer();
+		//calculateRankByPer();
 		calculateTotRank();
 		printStockListToConsole(rank, registeredDate);
 		printStockListToExcel(rank, registeredDate);
@@ -475,9 +475,9 @@ public class StockAnalyzer {
 		cell.setCellValue(rankInfo.getStockEstimation().getRelatedDateList());
 		cell.setCellStyle(textStyle);
 		cell = row.createCell(column++);
-		cell.setCellValue("http://finance.naver.com/item/main.nhn?code=" + rankInfo.getCompany().getId().substring(1));
+		cell.setCellValue("http://comp.fnguide.com/SVO2/ASP/SVD_main.asp?pGB=1&gicode=" + rankInfo.getCompany().getId() + "&cID=&MenuYn=&ReportGB=&NewMenuID=&stkGb=&strResearchYN=");
 		HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-		link.setAddress("http://finance.naver.com/item/main.nhn?code=" + rankInfo.getCompany().getId().substring(1));
+		link.setAddress("http://comp.fnguide.com/SVO2/ASP/SVD_main.asp?pGB=1&gicode=" + rankInfo.getCompany().getId() + "&cID=&MenuYn=&ReportGB=&NewMenuID=&stkGb=&strResearchYN=");
 		cell.setHyperlink(link);
 	}
 	

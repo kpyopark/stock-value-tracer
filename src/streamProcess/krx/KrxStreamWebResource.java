@@ -1,6 +1,5 @@
 package streamProcess.krx;
 
-import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
 
 import java.util.ArrayList;

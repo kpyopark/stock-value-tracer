@@ -99,6 +99,7 @@ public class StockValueEstimator {
 			cse.setLastEps((float)(cse.getRecentEps()*Math.pow(1+cse.getAveRoe(),10)));
 		} else {
 			cse.setAveRoe(-1);
+			cse.setAvePer(10000);
 		}
 		cse.setExpectationRation((float)0.15);
 		cse.setRecentStockValue(stock.getValue());

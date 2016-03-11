@@ -9,14 +9,26 @@ public class StringUtil {
 
 	static SimpleDateFormat STANDARD_DATE = null;
 	static SimpleDateFormat STANDARD_TIME = null;
+	static SimpleDateFormat STANDARD_DATE_NEW_FORMAT = null;
 	
 	static {
 		try {
 			STANDARD_DATE = new SimpleDateFormat("yyyyMMdd");
 			STANDARD_TIME = new SimpleDateFormat("HHmmss");
+			STANDARD_DATE_NEW_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static Date convertToDateFromNewDateString(String standardDate) {
+		java.util.Date rtn = null;
+		try {
+			rtn = STANDARD_DATE_NEW_FORMAT.parse(standardDate);
+		} catch ( ParseException pe ) {
+			pe.printStackTrace();
+		}
+		return rtn;
 	}
 	
 	public static Date convertToDate(String standardDate) {

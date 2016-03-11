@@ -1,6 +1,5 @@
 package streamProcess.krx;
 
-import internetResource.companyItem.CompanyAndItemListResourceFromKrx;
 import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
 
 import java.io.IOException;
@@ -22,7 +21,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-
 import common.QueueUtil;
 
 public class KrxMqStreamWebResource {

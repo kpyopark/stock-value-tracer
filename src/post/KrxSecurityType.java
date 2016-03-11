@@ -40,4 +40,5 @@ public enum KrxSecurityType {
 		}
 		return "ST";
 	}
+	
 }
