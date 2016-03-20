@@ -4,12 +4,11 @@ import java.util.ArrayList;
 
 import post.Company;
 import post.CompanyEx;
+import post.KrxSecurityType;
 import post.StockEstimated;
 import robot.DataUpdator;
-
 import common.PeriodUtil;
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.CompanyStockEstimationDao;
 import estimator.StockValueEstimator;
@@ -37,7 +36,7 @@ public class StockEstimationUpdator extends DataUpdator {
 	public void init() {
 		try {
 			CompanyExDao dao = new CompanyExDao();
-			companyList = dao.selectAllList(this.standardDate);
+			companyList = dao.selectAllList(this.standardDate, KrxSecurityType.STOCK);
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -101,7 +100,7 @@ public class StockEstimationUpdator extends DataUpdator {
 		CompanyExDao companyDao = new CompanyExDao();
 		try {
 			for( String monthString : monthlyPeriods ) {
-				ArrayList<CompanyEx> companies = companyDao.selectAllList(monthString);
+				ArrayList<CompanyEx> companies = companyDao.selectAllList(monthString, KrxSecurityType.STOCK);
 				StockEstimationUpdator updator = new StockEstimationUpdator();
 				for( Company company : companies ) {
 					System.out.println("update stock esitmated:" + company.getId() + ":" + company.getName() + ":" + monthString );

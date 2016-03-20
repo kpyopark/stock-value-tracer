@@ -95,7 +95,7 @@ public class StockAnalyzerManager {
 	protected void init() {
 		try {
 			dao = new CompanyExDao();
-			companyList = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date())); 
+			companyList = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()), KrxSecurityType.STOCK); 
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}

@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="lib/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/reflectasm-1.09-shaded.jar"/>
 	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/postgresql-9.4.1208.jre6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

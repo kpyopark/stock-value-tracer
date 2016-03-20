@@ -10,12 +10,14 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
 import post.Company;
+import post.CompanyEx;
+import post.KrxSecurityType;
 import post.StatementOfFinancialPosition;
-
 import common.NotNumericContentException;
+import common.StringUtil;
 import common.TimeWatch;
-
 import dao.CompanyDao;
+import dao.CompanyExDao;
 import dao.CompanyStatementOfFinancialPosition;
 
 public class FinancialStatementResourceFromPaxnet {
@@ -289,12 +291,12 @@ public class FinancialStatementResourceFromPaxnet {
 	public static void main(String[] args) {
 		TimeWatch timewatch = new TimeWatch();
 		HttpURLConnection conn = null;
-		ArrayList<Company> badCompanyList = new ArrayList<Company>();
+		ArrayList<CompanyEx> badCompanyList = new ArrayList<CompanyEx>();
 		try {
 			timewatch.start();
-			CompanyDao dao = new CompanyDao();
+			CompanyExDao dao = new CompanyExDao();
 			CompanyStatementOfFinancialPosition sofDao = new CompanyStatementOfFinancialPosition();
-			ArrayList<Company> companyList = dao.selectAllList();
+			ArrayList<CompanyEx> companyList = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()), KrxSecurityType.STOCK);
 			timewatch.reset();
 			// 1. Company List
 			for ( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) { //companyList.size() ; cnt++ ) {

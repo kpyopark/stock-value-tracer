@@ -110,7 +110,7 @@ public class StockResource {
 	            stock.setStandardTime(STANDARD_TIME.format(currentDate));
 			} catch ( Exception e1 ) {
 				System.out.println("해당 종목은 정보를 웹 상에서 확인해주세요.["+value+"]["+company+"]");
-            	e1.printStackTrace();
+            	//e1.printStackTrace();
             	return null;
 			} finally {
 				method.releaseConnection();

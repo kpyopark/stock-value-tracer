@@ -1,6 +1,6 @@
 package streamProcess.krx;
 
-import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
+import internetResource.companyItem.CompanyAndItemListResource2016FromKrx;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -55,7 +55,7 @@ public class KrxMqStreamWebResource {
 		BlockingQueue<KrxWebResourceTask> source = null;
 		Connection mqCon = null;
 		Channel selectQueueChannel = null;
-		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();		
+		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();		
 		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_) throws IOException {
 			source = source_;
 			createDestinationQueue();

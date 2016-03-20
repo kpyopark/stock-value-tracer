@@ -27,6 +27,7 @@ CREATE TABLE `tb_company` (
  *
  */
 
+@Deprecated
 public class CompanyDao extends BaseDao {
 	
 	public boolean insert(Company company) throws SQLException {
@@ -35,7 +36,7 @@ public class CompanyDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY ( STOCK_ID , COMPANY_NAME , STANDARD_DATE, MODIFIED_DATE, FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN ) VALUES ( ? , ? , ?, date_format(curdate(), '%Y%m%d'), ?, ?, ?, ? )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY ( STOCK_ID , COMPANY_NAME , STANDARD_DATE, MODIFIED_DATE, FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN ) VALUES ( ? , ? , ?, CURRENT_DATE, ?, ?, ?, ? )");
 			ps.setString(1, company.getId() );
 			ps.setString(2, company.getName() );
 			ps.setString(3, company.getStandardDate());
@@ -60,7 +61,7 @@ public class CompanyDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("UPDATE TB_COMPANY SET COMPANY_NAME = ?, MODIFIED_DATE = date_format(curdate(), '%Y%m%d'), FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
+			ps = conn.prepareStatement("UPDATE TB_COMPANY SET COMPANY_NAME = ?, MODIFIED_DATE = CURRENT_DATE, FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
 			ps.setString(1, company.getName() );
 			ps.setString(2, company.getFicsSector());
 			ps.setString(3, company.getFicsIndustryGroup());

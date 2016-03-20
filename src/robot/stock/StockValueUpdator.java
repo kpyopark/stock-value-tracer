@@ -6,11 +6,10 @@ import java.util.ArrayList;
 
 import post.Company;
 import post.CompanyEx;
+import post.KrxSecurityType;
 import post.Stock;
 import robot.DataUpdator;
-
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.StockDao;
 
@@ -69,7 +68,7 @@ public class StockValueUpdator extends DataUpdator {
 			StockValueUpdator updator = new StockValueUpdator();
 			ArrayList<CompanyEx> companyList = null;
 			CompanyExDao dao = new CompanyExDao();
-			companyList = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date())); 
+			companyList = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()), KrxSecurityType.STOCK); 
 			for ( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) {
 				updator.updateStockInfoFromWeb(companyList.get(cnt));
 			}

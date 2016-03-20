@@ -131,6 +131,8 @@ public class StringUtil {
 			return 0;
 		if ( content.equals("N/A(IFRS)") )
 			return 0;
+		if ( content.equals("완전잠식") )
+			return -1;
 		content = content.trim();
 		try {
 			rtn = Float.parseFloat(content.replaceAll("%", "").replaceAll(",","").replaceAll("#######",""));

@@ -10,7 +10,7 @@ import org.json.simple.parser.JSONParser;
 import post.KrxItem;
 import post.KrxMarketType;
 
-public class CompanyExpireResourceFromKrx2016 {
+public class CompanyExpireResource2016FromKrx {
 	
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
@@ -97,7 +97,7 @@ public class CompanyExpireResourceFromKrx2016 {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		CompanyExpireResourceFromKrx2016 krx = new CompanyExpireResourceFromKrx2016();
+		CompanyExpireResource2016FromKrx krx = new CompanyExpireResource2016FromKrx();
 		ArrayList<KrxItem> list = krx.getItemList(KrxMarketType.ALL, "20160223");
 		for ( KrxItem item: list) {
 			System.out.println(item);

@@ -21,7 +21,7 @@ import post.KrxItem;
 import post.KrxSecurityType;
 import common.StringUtil;
 
-public class CompanyAndItemListResourceFromKrx2 {
+public class CompanyAndItemListResource2016FromKrx {
 	
 	static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	static String ITEM_LIST_URL = null;
@@ -138,7 +138,7 @@ public class CompanyAndItemListResourceFromKrx2 {
 	}
 	
 	public static void main(String[] args) {
-		CompanyAndItemListResourceFromKrx2 webResource = new CompanyAndItemListResourceFromKrx2();
+		CompanyAndItemListResource2016FromKrx webResource = new CompanyAndItemListResource2016FromKrx();
 		Company company = new Company();
 		company.setId("A005930");
 		company.setName("»ï¼ºÀüÀÚ");

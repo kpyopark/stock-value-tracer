@@ -6,21 +6,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import post.CompanyEx;
+import post.KrxSecurityType;
 
 /**
 <pre>
-CREATE TABLE `tb_company_and_deffered` (
-  `STOCK_ID` varchar(10) COLLATE euckr_bin NOT NULL,
-  `STANDARD_DATE` varchar(8) COLLATE euckr_bin NOT NULL DEFAULT '',
-  `COMPANY_NAME` varchar(100) COLLATE euckr_bin NOT NULL,
-  `SECURITY_SECTOR` int(1) DEFAULT '0',
-  `FICS_SECTOR` varchar(45) COLLATE euckr_bin DEFAULT NULL,
-  `FICS_INDUSTRY_GROUP` varchar(45) COLLATE euckr_bin DEFAULT NULL,
-  `FICS_INDUSTRY` varchar(45) COLLATE euckr_bin DEFAULT NULL,
-  `CLOSED_YN` varchar(45) COLLATE euckr_bin DEFAULT NULL,
-  `MODIFIED_DATE` date DEFAULT NULL,
-  PRIMARY KEY (`STOCK_ID`,`STANDARD_DATE`)
-) ENGINE=MyISAM DEFAULT CHARSET=euckr COLLATE=euckr_bin;
+CREATE TABLE tb_company_and_deffered
+(
+  stock_id character varying(10) NOT NULL,
+  standard_date character varying(8) NOT NULL,
+  company_name character varying(100),
+  security_sector integer,
+  fics_sector character varying(45),
+  fics_industry_group character varying(45),
+  fics_industry character varying(45),
+  closed_yn character varying(45),
+  modified_date timestamp without time zone,
+  krx_industry_code character varying(6),
+  krx_industry_sector character varying(100),
+  krx_industry_category character varying(100),
+  CONSTRAINT tb_company_and_deffered_pkey PRIMARY KEY (stock_id, standard_date)
+)
 
 </pre>
  * @author user
@@ -37,10 +42,10 @@ public class CompanyExDao extends BaseDao {
 			ps = conn.prepareStatement("INSERT INTO tb_company_and_deffered " +
 					"(" +
 					"STOCK_ID , STANDARD_DATE , COMPANY_NAME, SECURITY_SECTOR, " +
-					"FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN, MODIFIED_DATE ) " +
+					"FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN, MODIFIED_DATE,krx_industry_code,krx_industry_sector, krx_industry_category) " +
 					"VALUES ( " +
 					"?, ?, ?, ?, " +
-					"?, ?, ?, ?, date_format(curdate(), '%Y%m%d') )"
+					"?, ?, ?, ?, CURRENT_DATE, ?, ?, ? )"
 					);
 			ps.setString(1, company.getId() );
 			ps.setString(2, company.getStandardDate() );
@@ -50,6 +55,9 @@ public class CompanyExDao extends BaseDao {
 			ps.setString(6, company.getFicsIndustryGroup() );
 			ps.setString(7, company.getFicsIndustry() );
 			ps.setString(8, company.isClosed() ? "Y" : "N" );
+			ps.setString(9, company.getKrxIndustryCode());
+			ps.setString(10, company.getKrxIndustrySector());
+			ps.setString(11, company.getKrxIndustryCategory());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -67,15 +75,18 @@ public class CompanyExDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("UPDATE tb_company_and_deffered SET COMPANY_NAME = ?, MODIFIED_DATE = date_format(curdate(), '%Y%m%d'), SECURITY_SECTOR = ?, FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
+			ps = conn.prepareStatement("UPDATE tb_company_and_deffered SET COMPANY_NAME = ?, MODIFIED_DATE = CURRENT_DATE, SECURITY_SECTOR = ?, FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ?, krx_industry_code = ?, krx_industry_sector = ?,krx_industry_category = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
 			ps.setString(1, company.getName() );
 			ps.setInt(2, company.getSecuritySector() );
 			ps.setString(3, company.getFicsSector());
 			ps.setString(4, company.getFicsIndustryGroup());
 			ps.setString(5, company.getFicsIndustry());
 			ps.setString(6, company.isClosed() ? "Y": "N");
-			ps.setString(7, company.getId() );
-			ps.setString(8, company.getStandardDate());
+			ps.setString(7, company.getKrxIndustryCode());
+			ps.setString(8, company.getKrxIndustrySector());
+			ps.setString(9, company.getKrxIndustryCategory());
+			ps.setString(10, company.getId() );
+			ps.setString(11, company.getStandardDate());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -93,7 +104,7 @@ public class CompanyExDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("UPDATE tb_company_and_deffered SET MODIFIED_DATE = date_format(curdate(), '%Y%m%d'), SECURITY_SECTOR = ? WHERE STOCK_ID = ?");
+			ps = conn.prepareStatement("UPDATE tb_company_and_deffered SET MODIFIED_DATE = CURRENT_DATE, SECURITY_SECTOR = ? WHERE STOCK_ID = ?");
 			ps.setInt(1, company.getSecuritySector() );
 			ps.setString(2, company.getId() );
 			rtn = ps.execute();
@@ -104,6 +115,23 @@ public class CompanyExDao extends BaseDao {
 			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 		}
 		System.out.println( rtn );
+		return rtn;
+	}
+	
+	
+	private static CompanyEx getCompanyExFromResultset(ResultSet rs) throws SQLException {
+		CompanyEx rtn = new CompanyEx();
+		rtn.setId(rs.getString("STOCK_ID"));
+		rtn.setName(rs.getString("COMPANY_NAME"));
+		rtn.setStandardDate(rs.getString("STANDARD_DATE"));
+		rtn.setSecuritySector(rs.getInt("SECURITY_SECTOR"));
+		rtn.setFicsSector(rs.getString("FICS_SECTOR"));
+		rtn.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
+		rtn.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
+		rtn.setClosed("Y".equals(rs.getString("CLOSED_YN")));
+		rtn.setKrxIndustryCode(rs.getString("krx_industry_code"));
+		rtn.setKrxIndustrySector(rs.getString("krx_industry_sector"));
+		rtn.setKrxIndustryCategory(rs.getString("krx_industry_category"));
 		return rtn;
 	}
 	
@@ -138,15 +166,7 @@ public class CompanyExDao extends BaseDao {
 			rs = ps.executeQuery();
 			
 			if( rs.next() ) {
-				rtn = new CompanyEx();
-				rtn.setId(id);
-				rtn.setName(rs.getString("COMPANY_NAME"));
-				rtn.setStandardDate(rs.getString("STANDARD_DATE"));
-				rtn.setSecuritySector(rs.getInt("SECURITY_SECTOR"));
-				rtn.setFicsSector(rs.getString("FICS_SECTOR"));
-				rtn.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
-				rtn.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
-				rtn.setClosed("Y".equals(rs.getString("CLOSED_YN")));
+				rtn = getCompanyExFromResultset(rs);
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -157,8 +177,8 @@ public class CompanyExDao extends BaseDao {
 		}
 		return rtn;
 	}
-	
-	public java.util.ArrayList<CompanyEx> selectAllList(String standardDate) throws SQLException {
+
+	public java.util.ArrayList<CompanyEx> selectAllList(String standardDate, KrxSecurityType securityType) throws SQLException {
 		java.util.ArrayList<CompanyEx> list = new java.util.ArrayList<CompanyEx>();
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -174,16 +194,9 @@ public class CompanyExDao extends BaseDao {
 			rs = ps.executeQuery();
 			
 			while ( rs.next() ) {
-				CompanyEx company = new CompanyEx();
-				company.setId(rs.getString("STOCK_ID"));
-				company.setName(rs.getString("COMPANY_NAME"));
-				company.setStandardDate(rs.getString("STANDARD_DATE"));
-				company.setFicsSector(rs.getString("FICS_SECTOR"));
-				company.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
-				company.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
-				company.setClosed("Y".equals(rs.getString("CLOSED_YN")));
-				company.setSecuritySector(rs.getInt("SECURITY_SECTOR"));
-				list.add(company);
+				CompanyEx company = getCompanyExFromResultset(rs);
+				if(securityType == null || securityType.getType() == company.getSecuritySector())
+					list.add(company);
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -194,7 +207,8 @@ public class CompanyExDao extends BaseDao {
 		}
 		return list;
 	}
-	
+
+	@Deprecated
 	public void insertCompanyTableFromDefferedTable() {
 		Connection conn = null;
 		PreparedStatement ps = null;

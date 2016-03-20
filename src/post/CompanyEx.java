@@ -10,6 +10,34 @@ public class CompanyEx extends Company {
 	public static int SECURITY_ETF_DEFFERED = 1;
 	public static int SECURITY_ELW_DEFFERED = 2;
 	
+	public String getKrxIndustryCode() {
+		return krxIndustryCode;
+	}
+
+	public void setKrxIndustryCode(String krxIndustryCode) {
+		this.krxIndustryCode = krxIndustryCode;
+	}
+
+	public String getKrxIndustrySector() {
+		return krxIndustrySector;
+	}
+
+	public void setKrxIndustrySector(String krxIndustrySector) {
+		this.krxIndustrySector = krxIndustrySector;
+	}
+
+	public String getKrxIndustryCategory() {
+		return krxIndustryCategory;
+	}
+
+	public void setKrxIndustryCategory(String krxIndustryCategory) {
+		this.krxIndustryCategory = krxIndustryCategory;
+	}
+
+	private String krxIndustryCode;
+	private String krxIndustrySector;
+	private String krxIndustryCategory;
+	
 	private int securitySector = 0;		// 0 - ordinary stock, 1 - etf deffered, 2 - elw deffered
 
 	public int getSecuritySector() {

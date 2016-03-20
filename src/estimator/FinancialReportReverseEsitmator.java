@@ -4,29 +4,33 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import common.StringUtil;
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
+import post.KrxSecurityType;
 import dao.CompanyDao;
+import dao.CompanyExDao;
 import dao.CompanyFinancialStatusDao;
 
 public class FinancialReportReverseEsitmator {
 
-	ArrayList<Company> companyList = null;
+	ArrayList<CompanyEx> companyList = null;
 	CompanyFinancialStatusDao orgDao = null;
-	CompanyDao companyDao = null;
+	CompanyExDao companyExDao = null;
 	
 	public FinancialReportReverseEsitmator() {
 		init();
 	}
 	
 	private void init() {
-		companyDao = new CompanyDao();
+		companyExDao = new CompanyExDao();
 		orgDao = new CompanyFinancialStatusDao();
 		try {
-			companyList = companyDao.selectAllList();
+			companyList = companyExDao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()), KrxSecurityType.STOCK);
 		} catch ( Exception e ) {
 			e.printStackTrace();
-			companyList = new ArrayList<Company>();
+			companyList = new ArrayList<CompanyEx>();
 		}
 	}
 	
@@ -443,7 +447,7 @@ public class FinancialReportReverseEsitmator {
 	
 	public static void executeFillblankQuarterReport() {
 		FinancialReportReverseEsitmator estimator = new FinancialReportReverseEsitmator();
-		ArrayList<Company> companies = estimator.companyList;
+		ArrayList<CompanyEx> companies = estimator.companyList;
 		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		try {
 			for ( int pos = 0 ; pos < companies.size() ; pos++ ) {
@@ -458,7 +462,7 @@ public class FinancialReportReverseEsitmator {
 	
 	public static void executeFillblankYearReport() {
 		FinancialReportReverseEsitmator estimator = new FinancialReportReverseEsitmator();
-		ArrayList<Company> companies = estimator.companyList;
+		ArrayList<CompanyEx> companies = estimator.companyList;
 		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		try {
 			for ( int pos = 0 ; pos < companies.size() ; pos++ ) {
@@ -472,7 +476,7 @@ public class FinancialReportReverseEsitmator {
 	
 	public static void executeFillblankAssetInfo() {
 		FinancialReportReverseEsitmator estimator = new FinancialReportReverseEsitmator();
-		ArrayList<Company> companies = estimator.companyList;
+		ArrayList<CompanyEx> companies = estimator.companyList;
 		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		try {
 			for ( int pos = 0 ; pos < companies.size() ; pos++ ) {

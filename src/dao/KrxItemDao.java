@@ -48,25 +48,25 @@ public class KrxItemDao extends BaseDao {
 			conn = getConnection();
 			conn.setAutoCommit(false);
 			ps = conn.prepareStatement(
-					"INSERT INTO `stock`.`tb_company_stock_daily` \n" +
-							"(`STOCK_ID`,                                 \n" +
-							"`COMPANY_NAME`,                              \n" +
-							"`STANDARD_DATE`,                             \n" +
-							"`SECURITY_TYPE`,                             \n" +
-							"`STOCK_PRICE`,                               \n" +
-							"`NET_CHANGE`,                                \n" +
-							"`NET_CHANGE_RATIO`,                          \n" +
-							"`ASK_PRICE`,                                 \n" +
-							"`BID_PRICE`,                                 \n" +
-							"`TODAY_HIGH`,                                \n" +
-							"`TODAY_LOW`,                                 \n" +
-							"`VOLUME`,                                    \n" +
-							"`VOLUME_AMOUNT`,                             \n" +
-							"`OPEN_PRICE`,                                \n" +
-							"`PAR_VALUE`,                                 \n" +
-							"`CURRENCY`,                                  \n" +
-							"`ORDINARY_SHARE`,                            \n" +
-							"`MARKET_CAPITAL`)                            \n" +
+					"INSERT INTO tb_company_stock_daily \n" +
+							"(STOCK_ID,                                 \n" +
+							"COMPANY_NAME,                              \n" +
+							"STANDARD_DATE,                             \n" +
+							"SECURITY_TYPE,                             \n" +
+							"STOCK_PRICE,                               \n" +
+							"NET_CHANGE,                                \n" +
+							"NET_CHANGE_RATIO,                          \n" +
+							"ASK_PRICE,                                 \n" +
+							"BID_PRICE,                                 \n" +
+							"TODAY_HIGH,                                \n" +
+							"TODAY_LOW,                                 \n" +
+							"VOLUME,                                    \n" +
+							"VOLUME_AMOUNT,                             \n" +
+							"OPEN_PRICE,                                \n" +
+							"PAR_VALUE,                                 \n" +
+							"CURRENCY,                                  \n" +
+							"ORDINARY_SHARE,                            \n" +
+							"MARKET_CAPITAL)                            \n" +
 							"VALUES                                       \n" +
 							"(                                            \n" +
 							"?, -- <{STOCK_ID: }>,                        \n" +

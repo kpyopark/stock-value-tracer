@@ -12,11 +12,12 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
 import post.Company;
+import post.CompanyEx;
 import post.CompanyFinancialStatus;
-
+import post.KrxSecurityType;
 import common.StringUtil;
-
 import dao.CompanyDao;
+import dao.CompanyExDao;
 
 public class FinancialReportResourceFromFnguide {
 	
@@ -233,11 +234,11 @@ public class FinancialReportResourceFromFnguide {
 	}
 	
 	public static void testCheckSpecialGeneralFinancialReport() {
-		CompanyDao dao = null;
+		CompanyExDao dao = null;
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		try {
-			dao = new CompanyDao();
-			ArrayList<Company> companies = dao.selectAllList();
+			dao = new CompanyExDao();
+			ArrayList<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()), KrxSecurityType.STOCK);
 			for( int cnt = 258 ; cnt < companies.size() ; cnt++) {
 				System.out.println("--------- COMPANY[" + companies.get(cnt).getName() + "][" + companies.get(cnt).getId() + "][" + cnt + "/" + companies.size() + "]-------------");
 				ir.checkSpecialGeneralFinancialReport(companies.get(cnt));
@@ -247,12 +248,13 @@ public class FinancialReportResourceFromFnguide {
 		} finally {
 		}
 	}
-
+	
+	@Deprecated
 	public static void testFinancialStatusAPI() {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
-		CompanyDao dao = new CompanyDao();
+		CompanyExDao dao = new CompanyExDao();
 		try {
-			Company company = dao.select("A005930", null);
+			CompanyEx company = dao.select("A005930", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

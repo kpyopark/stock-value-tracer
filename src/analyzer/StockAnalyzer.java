@@ -19,6 +19,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import post.CompanyEx;
+import post.KrxSecurityType;
 import post.StockEstimated;
 import post.StockRank;
 import dao.CompanyExDao;
@@ -51,7 +52,7 @@ public class StockAnalyzer {
 	}
 	
 	private void getCompanyList() throws java.sql.SQLException {
-		companyList = companyDao.selectAllList(this.standardDate);
+		companyList = companyDao.selectAllList(this.standardDate, KrxSecurityType.STOCK);
 	}
 	
 	/**
@@ -65,6 +66,8 @@ public class StockAnalyzer {
 	private void getCompanyStockEstimationList() throws java.sql.SQLException {
 		stockEstimList.clear();
 		for( int cnt = 0 ; cnt < companyList.size() ; cnt++ ) {
+			if(companyList.get(cnt).getSecuritySector() != KrxSecurityType.STOCK.getType())
+				continue;
 			if ( !companyList.get(cnt).isClosed() ) {
 				StockEstimated stockEstim = stockEstimDao.select(companyList.get(cnt));
 				if ( stockEstim != null )

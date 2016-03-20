@@ -91,7 +91,7 @@ public class StockDao extends BaseDao {
 					"?, \n" +
 					"?, \n" +
 					"?, \n" +
-					"date_format(curdate(), '%Y%m%d'), \n" +
+					"CURRENT_DATE, \n" +
 					"?, \n" +
 					"?, \n" +
 					"?, \n" +

@@ -7,11 +7,10 @@ import java.util.Date;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatusEstimated;
+import post.KrxSecurityType;
 import robot.DataUpdator;
-
 import common.PeriodUtil;
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.CompanyFinancialEstimStatusDao;
 
@@ -46,7 +45,7 @@ public class AnnualEstimationUpdator extends DataUpdator {
 		ArrayList<String> periodsList = PeriodUtil.getQuarterListFrom2000ToNow();
 		try {
 			for ( String period : periodsList ) {
-				ArrayList<CompanyEx> companies = companyDao.selectAllList(period);
+				ArrayList<CompanyEx> companies = companyDao.selectAllList(period, KrxSecurityType.STOCK);
 				for ( Company company : companies ) {
 					estimDao.updateFinancialReportEstimated(company, period);
 				}

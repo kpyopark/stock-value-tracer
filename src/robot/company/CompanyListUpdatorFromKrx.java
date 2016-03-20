@@ -1,7 +1,7 @@
 package robot.company;
 
-import internetResource.companyItem.CompanyAndItemListResourceFromKrx2;
-import internetResource.companyItem.CompanyExpireResourceFromKrx2016;
+import internetResource.companyItem.CompanyAndItemListResource2016FromKrx;
+import internetResource.companyItem.CompanyExpireResource2016FromKrx;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	}
 	
 	public void insertETFstockFrom2002Year() {
-		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();
+		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();
 		List<String> workDays = new ArrayList<String>();
 		for( int year = 2002 ; year < 2014 ; year++ ) {
 			workDays.addAll(PeriodUtil.getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
@@ -170,9 +170,9 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	}
 
 	public void insertCompanyAndStockFromKrxItem(String standardDate) {
-		CompanyAndItemListResourceFromKrx2 ir = new CompanyAndItemListResourceFromKrx2();
+		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();
 		try {
-			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
+			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate, null);
 			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
 				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
 				System.out.println("- standard date - " + standardDate + " - security type - " + securityType +  " - size - " + krxItemList.size() );
@@ -223,11 +223,11 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	}
 	
 	public void insertCompanyExpirationFromKrxItem() {
-		CompanyExpireResourceFromKrx2016 ir = new CompanyExpireResourceFromKrx2016();
+		CompanyExpireResource2016FromKrx ir = new CompanyExpireResource2016FromKrx();
 		KrxStockMatcher matcher = new KrxStockMatcher();
 		try {
 			String standardDate = StringUtil.convertToStandardDate(new java.util.Date());
-			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate);
+			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate, KrxSecurityType.STOCK);
 			ArrayList<KrxItem> krxItemList = ir.getItemList(KrxMarketType.ALL, standardDate);
 			System.out.println(krxItemList);
 			Collections.sort(krxItemList,matcher);
@@ -309,7 +309,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	public void updateFicsSectorInfo() {
 		CompanyExDao dao = new CompanyExDao();
 		try {
-			ArrayList<CompanyEx> companyList = dao.selectAllList(dao.getLatestStandardDate());
+			ArrayList<CompanyEx> companyList = dao.selectAllList(dao.getLatestStandardDate(), KrxSecurityType.STOCK);
 			FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 			boolean needUpdate;
 			for( CompanyEx fromDB : companyList ) {

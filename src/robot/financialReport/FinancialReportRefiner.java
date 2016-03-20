@@ -200,7 +200,7 @@ public class FinancialReportRefiner extends DataUpdator {
 		CompanyFinancialStatusDao financialDao = new CompanyFinancialStatusDao();
 		CompanyFinancialRefinedStatusDao cfsRefinedDao = new CompanyFinancialRefinedStatusDao();
 		String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
-		companyList = dao.selectAllList(registeredDate);
+		companyList = dao.selectAllList(registeredDate, KrxSecurityType.STOCK);
 		for ( CompanyEx company : companyList ) {
 			if ( company.getSecuritySector() == KrxSecurityType.STOCK.getType() ) {
 				ArrayList<CompanyFinancialStatus> financialStatusList = null;

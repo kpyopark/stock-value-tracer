@@ -14,10 +14,9 @@ import java.util.concurrent.TimeUnit;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
+import post.KrxSecurityType;
 import robot.DataUpdator;
-
 import common.StringUtil;
-
 import dao.CompanyDao;
 import dao.CompanyExDao;
 import dao.CompanyFinancialStatusDao;
@@ -32,11 +31,11 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	public final static long PRECISION_THRESHOLD = 99999999;
 	public final static long SHARE_SIZE_PRECISION_THRESHOLD = 999;
 	
-	ArrayList<Company> companyList = null;
+	ArrayList<CompanyEx> companyList = null;
 	
-	public void getCompanyList() throws SQLException {
-		CompanyDao dao = new CompanyDao();
-		companyList = dao.selectAllList();
+	public void getCompanyList(String standardDate) throws SQLException {
+		CompanyExDao dao = new CompanyExDao();
+		companyList = dao.selectAllList(standardDate, KrxSecurityType.STOCK);
 	}
 	
 	/**
@@ -253,6 +252,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		testUpdateFinancialStatus();
 	}
 	
+	@Deprecated
 	public static void testUpdateFinancialStatus() {
 		CompanyDao dao = null;
 		FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
@@ -271,7 +271,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		try {
 			final FinancialReportListUpdatorFromFnguide updator = new FinancialReportListUpdatorFromFnguide();
 			CompanyExDao dao = new CompanyExDao();
-			List<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()));
+			List<CompanyEx> companies = dao.selectAllList(StringUtil.convertToStandardDate(new java.util.Date()), KrxSecurityType.STOCK);
 			ExecutorService executor = Executors.newFixedThreadPool(20);
 			for( final CompanyEx comp : companies ) {
 				if ( comp.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK ) {

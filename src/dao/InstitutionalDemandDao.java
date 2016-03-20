@@ -35,17 +35,17 @@ public class InstitutionalDemandDao extends BaseDao {
 		super();
 	}
 	
-	static String INSERT_STATEMENT = "INSERT INTO `stock`.`tb_institutional_demand` " +
-			"(`stock_id`, " +
-			"`standard_date`, " +
-			"`standard_time`, " +
-			"`stock_closing_price`, " +
-			"`stock_updown_ratio_of_day`, " +
-			"`stocK_updown_price_of_day`, " +
-			"`foreigner_net_demand`, " +
-			"`foreigner_ownership_ratio`, " +
-			"`company_net_demand`, " +
-			"`individual_net_demand`) " +
+	static String INSERT_STATEMENT = "INSERT INTO tb_institutional_demand " +
+			"(stock_id, " +
+			"standard_date, " +
+			"standard_time, " +
+			"stock_closing_price, " +
+			"stock_updown_ratio_of_day, " +
+			"stocK_updown_price_of_day, " +
+			"foreigner_net_demand, " +
+			"foreigner_ownership_ratio, " +
+			"company_net_demand, " +
+			"individual_net_demand) " +
 			"VALUES " +
 			"(?,"+
 			"?,"+
@@ -58,17 +58,17 @@ public class InstitutionalDemandDao extends BaseDao {
 			"?,"+
 			"?);";
 
-	static String REPLACE_STATEMENT = "REPLACE INTO `stock`.`tb_institutional_demand` " +
-			"(`stock_id`, " +
-			"`standard_date`, " +
-			"`standard_time`, " +
-			"`stock_closing_price`, " +
-			"`stock_updown_ratio_of_day`, " +
-			"`stocK_updown_price_of_day`, " +
-			"`foreigner_net_demand`, " +
-			"`foreigner_ownership_ratio`, " +
-			"`company_net_demand`, " +
-			"`individual_net_demand`) " +
+	static String REPLACE_STATEMENT = "REPLACE INTO tb_institutional_demand " +
+			"(stock_id, " +
+			"standard_date, " +
+			"standard_time, " +
+			"stock_closing_price, " +
+			"stock_updown_ratio_of_day, " +
+			"stocK_updown_price_of_day, " +
+			"foreigner_net_demand, " +
+			"foreigner_ownership_ratio, " +
+			"company_net_demand, " +
+			"individual_net_demand) " +
 			"VALUES " +
 			"(?,"+
 			"?,"+
