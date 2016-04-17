@@ -42,10 +42,10 @@ public class CompanyExDao extends BaseDao {
 			ps = conn.prepareStatement("INSERT INTO tb_company_and_deffered " +
 					"(" +
 					"STOCK_ID , STANDARD_DATE , COMPANY_NAME, SECURITY_SECTOR, " +
-					"FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN, MODIFIED_DATE,krx_industry_code,krx_industry_sector, krx_industry_category) " +
+					"FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN, MODIFIED_DATE,krx_industry_code,krx_industry_sector, krx_industry_category, tel_no, address) " +
 					"VALUES ( " +
 					"?, ?, ?, ?, " +
-					"?, ?, ?, ?, CURRENT_DATE, ?, ?, ? )"
+					"?, ?, ?, ?, CURRENT_DATE, ?, ?, ?,?, ? )"
 					);
 			ps.setString(1, company.getId() );
 			ps.setString(2, company.getStandardDate() );
@@ -58,6 +58,8 @@ public class CompanyExDao extends BaseDao {
 			ps.setString(9, company.getKrxIndustryCode());
 			ps.setString(10, company.getKrxIndustrySector());
 			ps.setString(11, company.getKrxIndustryCategory());
+			ps.setString(12, company.getTelNo());
+			ps.setString(13, company.getAddress());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -75,7 +77,7 @@ public class CompanyExDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("UPDATE tb_company_and_deffered SET COMPANY_NAME = ?, MODIFIED_DATE = CURRENT_DATE, SECURITY_SECTOR = ?, FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ?, krx_industry_code = ?, krx_industry_sector = ?,krx_industry_category = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
+			ps = conn.prepareStatement("UPDATE tb_company_and_deffered SET COMPANY_NAME = ?, MODIFIED_DATE = CURRENT_DATE, SECURITY_SECTOR = ?, FICS_SECTOR = ? , FICS_INDUSTRY_GROUP = ?, FICS_INDUSTRY = ?, CLOSED_YN = ?, krx_industry_code = ?, krx_industry_sector = ?,krx_industry_category = ?, tel_no = ?, address = ? WHERE STOCK_ID = ? AND STANDARD_DATE = ?");
 			ps.setString(1, company.getName() );
 			ps.setInt(2, company.getSecuritySector() );
 			ps.setString(3, company.getFicsSector());
@@ -85,8 +87,10 @@ public class CompanyExDao extends BaseDao {
 			ps.setString(7, company.getKrxIndustryCode());
 			ps.setString(8, company.getKrxIndustrySector());
 			ps.setString(9, company.getKrxIndustryCategory());
-			ps.setString(10, company.getId() );
-			ps.setString(11, company.getStandardDate());
+			ps.setString(10, company.getTelNo());
+			ps.setString(11, company.getAddress());
+			ps.setString(12, company.getId() );
+			ps.setString(13, company.getStandardDate());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -132,6 +136,8 @@ public class CompanyExDao extends BaseDao {
 		rtn.setKrxIndustryCode(rs.getString("krx_industry_code"));
 		rtn.setKrxIndustrySector(rs.getString("krx_industry_sector"));
 		rtn.setKrxIndustryCategory(rs.getString("krx_industry_category"));
+		rtn.setTelNo(rs.getString("tel_no"));
+		rtn.setAddress(rs.getString("address"));
 		return rtn;
 	}
 	

@@ -1,6 +1,6 @@
 package post;
 
-public class Company extends BaseStructure {
+public class Company extends BaseStructure implements Comparable<Company> {
 	
 	/**
 	 * 
@@ -93,5 +93,14 @@ public class Company extends BaseStructure {
 			return tgtCompany.getId().equals(this.getId());
 		}
 		return super.equals(tgt);
+	}
+
+	@Override
+	public int compareTo(Company o) {
+		if (o == null)
+			return 1;
+		if (this.id == null)
+			return -1;
+		return this.id.compareTo(o.id) ;
 	}
 }

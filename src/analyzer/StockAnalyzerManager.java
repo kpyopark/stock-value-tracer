@@ -258,8 +258,8 @@ public class StockAnalyzerManager {
 		StockAnalyzerManager manager = new StockAnalyzerManager();
 		manager.setUpdateListener(new ExamUpdateListener());
 		manager.startCompanyListUpdator();
-		//manager.startCompanyFinancialStatusUpdator();
-		//manager.startFinancialReportRefiner();
+		manager.startCompanyFinancialStatusUpdator();
+		manager.startFinancialReportRefiner();
 		manager.startAnnualEstimationUpdator();
 		manager.startStockValueEstimationUpdator();
 		manager.startStockAnalyzer();

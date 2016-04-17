@@ -190,8 +190,8 @@ public class FinancialReportRefiner extends DataUpdator {
 	}
 	
 	public static void main(String[] args) throws SQLException {
-		//testCheckAllCompanyFinancialStatement();
-		testCheckCfs();
+		testCheckAllCompanyFinancialStatement();
+		//testCheckCfs();
 	}
 	
 	public static void testCheckAllCompanyFinancialStatement() throws SQLException {
@@ -223,7 +223,7 @@ public class FinancialReportRefiner extends DataUpdator {
 		CompanyEx company = new CompanyEx();
 		CompanyFinancialStatusDao financialDao = new CompanyFinancialStatusDao();
 		String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
-		company.setId("A005930");
+		company.setId("A017370");
 		ArrayList<CompanyFinancialStatus> financialStatusList = null;
 		financialStatusList = financialDao.getFinancialStatus(company, registeredDate);
 		List<CompanyFinancialStatus> cfsList = retrieveValidQuarterReports(company, financialStatusList);

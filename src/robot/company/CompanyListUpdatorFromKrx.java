@@ -2,6 +2,7 @@ package robot.company;
 
 import internetResource.companyItem.CompanyAndItemListResource2016FromKrx;
 import internetResource.companyItem.CompanyExpireResource2016FromKrx;
+import internetResource.companyItem.CompanyIndustryCode2016FromKrx;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
 import java.io.IOException;
@@ -25,11 +26,9 @@ import streamProcess.krx.KrxMqStreamInserter;
 import streamProcess.krx.KrxMqStreamWebResource;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
-
 import common.PeriodUtil;
 import common.QueueUtil;
 import common.StringUtil;
-
 import dao.CompanyExDao;
 import dao.KrxItemDao;
 import dao.StockDao;
@@ -280,7 +279,8 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 					toYear, toMonth, toDay);
 			insertCompanyCodeListAndStockValueForPeriods(workDays);
 			insertCompanyExpirationFromKrxItem();
-			updateFicsSectorInfo();
+			//updateFicsSectorInfo();
+			updateKrxSectorInfo();
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
@@ -306,6 +306,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 	}
 	
+	@Deprecated
 	public void updateFicsSectorInfo() {
 		CompanyExDao dao = new CompanyExDao();
 		try {
@@ -335,9 +336,41 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		}
 	}
 	
+	public void updateKrxSectorInfo() {
+		CompanyExDao dao = new CompanyExDao();
+		try {
+			CompanyIndustryCode2016FromKrx ir = new CompanyIndustryCode2016FromKrx();
+			ArrayList<CompanyEx> companyList = dao.selectAllList(dao.getLatestStandardDate(), KrxSecurityType.STOCK);
+			ArrayList<CompanyEx> webList = ir.getItemList(KrxMarketType.ALL);
+			Collections.sort(webList);
+			boolean needUpdate;
+			for( CompanyEx fromDB : companyList ) {
+				needUpdate = false;
+				int pos = Collections.binarySearch(webList, fromDB);
+				if( pos < 0 )
+					continue;
+				CompanyEx fromWeb = webList.get(pos);
+				if(!fromWeb.getKrxIndustryCode().equals(fromDB.getKrxIndustryCode()) ||
+					!fromWeb.getKrxIndustryCategory().equals(fromDB.getKrxIndustryCategory())
+					) {
+					fromDB.setAddress(fromWeb.getAddress());
+					fromDB.setTelNo(fromWeb.getTelNo());
+					fromDB.setKrxIndustryCode(fromWeb.getKrxIndustryCode());
+					fromDB.setKrxIndustryCategory(fromWeb.getKrxIndustryCategory());
+					needUpdate = true;
+				}
+				if ( needUpdate ) {
+					dao.update(fromDB);
+				}
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateKrxItemsFromYear(2015);
+		updator.updateKrxSectorInfo();
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

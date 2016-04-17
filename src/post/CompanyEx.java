@@ -33,10 +33,31 @@ public class CompanyEx extends Company {
 	public void setKrxIndustryCategory(String krxIndustryCategory) {
 		this.krxIndustryCategory = krxIndustryCategory;
 	}
+	
+	public String getTelNo() {
+		return telNo;
+	}
+
+	public void setTelNo(String telNo) {
+		this.telNo = telNo;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+
 
 	private String krxIndustryCode;
 	private String krxIndustrySector;
 	private String krxIndustryCategory;
+	
+	private String telNo;
+	private String address;
 	
 	private int securitySector = 0;		// 0 - ordinary stock, 1 - etf deffered, 2 - elw deffered
 

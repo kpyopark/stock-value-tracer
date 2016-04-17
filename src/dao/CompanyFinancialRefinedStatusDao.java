@@ -41,6 +41,8 @@ CREATE TABLE `tb_company_stat_refined` (
 
 </pre>
  * @author user
+ * 
+ * 
  *
  */
 public class CompanyFinancialRefinedStatusDao extends BaseDao {
@@ -53,7 +55,7 @@ public class CompanyFinancialRefinedStatusDao extends BaseDao {
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT_REFINED ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, curdate(),?,? )");
+			ps = conn.prepareStatement("INSERT INTO TB_COMPANY_STAT_REFINED ( STOCK_ID,STANDARD_DATE,IS_ANNUAL,ASSET_TOTAL,DEBT_TOTAL,CAPITAL,CAPITAL_TOTAL,SALES,OPERATION_PROFIT,ORDINARY_PROFIT,NET_PROFIT,INVESTED_CAPITAL,PREFFERED_STOCK_SIZE,GENERAL_STOCK_SIZE,DIVIDENED_RATIO,ROE,ROA,ROI,KOSPI_YN,FIXED_YN, MODIFIED_DATE, CALCULATED_YN, REGISTERED_DATE ) VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, now(),?,? )");
 			int cnt = 1;
 			ps.setString(cnt++, financialStat.getCompany().getId() );
 			ps.setString(cnt++, financialStat.getStandardDate() );

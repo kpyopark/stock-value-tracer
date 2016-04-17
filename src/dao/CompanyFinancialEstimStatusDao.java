@@ -112,25 +112,103 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 	
 	final static long PRECISION_THRESHOLD = 1000000;
 	
+	final static String INSERT_QUERY = 
+			"    insert into tb_company_estim_stat" +
+			" 	select stock_id, " +
+			"		max(standard_date) as standard_date, " +
+			"		'Y' as IS_ANNUAL, " +
+			"        'O' as estim_kind," +
+			"        avg(case when asset_total = 0 then null else asset_total end) as asset_total, " +
+			"        avg(case when debt_total = 0 then null else debt_total end) as debt_total," +
+			"        avg(case when capital = 0 then null else capital end) as capital," +
+			"        avg(case when capital_total = 0 then null else capital_total end) as capital_total," +
+			"        sum(sales_) as sales," +
+			"        sum(operation_profit_) as operation_profit," +
+			"        sum(ordinary_profit_) as ordinary_profit," +
+			"        sum(net_profit_) as net_profit," +
+			"        avg(case when invested_capital = 0 then null else invested_capital end) as invested_capital," +
+			"        avg(case when preffered_stock_size = 0 then null else preffered_stock_size end) as preffered_stock_size," +
+			"        avg(case when general_stock_size = 0 then null else general_stock_size end) as general_stock_size," +
+			"        max(DIVIDENED_RATIO) as dividened_ratio," +
+			"        avg(roe) as roe," +
+			"        avg(roa) as roa," +
+			"        avg(roi) as roi," +
+			"        KOSPI_YN," +
+			"        FIXED_YN," +
+			"        max(MODIFIED_DATE) as modified_date," +
+			"        'Y' AS ESTIMATED_YN," +
+			"        array_to_string(array_agg(standard_date),',') AS RELATED_DATE_LIST," +
+			"        max(REGISTERED_DATE) as registered_date" +
+			"	from " +
+			"	( " +
+			"	select *," +
+			"	       case when sales <> 0 then sales else avg(case when sales = 0 then null else sales end) over (partition by stock_id) end sales_," +
+			"	       case when operation_profit <> 0 then operation_profit else avg(case when operation_profit = 0 then null else operation_profit end) over (partition by stock_id) end operation_profit_," +
+			"	       case when ordinary_profit <> 0 then ordinary_profit else avg(case when ordinary_profit = 0 then null else ordinary_profit end) over (partition by stock_id) end ordinary_profit_," +
+			"	       case when net_profit <> 0 then net_profit else avg(case when net_profit = 0 then null else net_profit end) over (partition by stock_id) end net_profit_" +
+			"        from tb_company_stat_refined " +
+			"	where 1=1" +
+			"	        and stock_id = ? and standard_date <= ?" +
+			"		and is_annual = 'N'" +
+			"		and fixed_yn = 'Y'" +
+			"	order by standard_date desc" +
+			"	limit 4" +
+			"        ) b" +
+			"        group by stock_id, b.kospi_yn, b.fixed_yn";
+	
+	final static String DELETE_QUERY = 
+			"delete from tb_company_estim_stat" +
+					"    where  stock_id = ? and standard_date = ( " +
+					"			select max(standard_date) " +
+					"            from tb_company_stat_refined" +
+					"			where stock_id = ? " +
+					"            and standard_date <= ? " +
+					"            and is_annual = 'N' " +
+					"            and fixed_yn = 'Y' " +
+					"		)" +
+					"		and is_annual = 'Y' and estim_kind = 'O'";
+	
+	private void deleteLastestFinancialStatementForUpdate(Connection conn, Company company, String registeredDate) throws SQLException {
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(DELETE_QUERY);
+			int cnt = 1;
+			ps.setString(cnt++, company.getId());
+			ps.setString(cnt++, company.getId());
+			ps.setString(cnt++, registeredDate);
+
+			ps.execute();
+		} finally {
+			if(ps!=null)try{ps.close();}catch(Exception e){}
+		}
+	}
+	
+	private void insertLastestFinancialStatementForUpdate(Connection conn, Company company, String registeredDate) throws SQLException {
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(INSERT_QUERY);
+			int cnt = 1;
+			ps.setString(cnt++, company.getId());
+			ps.setString(cnt++, registeredDate);
+			ps.execute();
+		} finally {
+			if(ps!=null)try{ps.close();}catch(Exception e){}
+		}
+	}
+	
 	public CompanyFinancialStatusEstimated updateFinancialReportEstimated(Company company, String registeredDate) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs = null;
 		CompanyFinancialStatusEstimated rtn = null;
-		//System.out.println("update estimation:" + company.getId() + "[" + company.getName() + "]:" + registeredDate);
 		try {
 			conn = getConnection();
-			//System.out.println(financialStat.getRelatedDateList());
-			ps = conn.prepareStatement("CALL proc_estimate_financial_report(?, ?)");
-			int cnt = 1;
-			ps.setString(cnt++, company.getId());
-			ps.setString(cnt++, registeredDate);
-
-			ps.execute();
+			deleteLastestFinancialStatementForUpdate(conn, company, registeredDate);
+			insertLastestFinancialStatementForUpdate(conn, company, registeredDate);
 			
 			ps2 = conn.prepareStatement("select * from TB_COMPANY_ESTIM_STAT WHERE  STOCK_ID = ? and is_annual = 'Y' and standard_date <= ? ORDER BY 1,2 desc,3 limit 1");
-			cnt = 1;
+			int cnt = 1;
 			ps2.setString(cnt++, company.getId());
 			ps2.setString(cnt++, registeredDate);
 			
