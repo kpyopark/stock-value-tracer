@@ -31,13 +31,13 @@ public class StockRank extends BaseStructure {
 	
 	private int roaRank = Integer.MAX_VALUE;
 	
-	private int bppRank = Integer.MAX_VALUE;
+	private int bpsRank = Integer.MAX_VALUE;
 	
-	public int getBppRank() {
-		return bppRank;
+	public int getBpsRank() {
+		return bpsRank;
 	}
-	public void setBppRank(int bppRank) {
-		this.bppRank = bppRank;
+	public void setBpsRank(int bpsRank) {
+		this.bpsRank = bpsRank;
 	}
 	public int getEarningYieldRank() {
 		return EarningYieldRank;

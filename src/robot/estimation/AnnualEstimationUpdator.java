@@ -56,7 +56,8 @@ public class AnnualEstimationUpdator extends DataUpdator {
 	}
 	
 	public static void main(String[] args) {
-		testUpdateAllFinancialEstimated();
+		//testUpdateAllFinancialEstimated();
+		testUpdateFinancialEstimated();
 	}
 	
 	public static void testUpdateAllFinancialEstimated() {
@@ -74,7 +75,7 @@ public class AnnualEstimationUpdator extends DataUpdator {
 			AnnualEstimationUpdator updator = new AnnualEstimationUpdator();
 			updator.addUpdateListener(new robot.listenter.ExamUpdateListener());
 			Company company = new Company();
-			company.setId("A025890");
+			company.setId("A034730");
 			updator.updateCompanyFinancialStatusEstimated(company, StringUtil.convertToStandardDate(new Date()));
 		} catch ( Exception e ) {
 			e.printStackTrace();

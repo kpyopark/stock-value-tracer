@@ -43,7 +43,11 @@ public class StockEstimated extends BaseStructure {
 	
 	private float aveRoa = (float) 0.0;
 	
-	private float aveBpp = (float) 0.0;
+	private float aveBps = (float) 0.0;
+	/**
+	 * Book / Price Ratio
+	 */
+	private float aveBpr = (float) 0.0;
 	
 	private float earningYield = (float) 0.0;
 	
@@ -65,12 +69,12 @@ public class StockEstimated extends BaseStructure {
 		this.earningYield = earningYield;
 	}
 
-	public float getAveBpp() {
-		return aveBpp;
+	public float getAveBps() {
+		return aveBps;
 	}
 
-	public void setAveBpp(float aveBpp) {
-		this.aveBpp = aveBpp;
+	public void setAveBps(float aveBps) {
+		this.aveBps = aveBps;
 	}
 
 	/**
@@ -190,6 +194,14 @@ public class StockEstimated extends BaseStructure {
 
 	public void setAveRoa(float aveRoa) {
 		this.aveRoa = aveRoa;
+	}
+	
+	public void setAveBpr(float aveBpr) {
+		this.aveBpr = aveBpr;
+	}
+	
+	public float getAveBpr() {
+		return this.aveBpr;
 	}
 
 	public String getRelatedDateList() {

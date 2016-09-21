@@ -91,14 +91,14 @@ public class CompanyExDao extends BaseDao {
 			ps.setString(11, company.getAddress());
 			ps.setString(12, company.getId() );
 			ps.setString(13, company.getStandardDate());
-			rtn = ps.execute();
+			rtn = ps.executeUpdate() > 0;
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		} finally {
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 		}
-		System.out.println( rtn );
+		System.out.println( String.format("[%s]-[%s]Company information has changed. [%s]", company.getId(), company.getName(), rtn ? "Yes" : "No") );
 		return rtn;
 	}
 	
@@ -133,11 +133,12 @@ public class CompanyExDao extends BaseDao {
 		rtn.setFicsIndustryGroup(rs.getString("FICS_INDUSTRY_GROUP"));
 		rtn.setFicsIndustry(rs.getString("FICS_INDUSTRY"));
 		rtn.setClosed("Y".equals(rs.getString("CLOSED_YN")));
-		rtn.setKrxIndustryCode(rs.getString("krx_industry_code"));
-		rtn.setKrxIndustrySector(rs.getString("krx_industry_sector"));
-		rtn.setKrxIndustryCategory(rs.getString("krx_industry_category"));
-		rtn.setTelNo(rs.getString("tel_no"));
-		rtn.setAddress(rs.getString("address"));
+		rtn.setKrxIndustryCode(rs.getString("KRX_INDUSTRY_CODE"));
+		rtn.setKrxIndustrySector(rs.getString("KRX_INDUSTRY_SECTOR"));
+		rtn.setKrxIndustryCategory(rs.getString("KRX_INDUSTRY_CATEGORY"));
+		rtn.setTelNo(rs.getString("TEL_NO"));
+		rtn.setAddress(rs.getString("ADDRESS"));
+		rtn.setFutureYn(rs.getString("FUTURE_YN"));
 		return rtn;
 	}
 	

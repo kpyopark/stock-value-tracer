@@ -87,14 +87,14 @@ public class StockAnalyzer {
 					stockRankList.get(cnt).getPerRank() + ";" + 
 					stockRankList.get(cnt).getRoaRank() + ";" +
 					stockRankList.get(cnt).getRoeRank() + ";" +
-					stockRankList.get(cnt).getBppRank() + ";" +
+					stockRankList.get(cnt).getBpsRank() + ";" +
 					stockRankList.get(cnt).getEarningYieldRank() + ";" +
 					stockRankList.get(cnt).getTotRank() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getEstimKind() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAvePer() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAveRoe() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAveRoa() + ";" +
-					stockRankList.get(cnt).getStockEstimation().getAveBpp() + ";" +
+					stockRankList.get(cnt).getStockEstimation().getAveBps() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getEarningYield() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getDebtRatio() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getAveDividendRatio() + ";" +
@@ -197,7 +197,7 @@ public class StockAnalyzer {
 		calculateRankByRoa();
 		//calculateRankByAdjustRoe();
 		calculateRankByEarningYield();
-		calculateRankByBpp();
+		calculateRankByBps();
 		//calculateRankByPer();
 		calculateTotRank();
 		printStockListToConsole(rank, registeredDate);
@@ -257,8 +257,8 @@ public class StockAnalyzer {
 		}
 	}
 
-	private void calculateRankByBpp() {
-		java.util.Collections.sort(stockEstimList,new BppComparator());
+	private void calculateRankByBps() {
+		java.util.Collections.sort(stockEstimList,new BpsComparator());
 		int rank = 1;
 		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
 			StockRank stockRank = new StockRank();
@@ -269,10 +269,10 @@ public class StockAnalyzer {
 				stockRank.setStockEstimation(stockEstimList.get(cnt));
 				stockRankList.add(stockRank);
 			}
-			if ( stockEstimList.get(cnt).getAveBpp() >= 0 ) {
+			if ( stockEstimList.get(cnt).getAveBps() >= 0 ) {
 				rank = cnt+1;
 			}
-			stockRank.setBppRank(rank);
+			stockRank.setBpsRank(rank);
 		}
 	}
 
@@ -312,7 +312,7 @@ public class StockAnalyzer {
 		while( iter.hasNext() ) {
 			StockRank stockRank = (StockRank)iter.next();
 			//stockRank.setTotRank(stockRank.getPerRank()+stockRank.getRoaRank());
-			stockRank.setTotRank((int)(stockRank.getRoaRank() * 0.3 + stockRank.getRoeRank() * 0.5 + stockRank.getEarningYieldRank() * 0.8 + stockRank.getBppRank() * 0.2));
+			stockRank.setTotRank((int)(stockRank.getRoaRank() * 0.2 + stockRank.getRoeRank() * 0.8 + stockRank.getEarningYieldRank() * 0.3 + stockRank.getBpsRank() * 0.8));
 		}
 		java.util.Collections.sort(stockRankList,new TotComparator());
 	}
@@ -399,9 +399,9 @@ public class StockAnalyzer {
 
 	}
 	
-	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE","BPP","E.Y",
+	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE","BPS","E.Y",
 		"TOT","EST","SECTOR","GROUP","INDUSTRY","AVEPER","AVEROE","AVEROA",
-		"AVEBPP", "EARNING_RATIO", "DEBT_RATIO",
+		"AVEBPS", "AVEBPR", "EARNING_RATIO", "DEBT_RATIO",
 		"AVEDIV","REPS","RSTOCK","LEPS","SHARESIZE","M.C","DATE","URL"
 	};
 	
@@ -430,7 +430,7 @@ public class StockAnalyzer {
 		row.createCell(column++).setCellValue(rankInfo.getPerRank());
 		row.createCell(column++).setCellValue(rankInfo.getRoaRank());
 		row.createCell(column++).setCellValue(rankInfo.getRoeRank());
-		row.createCell(column++).setCellValue(rankInfo.getBppRank());
+		row.createCell(column++).setCellValue(rankInfo.getBpsRank());
 		row.createCell(column++).setCellValue(rankInfo.getEarningYieldRank());
 		row.createCell(column++).setCellValue(rankInfo.getTotRank());
 		row.createCell(column++).setCellValue(rankInfo.getStockEstimation().getEstimKind());
@@ -447,7 +447,10 @@ public class StockAnalyzer {
 		cell.setCellValue(rankInfo.getStockEstimation().getAveRoa());
 		cell.setCellStyle(percentStyle);
 		cell = row.createCell(column++);
-		cell.setCellValue(rankInfo.getStockEstimation().getAveBpp());
+		cell.setCellValue(rankInfo.getStockEstimation().getAveBps());
+		cell.setCellStyle(numStyle);
+		cell = row.createCell(column++);
+		cell.setCellValue(rankInfo.getStockEstimation().getAveBpr());
 		cell.setCellStyle(percentStyle);
 		cell = row.createCell(column++);
 		cell.setCellValue(rankInfo.getStockEstimation().getEarningYield());
@@ -541,10 +544,10 @@ class AdjustRoeComparator implements java.util.Comparator<StockEstimated> {
 	}
 }
 
-class BppComparator implements java.util.Comparator<StockEstimated> {
+class BpsComparator implements java.util.Comparator<StockEstimated> {
 	public int compare(StockEstimated src, StockEstimated tgt) {
-		return src.getAveBpp() < tgt.getAveBpp() ? 1 :
-			src.getAveBpp() == tgt.getAveBpp() ? 0 : -1;
+		return src.getAveBps() < tgt.getAveBps() ? 1 :
+			src.getAveBps() == tgt.getAveBps() ? 0 : -1;
 	}
 }
 

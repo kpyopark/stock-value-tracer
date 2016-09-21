@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
+import common.StringUtil;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatusEstimated;
@@ -168,6 +170,23 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 					"		)" +
 					"		and is_annual = 'Y' and estim_kind = 'O'";
 	
+	final static String DELETE_OVERESTIMATED_ROWS = 
+			"delete from tb_company_estim_stat " +
+					"where  (stock_id, standard_date) in ( " +
+					"select a.stock_id, a.standard_date from tb_company_estim_stat a, " +
+					"        ( " +
+					"         select b1.stock_id, max(b1.standard_date) as standard_date " +
+					"         from tb_company_stat_refined b1  " +
+					"         where b1.stock_id = ? and b1.standard_date between to_char(to_timestamp(?, 'YYYYMMDD') - '1 year'::interval, 'YYYYMMDD') and to_char(to_timestamp(?, 'YYYYMMDD'), 'YYYYMMDD') " +
+					"	 and b1.is_annual = 'N'  " +
+					"	 and b1.fixed_yn = 'Y'  " +
+					"         group by b1.stock_id " +
+					"        ) b " +
+					"where   a.stock_id = b.stock_id  " +
+					"        and a.standard_date > b.standard_date " +
+					"	and a.is_annual = 'Y' and a.estim_kind = 'O' " +
+					")";
+	
 	private void deleteLastestFinancialStatementForUpdate(Connection conn, Company company, String registeredDate) throws SQLException {
 		PreparedStatement ps = null;
 		try {
@@ -175,6 +194,21 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			int cnt = 1;
 			ps.setString(cnt++, company.getId());
 			ps.setString(cnt++, company.getId());
+			ps.setString(cnt++, registeredDate);
+
+			ps.execute();
+		} finally {
+			if(ps!=null)try{ps.close();}catch(Exception e){}
+		}
+	}
+	
+	private void deleteFalseEstimatedItems(Connection conn, Company company, String registeredDate) throws SQLException {
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(DELETE_OVERESTIMATED_ROWS);
+			int cnt = 1;
+			ps.setString(cnt++, company.getId());
+			ps.setString(cnt++, registeredDate);
 			ps.setString(cnt++, registeredDate);
 
 			ps.execute();
@@ -205,6 +239,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 		try {
 			conn = getConnection();
 			deleteLastestFinancialStatementForUpdate(conn, company, registeredDate);
+			deleteFalseEstimatedItems(conn, company, registeredDate);
 			insertLastestFinancialStatementForUpdate(conn, company, registeredDate);
 			
 			ps2 = conn.prepareStatement("select * from TB_COMPANY_ESTIM_STAT WHERE  STOCK_ID = ? and is_annual = 'Y' and standard_date <= ? ORDER BY 1,2 desc,3 limit 1");
@@ -223,7 +258,7 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 			//e.printStackTrace();
 		} finally {
 			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
-			if ( ps2 != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps2 != null ) try { ps2.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
 		}
 		return rtn;
@@ -367,8 +402,8 @@ public class CompanyFinancialEstimStatusDao extends BaseDao {
 	public static void testUpdateFinancialReportEstimated() {
 		CompanyFinancialEstimStatusDao dao = new CompanyFinancialEstimStatusDao();
 		CompanyEx company = new CompanyEx();
-		company.setId("A006390");
-		dao.updateFinancialReportEstimated(company, "20150117");
+		company.setId("A036580");
+		dao.updateFinancialReportEstimated(company, StringUtil.convertToStandardDate(new Date()));
 	}
 	
 }

@@ -1,17 +1,8 @@
 package internetResource.companyItem;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import org.htmlcleaner.TagNode;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,6 +10,7 @@ import org.json.simple.parser.JSONParser;
 import post.Company;
 import post.KrxItem;
 import post.KrxSecurityType;
+
 import common.StringUtil;
 
 public class CompanyAndItemListResource2016FromKrx {

@@ -93,6 +93,11 @@ public class StringUtil {
 		return nextYear + standardDate.substring(4);
 	}
 	
+	public static String getPreviousAnnualStandardDate(String standardDate) {
+		int nextYear = Integer.parseInt(standardDate.substring(0, 4)) - 1;
+		return nextYear + standardDate.substring(4);
+	}
+	
 	public static String getNumericValue(String org) {
 		int tag_start = -1;
 		int tag_end = -1;

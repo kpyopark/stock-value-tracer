@@ -58,7 +58,18 @@ public class CompanyEx extends Company {
 	
 	private String telNo;
 	private String address;
+	private String futureYn;
 	
+	public String getFutureYn() {
+		return futureYn;
+	}
+
+	public void setFutureYn(String futureYn) {
+		this.futureYn = futureYn;
+	}
+
+
+
 	private int securitySector = 0;		// 0 - ordinary stock, 1 - etf deffered, 2 - elw deffered
 
 	public int getSecuritySector() {

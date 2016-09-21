@@ -3,15 +3,23 @@ package robot.company;
 import internetResource.companyItem.CompanyAndItemListResource2016FromKrx;
 import internetResource.companyItem.CompanyExpireResource2016FromKrx;
 import internetResource.companyItem.CompanyIndustryCode2016FromKrx;
+import internetResource.companyItem.EtfListResource2016FromKrx;
 import internetResource.financialReport.FinancialReportResourceFromFnguide;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
 
 import post.CompanyEx;
 import post.KrxItem;
@@ -35,6 +43,8 @@ import dao.StockDao;
 
 public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
+	Logger logger = Logger.getLogger(CompanyListUpdatorFromKrx.class);
+	
 	CompanyExDao dao = null;
 	StockDao stockDao = null;
 	KrxItemDao krxDao = null;
@@ -45,27 +55,23 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		krxDao = new KrxItemDao();
 	}
 	
-	public void insertETFstockFrom2002Year() {
-		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();
+	public void insertETFstockFrom2009Year() {
 		List<String> workDays = new ArrayList<String>();
-		for( int year = 2002 ; year < 2014 ; year++ ) {
-			workDays.addAll(PeriodUtil.getWorkDaysForOneYear(year, Calendar.DECEMBER, 31));
-		}
+		//workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2009, Calendar.DECEMBER, 31));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2010, Calendar.DECEMBER, 31));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2011, Calendar.DECEMBER, 31));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2012, Calendar.DECEMBER, 31));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2013, Calendar.DECEMBER, 31));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2014, Calendar.DECEMBER, 31));
+		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(2015, Calendar.DECEMBER, 31));
 		Calendar calendar = Calendar.getInstance();
 		workDays.addAll(PeriodUtil.getWorkDaysForOneYear(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
 		for( int dayCnt = 0 ; dayCnt < workDays.size(); dayCnt++ ) {
 			String standardDate = workDays.get(dayCnt);
 			System.out.println("Start for the date - " + standardDate + " -");
 			try {
-				ArrayList<KrxItem> companyAndStock = ir.getItemList(KrxSecurityType.ETF, standardDate, null);
-				System.out.println("    # of etf :" + companyAndStock.size());
-				for ( int cnt = 0 ; cnt < companyAndStock.size(); cnt++ ) {
-					CompanyEx company = companyAndStock.get(cnt).getCompany();
-					company.setSecuritySector(KrxSecurityType.ETF.getType());
-					company.setStandardDate(standardDate);
-					dao.update(company);
-				}
-			} catch ( Exception e ) {
+				insertEtfAndPrice(standardDate);
+			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -167,45 +173,91 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 		stock.setVolume(krxStockInfo.getVolume());
 		return stock;
 	}
-
-	public void insertCompanyAndStockFromKrxItem(String standardDate) {
-		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();
+	
+	private CompanyEx checkNewCompanyOrChanged(KrxItem krxItem, String standardDate,
+			KrxSecurityType securityType, List<CompanyEx> companiesFromDB) throws SQLException {
+		CompanyEx companyFromKrx = krxItem.getCompany();
+		companyFromKrx.setStandardDate(standardDate);
+		companyFromKrx.setSecuritySector(securityType.getType());
+		int currentDBPosition = -1;
+		if ( ( currentDBPosition = companiesFromDB.indexOf(companyFromKrx) ) != -1 ) {
+			CompanyEx companyEx = companiesFromDB.get(currentDBPosition);
+			if ( !companyEx.getName().equals(companyFromKrx.getName()) 
+					|| companyEx.getSecuritySector() != companyFromKrx.getSecuritySector() ) {
+				dao.insert(companyFromKrx);
+				fireCompanyChanged(companyFromKrx, null);
+			}
+		} else
+			dao.insert(companyFromKrx);
+		return companyFromKrx;
+	}
+	
+	private void insertDailyStockPrice(KrxItem krxItem, CompanyEx companyFromKrx, String standardDate) throws SQLException {
+		Stock stock = getStockFromKrxItem(krxItem, companyFromKrx, standardDate, "150000");
+		if ( stockDao.select(companyFromKrx, standardDate, "150000") != null ) {
+			// skip
+		} else {
+			stockDao.insert(stock);
+		}
+		if ( krxDao.select(krxItem, standardDate) != null ) {
+			// skip
+		} else {
+			krxDao.insert(krxItem);
+		}
+	}
+	
+	private void checkUnusedStock(CompanyEx companyEx, String standardDate) {
 		try {
-			ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate, null);
+			companyEx.setClosed(true);
+			companyEx.setStandardDate(standardDate);
+			dao.insert(companyEx);
+		} catch (SQLException sqle) {
+			logger.warn(
+					String.format("The company %s-%s is closed when %s. but to update failed.", companyEx.getId(), companyEx.getName(), companyEx.getStandardDate()), sqle);
+		}
+	}
+	
+	private void insertCompanyAndStockPrice(String standardDate, KrxSecurityType securityType) throws Exception {
+		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();
+		ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
+		ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate, securityType);
+		logger.debug(String.format("#Standard date [%s] Security type [%s] # in web [%d] # in DB [%d]",standardDate, securityType, 
+				krxItemList.size(), companiesFromDB.size()));
+		for ( KrxItem krxItem : krxItemList) {
+			CompanyEx companyFromKrx = checkNewCompanyOrChanged(krxItem, standardDate, securityType, 
+					companiesFromDB);
+			insertDailyStockPrice(krxItem, companyFromKrx, standardDate);
+		}
+	}
+	
+	private void insertEtfAndPrice(String standardDate) throws Exception {
+		EtfListResource2016FromKrx ire = new EtfListResource2016FromKrx();
+		ArrayList<KrxItem> krxItemList = 
+				ire.getItemList(standardDate);
+		ArrayList<CompanyEx> companiesFromDB = dao.selectAllList(standardDate, KrxSecurityType.ETF);
+		logger.debug(String.format("#Standard date [%s] Security type [%s] # in web [%d] # in DB [%d]",standardDate, KrxSecurityType.ETF, 
+				krxItemList.size(), companiesFromDB.size()));
+		for ( KrxItem krxItem : krxItemList) {
+			CompanyEx companyFromKrx = checkNewCompanyOrChanged(krxItem, standardDate, KrxSecurityType.ETF, 
+					companiesFromDB);
+			insertDailyStockPrice(krxItem, companyFromKrx, standardDate);
+		}
+		if(krxItemList.size() > 30 ) {		// why use magic number 200?. because in normal cases. there are more 200 ETFS in the market.
+			companiesFromDB.stream()
+					.filter(company-> company.getSecuritySector() == KrxSecurityType.ETF.getType())
+					.filter(company-> !krxItemList.stream().anyMatch(krxItem->krxItem.getId().equals(company.getId())))
+					.forEach(company-> checkUnusedStock(company, standardDate));
+		}
+	}
+	
+	public void insertCompanyAndStockFromKrxItem(String standardDate) {
+		try {
 			for ( KrxSecurityType securityType : KrxSecurityType.values() ) {
-				ArrayList<KrxItem> krxItemList = ir.getItemList(securityType, standardDate, null);
-				System.out.println("- standard date - " + standardDate + " - security type - " + securityType +  " - size - " + krxItemList.size() );
-				ArrayList<KrxItem> insertList = new ArrayList<KrxItem>();
-				for ( int cnt = 0 ; cnt < krxItemList.size(); cnt++ ) {
-					// CompanyEx
-					CompanyEx companyFromKrx = krxItemList.get(cnt).getCompany();
-					companyFromKrx.setStandardDate(standardDate);
-					companyFromKrx.setSecuritySector(securityType.getType());
-					int currentDBPosition = -1;
-					if ( ( currentDBPosition = companiesFromDB.indexOf(companyFromKrx) ) != -1 ) {
-						CompanyEx companyEx = companiesFromDB.get(currentDBPosition);
-						if ( !companyEx.getName().equals(companyFromKrx.getName()) 
-								|| companyEx.getSecuritySector() != companyFromKrx.getSecuritySector() ) {
-							dao.insert(companyFromKrx);
-							fireCompanyChanged(companyFromKrx, null);
-						}
-					} else
-						dao.insert(companyFromKrx);
-					// Stock Info
-					Stock stock = getStockFromKrxItem(krxItemList.get(cnt), companyFromKrx, standardDate, "150000");
-					if ( stockDao.select(companyFromKrx, standardDate, "150000") != null ) {
-						// skip
-					} else {
-						stockDao.insert(stock);
-					}
-					if ( krxDao.select(krxItemList.get(cnt), standardDate) != null ) {
-						// skip
-					} else {
-						insertList.clear();
-						insertList.add(krxItemList.get(cnt));
-						krxDao.insert(insertList);
-					}
-				}
+				if(securityType == KrxSecurityType.ETF)
+					insertEtfAndPrice(standardDate);
+				else
+					insertCompanyAndStockPrice(standardDate, securityType);
+					
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -357,6 +409,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 					fromDB.setTelNo(fromWeb.getTelNo());
 					fromDB.setKrxIndustryCode(fromWeb.getKrxIndustryCode());
 					fromDB.setKrxIndustryCategory(fromWeb.getKrxIndustryCategory());
+					fromDB.setKrxIndustrySector(fromWeb.getKrxIndustrySector());
 					needUpdate = true;
 				}
 				if ( needUpdate ) {
@@ -370,7 +423,8 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
-		updator.updateKrxSectorInfo();
+		//updator.updateKrxSectorInfo();
+		updator.insertETFstockFrom2009Year();
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

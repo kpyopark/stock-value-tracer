@@ -47,6 +47,7 @@ public class FinancialReportResourceFromFnguide {
 	}
 
 	static String XPATH_FICS_SECTOR = "//*[@id=\"compinfo\"]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[3]/td/table/tbody/tr[2]/td[1]/span[2]";
+	static String XPATH_CONSOLIDATED_YN = "//*[@id=\"upjongRptGb\"]";
 	
 	static String[][] GENERAL_REPORT_HEADERS = { 
 		{ "매출액" ,"보험료수익", "순영업수익", "이자수익", "영업수익", "SALES" }, // "SALES", "" }, 
@@ -118,9 +119,9 @@ public class FinancialReportResourceFromFnguide {
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 			String htmlText = new String(baos.toByteArray(), "utf-8");
 
-			boolean isConsolidated = htmlText.indexOf("input[value=\"B\"]") < 0;
 			
 			TagNode financeReport = cleaner.clean(bais, "utf-8");
+			boolean isConsolidated = !"B".equals(node(financeReport.evaluateXPath(XPATH_CONSOLIDATED_YN)[0]).getAttributeByName("value"));
 			{
 				Object[] ficsInfoObjects = financeReport.evaluateXPath(XPATH_FICS_SECTOR);
 				if ( ficsInfoObjects.length > 0 ) {
@@ -254,7 +255,7 @@ public class FinancialReportResourceFromFnguide {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyExDao dao = new CompanyExDao();
 		try {
-			CompanyEx company = dao.select("A005930", null);
+			CompanyEx company = dao.select("A032280", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

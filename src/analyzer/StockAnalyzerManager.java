@@ -1,8 +1,15 @@
 package analyzer;
 
+import internetResource.companyItem.FutureAndOptionResourceFromKrx;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.sun.javafx.binding.StringFormatter;
 
 import post.Company;
 import post.CompanyEx;
@@ -13,14 +20,13 @@ import robot.estimation.AnnualEstimationUpdator;
 import robot.estimation.StockEstimationUpdator;
 import robot.financialReport.FinancialReportListUpdatorFromFnguide;
 import robot.financialReport.FinancialReportRefiner;
-import robot.listenter.ExamUpdateListener;
 import robot.stock.StockValueUpdator;
-
 import common.StringUtil;
-
 import dao.CompanyExDao;
 
 class ThreadPool {
+	
+	final static Logger logger = Logger.getLogger(ThreadPool.class);
 
 	java.util.Vector<Thread> runThreads = new java.util.Vector<Thread>();
 	
@@ -67,7 +73,7 @@ class ThreadPool {
 			for(int cnt=0; cnt<runThreads.size() ;cnt++ ) {
 				if ( !runThreads.get(cnt).isAlive() ) {
 					position = cnt;
-					System.out.println("select position:"+position);
+					logger.debug("select position:"+position);
 					break;
 				}
 			}
@@ -76,11 +82,13 @@ class ThreadPool {
 	}
 	
 	private synchronized void printStatus() {
-		System.out.println("current size:" + runThreads.size() );
+		logger.debug("current size:" + runThreads.size() );
 	}
 }
 
 public class StockAnalyzerManager {
+	
+	final static Logger logger = Logger.getLogger(StockAnalyzerManager.class);
 
 	ArrayList<CompanyEx> companyList = null;
 	CompanyExDao dao = null;
@@ -125,6 +133,16 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
+	 * Index 목록을 수정한다.
+	 * 이 부분은 다른 프로그램에서 활용하기 위하여 임시 추가한 부분이다.
+	 * 
+	 */
+	public void updateOptionListUpdator() {
+		FutureAndOptionResourceFromKrx.updateIndexOptionAndMiniIndexOption();
+	}
+	
+	
+	/**
 	 * 재무재표 정보를 Web에서 가지고 온다.
 	 */
 	public void startCompanyFinancialStatusUpdator() {
@@ -141,15 +159,19 @@ public class StockAnalyzerManager {
 								CompanyEx orgCompany = new CompanyEx();
 								orgCompany.copyStructure(company);
 								if (orgCompany.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK) {
-									System.out.println("Ordinary Stock:" + company);
 									updator.updateFinancialStatus(company);
-									if ( ( orgCompany.isClosed() != company.isClosed() ) ||
-											( orgCompany.getFicsSector() != null && orgCompany.getFicsSector().equals(company.getFicsSector() ) ) ||
-											( orgCompany.getFicsIndustryGroup() != null && orgCompany.getFicsIndustryGroup().equals(company.getFicsIndustryGroup() ) ) ||
-											( orgCompany.getFicsIndustry() != null && orgCompany.getFicsIndustry().equals(company.getFicsIndustry() ) ) ||
-											( orgCompany.isClosed() != company.isClosed() ) ) {
-										dao.update(company);
+									if ( orgCompany.isClosed() != company.isClosed() ) {
+										logger.info(StringFormatter.format("[%s]-[%s]Company has closed. [%s]", company.getId(), company.getName(), company.isClosed() ? "Yes" : "No" ).getValue());
+									} else if ( orgCompany.getFicsSector() != null && !orgCompany.getFicsSector().equals(company.getFicsSector()) ) {
+										logger.info(StringFormatter.format("[%s]-[%s]Company has changed. Fics Sector before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsSector(), company.getFicsSector()).getValue());
+									} else if ( orgCompany.getFicsIndustryGroup() != null && !orgCompany.getFicsIndustryGroup().equals(company.getFicsIndustryGroup()) ) {
+										logger.info(StringFormatter.format("[%s]-[%s]Company has changed. Fics Industry Group before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsIndustryGroup(), company.getFicsIndustryGroup()).getValue());
+									} else if ( orgCompany.getFicsIndustry() != null && !orgCompany.getFicsIndustry().equals(company.getFicsIndustry()) ) {
+										logger.info(StringFormatter.format("[%s]-[%s]Company has changed. Fics Industry before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsIndustry(), company.getFicsIndustry()).getValue());
+									} else {
+										return;
 									}
+									dao.update(company);
 								} else {
 									System.out.println("Deffered Stock:" + company);
 								}
@@ -256,12 +278,18 @@ public class StockAnalyzerManager {
 	
 	public static void main(String[] args) {
 		StockAnalyzerManager manager = new StockAnalyzerManager();
-		manager.setUpdateListener(new ExamUpdateListener());
-		manager.startCompanyListUpdator();
-		manager.startCompanyFinancialStatusUpdator();
-		manager.startFinancialReportRefiner();
-		manager.startAnnualEstimationUpdator();
-		manager.startStockValueEstimationUpdator();
-		manager.startStockAnalyzer();
+		//manager.setUpdateListener(new ExamUpdateListener());
+		boolean[] startConditions = new boolean[] {
+			true, true, true, true, true, true, true		//Normal Case.
+			// false, false, false, false, true, true, true		// After to update estimation, and print new ranking list.
+			//true, false, false, false, false, false, false		// Update company only.
+		};
+		if(startConditions[0]) manager.startCompanyListUpdator();
+		if(startConditions[1]) manager.updateOptionListUpdator();
+		if(startConditions[2]) manager.startCompanyFinancialStatusUpdator();
+		if(startConditions[3]) manager.startFinancialReportRefiner();
+		if(startConditions[4]) manager.startAnnualEstimationUpdator();
+		if(startConditions[5]) manager.startStockValueEstimationUpdator();
+		if(startConditions[6]) manager.startStockAnalyzer();
 	}
 }

@@ -38,79 +38,104 @@ CREATE TABLE `tb_company_stock_daily` (
  *
  */
 public class KrxItemDao extends BaseDao {
-
+	
+	static String INSERT_STRING = "INSERT INTO tb_company_stock_daily \n" +
+			"(STOCK_ID,                                 \n" +
+			"COMPANY_NAME,                              \n" +
+			"STANDARD_DATE,                             \n" +
+			"SECURITY_TYPE,                             \n" +
+			"STOCK_PRICE,                               \n" +
+			"NET_CHANGE,                                \n" +
+			"NET_CHANGE_RATIO,                          \n" +
+			"ASK_PRICE,                                 \n" +
+			"BID_PRICE,                                 \n" +
+			"TODAY_HIGH,                                \n" +
+			"TODAY_LOW,                                 \n" +
+			"VOLUME,                                    \n" +
+			"VOLUME_AMOUNT,                             \n" +
+			"OPEN_PRICE,                                \n" +
+			"PAR_VALUE,                                 \n" +
+			"CURRENCY,                                  \n" +
+			"ORDINARY_SHARE,                            \n" +
+			"MARKET_CAPITAL)                            \n" +
+			"VALUES                                       \n" +
+			"(                                            \n" +
+			"?, -- <{STOCK_ID: }>,                        \n" +
+			"?, -- <{COMPANY_NAME: }>,                    \n" +
+			"?, -- <{STANDARD_DATE: }>,                   \n" +
+			"?, -- <{SECURITY_TYPE: }>,                   \n" +
+			"?, -- <{STOCK_PRICE: }>,                     \n" +
+			"?, -- <{NET_CHANGE: }>,                      \n" +
+			"?, -- <{NET_CHANGE_RATIO: }>,                \n" +
+			"?, -- <{ASK_PRICE: }>,                       \n" +
+			"?, -- <{BID_PRICE: }>,                       \n" +
+			"?, -- <{TODAY_HIGH: }>,                      \n" +
+			"?, -- <{TODAY_LOW: }>,                       \n" +
+			"?, -- <{VOLUME: }>,                          \n" +
+			"?, -- <{VOLUME_AMOUNT: }>,                   \n" +
+			"?, -- <{OPEN_PRICE: }>,                      \n" +
+			"?, -- <{PAR_VALUE: }>,                       \n" +
+			"?, -- <{CURRENCY: }>,                        \n" +
+			"?, -- <{ORDINARY_SHARE: }>,                  \n" +
+			"? -- <{MARKET_CAPITAL: }>                    \n" +
+			")                                            \n";
+	
+	private boolean insertOneRow(PreparedStatement ps, KrxItem krxItem) throws SQLException {
+		int inxCnt = 1;
+		ps.setString(inxCnt++, krxItem.getId() );
+		ps.setString(inxCnt++, krxItem.getName() );
+		ps.setString(inxCnt++, krxItem.getStandardDate() );
+		ps.setString(inxCnt++, krxItem.getSecurityType().getType()+"" );
+		ps.setLong(inxCnt++, krxItem.getStockPrice());
+		ps.setLong(inxCnt++, krxItem.getNetChange());
+		ps.setFloat(inxCnt++, krxItem.getNetChangeRatio());
+		ps.setLong(inxCnt++, krxItem.getAsk());
+		ps.setLong(inxCnt++, krxItem.getBid());
+		ps.setLong(inxCnt++, krxItem.getTodayHigh());
+		ps.setLong(inxCnt++, krxItem.getTodayLow());
+		ps.setLong(inxCnt++, krxItem.getVolume());
+		ps.setLong(inxCnt++, krxItem.getVolumnAmount());
+		ps.setLong(inxCnt++, krxItem.getOpenPrice());
+		ps.setFloat(inxCnt++, krxItem.getParValue());
+		ps.setString(inxCnt++, krxItem.getCurrency());
+		ps.setLong(inxCnt++, krxItem.getOrdinaryShare());
+		ps.setLong(inxCnt++, krxItem.getMaketCapitalization());
+		
+		return ps.execute();
+	}
+	
+	public boolean insert(KrxItem krxItem) throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		boolean rtn = false;
+		try {
+			conn = getConnection();
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement(INSERT_STRING);
+			insertOneRow(ps, krxItem);
+			conn.commit();
+		} catch ( Exception e ) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			conn.setAutoCommit(true);
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+		
+	}
+	
 	public boolean insert(List<KrxItem> krxItems) throws SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		boolean rtn = false;
-		int inxCnt = 1;
 		try {
 			conn = getConnection();
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement(
-					"INSERT INTO tb_company_stock_daily \n" +
-							"(STOCK_ID,                                 \n" +
-							"COMPANY_NAME,                              \n" +
-							"STANDARD_DATE,                             \n" +
-							"SECURITY_TYPE,                             \n" +
-							"STOCK_PRICE,                               \n" +
-							"NET_CHANGE,                                \n" +
-							"NET_CHANGE_RATIO,                          \n" +
-							"ASK_PRICE,                                 \n" +
-							"BID_PRICE,                                 \n" +
-							"TODAY_HIGH,                                \n" +
-							"TODAY_LOW,                                 \n" +
-							"VOLUME,                                    \n" +
-							"VOLUME_AMOUNT,                             \n" +
-							"OPEN_PRICE,                                \n" +
-							"PAR_VALUE,                                 \n" +
-							"CURRENCY,                                  \n" +
-							"ORDINARY_SHARE,                            \n" +
-							"MARKET_CAPITAL)                            \n" +
-							"VALUES                                       \n" +
-							"(                                            \n" +
-							"?, -- <{STOCK_ID: }>,                        \n" +
-							"?, -- <{COMPANY_NAME: }>,                    \n" +
-							"?, -- <{STANDARD_DATE: }>,                   \n" +
-							"?, -- <{SECURITY_TYPE: }>,                   \n" +
-							"?, -- <{STOCK_PRICE: }>,                     \n" +
-							"?, -- <{NET_CHANGE: }>,                      \n" +
-							"?, -- <{NET_CHANGE_RATIO: }>,                \n" +
-							"?, -- <{ASK_PRICE: }>,                       \n" +
-							"?, -- <{BID_PRICE: }>,                       \n" +
-							"?, -- <{TODAY_HIGH: }>,                      \n" +
-							"?, -- <{TODAY_LOW: }>,                       \n" +
-							"?, -- <{VOLUME: }>,                          \n" +
-							"?, -- <{VOLUME_AMOUNT: }>,                   \n" +
-							"?, -- <{OPEN_PRICE: }>,                      \n" +
-							"?, -- <{PAR_VALUE: }>,                       \n" +
-							"?, -- <{CURRENCY: }>,                        \n" +
-							"?, -- <{ORDINARY_SHARE: }>,                  \n" +
-							"? -- <{MARKET_CAPITAL: }>                    \n" +
-							")                                            \n"
-					);
+			ps = conn.prepareStatement(INSERT_STRING);
 			for ( KrxItem krxItem : krxItems) {
-				inxCnt = 1;
-				ps.setString(inxCnt++, krxItem.getId() );
-				ps.setString(inxCnt++, krxItem.getName() );
-				ps.setString(inxCnt++, krxItem.getStandardDate() );
-				ps.setString(inxCnt++, krxItem.getSecurityType().getType()+"" );
-				ps.setLong(inxCnt++, krxItem.getStockPrice());
-				ps.setLong(inxCnt++, krxItem.getNetChange());
-				ps.setFloat(inxCnt++, krxItem.getNetChangeRatio());
-				ps.setLong(inxCnt++, krxItem.getAsk());
-				ps.setLong(inxCnt++, krxItem.getBid());
-				ps.setLong(inxCnt++, krxItem.getTodayHigh());
-				ps.setLong(inxCnt++, krxItem.getTodayLow());
-				ps.setLong(inxCnt++, krxItem.getVolume());
-				ps.setLong(inxCnt++, krxItem.getVolumnAmount());
-				ps.setLong(inxCnt++, krxItem.getOpenPrice());
-				ps.setFloat(inxCnt++, krxItem.getParValue());
-				ps.setString(inxCnt++, krxItem.getCurrency());
-				ps.setLong(inxCnt++, krxItem.getOrdinaryShare());
-				ps.setLong(inxCnt++, krxItem.getMaketCapitalization());
-				
-				rtn = ps.execute();
+				insertOneRow(ps, krxItem);
 			}
 			conn.commit();
 		} catch ( Exception e ) {

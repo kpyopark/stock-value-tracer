@@ -71,22 +71,25 @@ public class StockValueEstimator {
 		cse.setAveRoa(((float)cfs.getNetProfit())/cfs.getAssets());
 		cse.setDebtRatio((float)cfs.getDebt()/cfs.getAssets());
 		if ( cfs.getOrdinarySharesSize() > 0 ) {
-			cse.setAveBpp(((float)cfs.getGrossCapital()/cfs.getOrdinarySharesSize())/stock.getValue());
+			cse.setAveBps(((float)cfs.getGrossCapital()/cfs.getOrdinarySharesSize()));
 			cse.setRecentEps(cfs.getNetProfit() / cfs.getOrdinarySharesSize());
 			if ( stock.getValue() > 0 ) {
 				cse.setAvePer(stock.getValue()/cse.getRecentEps());
 				cse.setEarningYield(cse.getRecentEps()/stock.getValue());
+				cse.setAveBpr(cse.getAveBps()/stock.getValue());
 			} else {
 				cse.setRecentEps(0);
 				cse.setAvePer(10000);
-				cse.setEarningYield((float)-100.0);
+				cse.setEarningYield(-100.0f);
+				cse.setAveBpr(-100.0f);
 				System.out.println("주가가 등록되어 있지 않습니다. 확인 필요.[" + stock + "]");
 			}
 		} else {
-			cse.setAveBpp(-100);
+			cse.setAveBps(-100);
 			cse.setRecentEps(0);
 			cse.setAvePer(10000);
 			cse.setEarningYield((float)-100.0);
+			cse.setAveBpr(-100.0f);
 			System.out.println("보통주가 등록되어 있지 않습니다. 확인 필요.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
 		}
 		if ( cfs.getNetProfit() > 0 ) {
@@ -117,7 +120,7 @@ public class StockValueEstimator {
 		CompanyFinancialEstimStatusDao estimStatusDao = new CompanyFinancialEstimStatusDao();
 		StockDao stockDao = new StockDao();
 		Company company = new Company();
-		company.setId("A006390");
+		company.setId("A008560");
 		CompanyFinancialStatusEstimated estimStatus = estimStatusDao.select(company,null, null);
 		Stock stock = stockDao.select(company, null, null);
 		System.out.println(estimStatus);
