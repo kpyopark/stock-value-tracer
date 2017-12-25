@@ -255,7 +255,7 @@ public class FinancialReportResourceFromFnguide {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyExDao dao = new CompanyExDao();
 		try {
-			CompanyEx company = dao.select("A032280", null);
+			CompanyEx company = dao.select("A079650", null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

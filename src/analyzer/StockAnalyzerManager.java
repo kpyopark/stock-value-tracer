@@ -1,6 +1,8 @@
 package analyzer;
 
-import internetResource.companyItem.FutureAndOptionResourceFromKrx;
+import internetResource.companyItem.FutureResourceFromKrx;
+import internetResource.companyItem.OptionResourceFromKrx;
+import internetResource.environment.ClosedDayRetriever;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -118,6 +120,13 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
+	 * 휴장일 정보를 갱신한다.
+	 */
+	public void startClosedDayUpdator() {
+		ClosedDayRetriever.updateClosedDays();
+	}
+	
+	/**
 	 * 회사 목록을 수정한다.
 	 * 현재 이 부분은 손질이 약간 필요함.
 	 */
@@ -138,7 +147,8 @@ public class StockAnalyzerManager {
 	 * 
 	 */
 	public void updateOptionListUpdator() {
-		FutureAndOptionResourceFromKrx.updateIndexOptionAndMiniIndexOption();
+		OptionResourceFromKrx.updateIndexOptionAndMiniIndexOption();
+		FutureResourceFromKrx.updateFutures();
 	}
 	
 	
@@ -280,16 +290,17 @@ public class StockAnalyzerManager {
 		StockAnalyzerManager manager = new StockAnalyzerManager();
 		//manager.setUpdateListener(new ExamUpdateListener());
 		boolean[] startConditions = new boolean[] {
-			true, true, true, true, true, true, true		//Normal Case.
+			true, true, true, true, true, true, true, true		//Normal Case.
 			// false, false, false, false, true, true, true		// After to update estimation, and print new ranking list.
 			//true, false, false, false, false, false, false		// Update company only.
 		};
-		if(startConditions[0]) manager.startCompanyListUpdator();
-		if(startConditions[1]) manager.updateOptionListUpdator();
-		if(startConditions[2]) manager.startCompanyFinancialStatusUpdator();
-		if(startConditions[3]) manager.startFinancialReportRefiner();
-		if(startConditions[4]) manager.startAnnualEstimationUpdator();
-		if(startConditions[5]) manager.startStockValueEstimationUpdator();
-		if(startConditions[6]) manager.startStockAnalyzer();
+		if(startConditions[0]) manager.startClosedDayUpdator();
+		if(startConditions[1]) manager.startCompanyListUpdator();
+		if(startConditions[2]) manager.updateOptionListUpdator();
+		if(startConditions[3]) manager.startCompanyFinancialStatusUpdator();
+		if(startConditions[4]) manager.startFinancialReportRefiner();
+		if(startConditions[5]) manager.startAnnualEstimationUpdator();
+		if(startConditions[6]) manager.startStockValueEstimationUpdator();
+		if(startConditions[7]) manager.startStockAnalyzer();
 	}
 }

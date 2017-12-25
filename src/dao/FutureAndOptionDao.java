@@ -40,7 +40,46 @@ public class FutureAndOptionDao extends BaseDao {
 		return rtn;
 	}
 	
-	public List<FutureAndOption> getActionOptions() {
+	public List<FutureAndOption> getActiveFutures() {
+		List<FutureAndOption> rtn = new ArrayList<FutureAndOption>();
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement(
+					"SELECT stock_id, stock_name, future_option_type, target_ym, end_target_ym, closed_yn, "
+					+ "base_stock_id, start_future_id, end_future_id, modified_date, target_ymd, action_price "
+					+ "FROM TB_FUTURE_AND_OPTION WHERE CLOSED_YN <> 'Y' AND FUTURE_OPTION_TYPE IN ('F', 'SP')");
+			rs = ps.executeQuery();
+			FutureAndOption oneOption = null;
+			while(rs.next()) {
+				oneOption = new FutureAndOption();
+				oneOption.setStockId(rs.getString(1));
+				oneOption.setStockName(rs.getString(2));
+				oneOption.setFutureOptionType(rs.getString(3));
+				oneOption.setTargetYm(rs.getString(4));
+				oneOption.setEndTargetYm(rs.getString(5));
+				oneOption.setClosedYn("Y".equals(rs.getString(6)));
+				oneOption.setBaseStockId(rs.getString(7));
+				oneOption.setStartFutureId(rs.getString(8));
+				oneOption.setEndFutureId(rs.getString(9));
+				oneOption.setModifedDate(rs.getDate(10));
+				oneOption.setTargetYmd(rs.getString(11));
+				oneOption.setActionPrice(rs.getFloat(12));
+				rtn.add(oneOption);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		System.out.println( rtn );
+		return rtn;
+	}
+	
+	public List<FutureAndOption> getActiveOptions() {
 		List<FutureAndOption> rtn = new ArrayList<FutureAndOption>();
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -48,7 +87,7 @@ public class FutureAndOptionDao extends BaseDao {
 		try {
 			conn = getConnection();
 			ps = conn.prepareStatement("SELECT stock_id, stock_name, future_option_type, target_ym, end_target_ym, closed_yn, "
-					+ "base_stock_id, start_future_id, end_future_id, modified_date, target_ymd, action_price FROM TB_FUTURE_AND_OPTION WHERE CLOSED_YN <> 'Y'");
+					+ "base_stock_id, start_future_id, end_future_id, modified_date, target_ymd, action_price FROM TB_FUTURE_AND_OPTION WHERE CLOSED_YN <> 'Y' and FUTURE_OPTION_TYPE IN ('C', 'P')");
 			rs = ps.executeQuery();
 			FutureAndOption oneOption = null;
 			while(rs.next()) {
@@ -97,7 +136,5 @@ public class FutureAndOptionDao extends BaseDao {
 		System.out.println( rtn );
 		return rtn;
 	}
-	
-
 	
 }

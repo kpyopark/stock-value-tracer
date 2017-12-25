@@ -15,7 +15,7 @@ import post.EnumFutureOptionCategory;
 import post.FutureAndOption;
 import post.KrxMarketType;
 
-public class FutureAndOptionResourceFromKrx {
+public class OptionResourceFromKrx {
 	
 	static String ITEM_LIST_URL = null;
 	static String OTP_URL = null;
@@ -108,13 +108,13 @@ public class FutureAndOptionResourceFromKrx {
 	public static void updateIndexOptionAndMiniIndexOption() {
 		
 		try {
-			FutureAndOptionResourceFromKrx krx = new FutureAndOptionResourceFromKrx();
+			OptionResourceFromKrx krx = new OptionResourceFromKrx();
 			FutureAndOptionDao dao = new FutureAndOptionDao();
-			ArrayList<FutureAndOption> list = krx.getItemList(EnumFutureOptionCategory.FOTYPE_KOSPI200, "C");
-			list.addAll(krx.getItemList(EnumFutureOptionCategory.FOTYPE_KOSPI200, "P"));
-			list.addAll(krx.getItemList(EnumFutureOptionCategory.FOTYPE_MINISP200, "C"));
-			list.addAll(krx.getItemList(EnumFutureOptionCategory.FOTYPE_MINISP200, "P"));
-			List<FutureAndOption> listInDb = dao.getActionOptions();
+			ArrayList<FutureAndOption> list = krx.getItemList(EnumFutureOptionCategory.FOTYPE_OP_KOSPI200, "C");
+			list.addAll(krx.getItemList(EnumFutureOptionCategory.FOTYPE_OP_KOSPI200, "P"));
+			list.addAll(krx.getItemList(EnumFutureOptionCategory.FOTYPE_OP_MINISP200, "C"));
+			list.addAll(krx.getItemList(EnumFutureOptionCategory.FOTYPE_OP_MINISP200, "P"));
+			List<FutureAndOption> listInDb = dao.getActiveOptions();
 			List<FutureAndOption> newItems = new ArrayList<FutureAndOption>();
 			List<FutureAndOption> oldItems = new ArrayList<FutureAndOption>();
 			for ( FutureAndOption item: list) {

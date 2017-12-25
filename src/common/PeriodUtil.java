@@ -55,7 +55,9 @@ public class PeriodUtil {
 	}
 	
 	public static void main(String[] args) {
-		testGetPeriodList();
+		//testGetPeriodList();
+		System.out.println(
+				getWorkDays(2017,Calendar.DECEMBER,12, 2017, Calendar.DECEMBER, 13));
 	}
 	
 	public static void testGetPeriodList() {
@@ -93,7 +95,7 @@ public class PeriodUtil {
 		while(true) {
 			if ( calendar.get(Calendar.YEAR) > toYear )
 				break;
-			if ( calendar.get(Calendar.YEAR) == toYear && calendar.get(Calendar.DAY_OF_YEAR) >= lastJulianDate )
+			if ( calendar.get(Calendar.YEAR) == toYear && calendar.get(Calendar.DAY_OF_YEAR) > lastJulianDate )
 				break;
 			if ( ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ) && ( calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ) ) {
 				rtn.add(standardFormat.format(calendar.getTime()));

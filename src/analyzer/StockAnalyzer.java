@@ -79,7 +79,7 @@ public class StockAnalyzer {
 	}
 	
 	private void printStockListToConsole(int rank, String registeredDate) {
-		System.out.println("Name;Id;Per;Roa;Roe;Bpp;E.Y;Tot;Est;AvePer;AveRoe;AveRoa;AveBpp;EarningYeild;DebtRatio:AveDividendRatio;RecentEps;RecentStockValue;LastEps;Date;size;URL");
+		System.out.println("Name;Id;Per;Roa;Roe;Bpr;E.Y;Tot;Est;AvePer;AveRoe;AveRoa;AveBpp;EarningYeild;DebtRatio:AveDividendRatio;RecentEps;RecentStockValue;LastEps;Date;size;URL");
 		for ( int cnt = 0 ; cnt < rank ; cnt++ ) {
 			//System.out.println( stockRankList.get(cnt));
 			System.out.println(stockRankList.get(cnt).getCompany().getName() + ";" +
@@ -87,7 +87,7 @@ public class StockAnalyzer {
 					stockRankList.get(cnt).getPerRank() + ";" + 
 					stockRankList.get(cnt).getRoaRank() + ";" +
 					stockRankList.get(cnt).getRoeRank() + ";" +
-					stockRankList.get(cnt).getBpsRank() + ";" +
+					stockRankList.get(cnt).getBprRank() + ";" +
 					stockRankList.get(cnt).getEarningYieldRank() + ";" +
 					stockRankList.get(cnt).getTotRank() + ";" +
 					stockRankList.get(cnt).getStockEstimation().getEstimKind() + ";" +
@@ -197,7 +197,8 @@ public class StockAnalyzer {
 		calculateRankByRoa();
 		//calculateRankByAdjustRoe();
 		calculateRankByEarningYield();
-		calculateRankByBps();
+		//calculateRankByBps();
+		calculateRankByBpr();
 		//calculateRankByPer();
 		calculateTotRank();
 		printStockListToConsole(rank, registeredDate);
@@ -276,6 +277,25 @@ public class StockAnalyzer {
 		}
 	}
 
+	private void calculateRankByBpr() {
+		java.util.Collections.sort(stockEstimList,new BprComparator());
+		int rank = 1;
+		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
+			StockRank stockRank = new StockRank();
+			stockRank.setCompany(stockEstimList.get(cnt).getCompany());
+			if ( stockRankList.contains(stockRank) ) {
+				stockRank = stockRankList.get(stockRankList.indexOf(stockRank));
+			} else {
+				stockRank.setStockEstimation(stockEstimList.get(cnt));
+				stockRankList.add(stockRank);
+			}
+			if ( stockEstimList.get(cnt).getAveBps() >= 0 ) {
+				rank = cnt+1;
+			}
+			stockRank.setBprRank(rank);
+		}
+	}
+
 	private void calculateRankByEarningYield() {
 		java.util.Collections.sort(stockEstimList,new EarningYieldComparator());
 		for ( int cnt = 0 ; cnt < stockEstimList.size() ; cnt++ ) {
@@ -312,7 +332,7 @@ public class StockAnalyzer {
 		while( iter.hasNext() ) {
 			StockRank stockRank = (StockRank)iter.next();
 			//stockRank.setTotRank(stockRank.getPerRank()+stockRank.getRoaRank());
-			stockRank.setTotRank((int)(stockRank.getRoaRank() * 0.2 + stockRank.getRoeRank() * 0.8 + stockRank.getEarningYieldRank() * 0.3 + stockRank.getBpsRank() * 0.8));
+			stockRank.setTotRank((int)(stockRank.getRoaRank() * 0.2 + stockRank.getRoeRank() * 0.8 + stockRank.getEarningYieldRank() * 0.3 + stockRank.getBprRank() * 0.8));
 		}
 		java.util.Collections.sort(stockRankList,new TotComparator());
 	}
@@ -399,7 +419,7 @@ public class StockAnalyzer {
 
 	}
 	
-	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE","BPS","E.Y",
+	final static String[] HEADERS = { "NAME","ID","PER","ROA","ROE","BPR","E.Y",
 		"TOT","EST","SECTOR","GROUP","INDUSTRY","AVEPER","AVEROE","AVEROA",
 		"AVEBPS", "AVEBPR", "EARNING_RATIO", "DEBT_RATIO",
 		"AVEDIV","REPS","RSTOCK","LEPS","SHARESIZE","M.C","DATE","URL"
@@ -430,7 +450,7 @@ public class StockAnalyzer {
 		row.createCell(column++).setCellValue(rankInfo.getPerRank());
 		row.createCell(column++).setCellValue(rankInfo.getRoaRank());
 		row.createCell(column++).setCellValue(rankInfo.getRoeRank());
-		row.createCell(column++).setCellValue(rankInfo.getBpsRank());
+		row.createCell(column++).setCellValue(rankInfo.getBprRank());
 		row.createCell(column++).setCellValue(rankInfo.getEarningYieldRank());
 		row.createCell(column++).setCellValue(rankInfo.getTotRank());
 		row.createCell(column++).setCellValue(rankInfo.getStockEstimation().getEstimKind());
@@ -548,6 +568,13 @@ class BpsComparator implements java.util.Comparator<StockEstimated> {
 	public int compare(StockEstimated src, StockEstimated tgt) {
 		return src.getAveBps() < tgt.getAveBps() ? 1 :
 			src.getAveBps() == tgt.getAveBps() ? 0 : -1;
+	}
+}
+
+class BprComparator implements java.util.Comparator<StockEstimated> {
+	public int compare(StockEstimated src, StockEstimated tgt) {
+		return src.getAveBpr() < tgt.getAveBpr() ? 1 :
+			src.getAveBpr() == tgt.getAveBpr() ? 0 : -1;
 	}
 }
 

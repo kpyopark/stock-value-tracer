@@ -59,7 +59,16 @@ public class CompanyEx extends Company {
 	private String telNo;
 	private String address;
 	private String futureYn;
+	private String futureBaseCode;
 	
+	public String getFutureBaseCode() {
+		return futureBaseCode;
+	}
+
+	public void setFutureBaseCode(String futureBaseCode) {
+		this.futureBaseCode = futureBaseCode;
+	}
+
 	public String getFutureYn() {
 		return futureYn;
 	}

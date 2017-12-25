@@ -142,9 +142,11 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 	private CompanyFinancialStatus updateMergedData(CompanyFinancialStatus oldStatus, CompanyFinancialStatus newStatus) throws Exception {
 		
 		if ( !oldStatus.getCompany().getId().equals(newStatus.getCompany().getId()) ) throw new Exception("ID°¡ ´Ù¸§["+oldStatus.getCompany().getId()+"]["+newStatus.getCompany().getId()+"]");
+		/*
 		if ( oldStatus.isFixed() && oldStatus.getOrdinarySharesSize() != 0 ) {
 			return null; 
 		}
+		*/
 
 		CompanyFinancialStatus mergeStatus = new CompanyFinancialStatus();
 		mergeStatus.setCompany(oldStatus.getCompany());
@@ -259,7 +261,7 @@ public class FinancialReportListUpdatorFromFnguide extends DataUpdator {
 		try {
 			dao = new CompanyDao();
 			Company company = null;
-			company = dao.select("A032280", null);
+			company = dao.select("A079650", null);
 			updator.updateFinancialStatus(company);
 		} catch ( Exception e1 ) { 
 			e1.printStackTrace();

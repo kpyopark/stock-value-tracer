@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import post.CompanyEx;
 import post.KrxSecurityType;
@@ -42,10 +44,10 @@ public class CompanyExDao extends BaseDao {
 			ps = conn.prepareStatement("INSERT INTO tb_company_and_deffered " +
 					"(" +
 					"STOCK_ID , STANDARD_DATE , COMPANY_NAME, SECURITY_SECTOR, " +
-					"FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN, MODIFIED_DATE,krx_industry_code,krx_industry_sector, krx_industry_category, tel_no, address) " +
+					"FICS_SECTOR, FICS_INDUSTRY_GROUP, FICS_INDUSTRY, CLOSED_YN, MODIFIED_DATE,krx_industry_code,krx_industry_sector, krx_industry_category, tel_no, address, FUTURE_YN, future_base_code) " +
 					"VALUES ( " +
 					"?, ?, ?, ?, " +
-					"?, ?, ?, ?, CURRENT_DATE, ?, ?, ?,?, ? )"
+					"?, ?, ?, ?, CURRENT_DATE, ?, ?, ?,?, ?,?,? )"
 					);
 			ps.setString(1, company.getId() );
 			ps.setString(2, company.getStandardDate() );
@@ -60,6 +62,8 @@ public class CompanyExDao extends BaseDao {
 			ps.setString(11, company.getKrxIndustryCategory());
 			ps.setString(12, company.getTelNo());
 			ps.setString(13, company.getAddress());
+			ps.setString(14,  company.getFutureYn());
+			ps.setString(15, company.getFutureBaseCode());
 			rtn = ps.execute();
 		} catch ( Exception e ) {
 			e.printStackTrace();
@@ -139,6 +143,7 @@ public class CompanyExDao extends BaseDao {
 		rtn.setTelNo(rs.getString("TEL_NO"));
 		rtn.setAddress(rs.getString("ADDRESS"));
 		rtn.setFutureYn(rs.getString("FUTURE_YN"));
+		rtn.setFutureBaseCode(rs.getString("FUTURE_BASE_CODE"));
 		return rtn;
 	}
 	
@@ -174,6 +179,28 @@ public class CompanyExDao extends BaseDao {
 			
 			if( rs.next() ) {
 				rtn = getCompanyExFromResultset(rs);
+			}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		} finally {
+			if ( rs != null ) try { rs.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( ps != null ) try { ps.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+			if ( conn != null ) try { conn.close(); } catch ( Exception e1 ) { e1.printStackTrace(); }
+		}
+		return rtn;
+	}
+	
+	public List<CompanyEx> getSingleStockFutureUnderlyingStocks() throws SQLException {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<CompanyEx> rtn = new ArrayList<CompanyEx>();
+		try {
+			conn = getConnection();
+			ps = conn.prepareStatement("SELECT * FROM tb_company_and_deffered WHERE FUTURE_YN = 'Y' AND CLOSED_YN <> 'Y'");
+			rs = ps.executeQuery();
+			while( rs.next() ) {
+				rtn.add(getCompanyExFromResultset(rs));
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
