@@ -2,6 +2,7 @@ package internetResource.companyItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,7 +11,7 @@ import org.json.simple.parser.JSONParser;
 import post.Company;
 import post.KrxItem;
 import post.KrxSecurityType;
-
+import common.PeriodUtil;
 import common.StringUtil;
 
 public class CompanyAndItemListResource2016FromKrx {
@@ -130,6 +131,10 @@ public class CompanyAndItemListResource2016FromKrx {
 	}
 	
 	public static void main(String[] args) {
+		getCurrentCompanyStockInfo();
+	}
+	
+	private static void testGetEachCompanyInfo() {
 		CompanyAndItemListResource2016FromKrx webResource = new CompanyAndItemListResource2016FromKrx();
 		Company company = new Company();
 		company.setId("A005930");
@@ -140,7 +145,19 @@ public class CompanyAndItemListResource2016FromKrx {
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
-		
+	}
+	
+	private static List<KrxItem> getCurrentCompanyStockInfo() {
+		CompanyAndItemListResource2016FromKrx webResource = new CompanyAndItemListResource2016FromKrx();
+		ArrayList<KrxItem> items = null;
+		try {
+			System.out.println(StringUtil.convertToStandardDate(new java.util.Date()));
+			items = webResource.getItemList(KrxSecurityType.STOCK, StringUtil.convertToStandardDate(new java.util.Date()), null);
+			//System.out.println(items);
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+		return items;
 	}
 
 }

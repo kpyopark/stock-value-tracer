@@ -48,6 +48,8 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	CompanyExDao dao = null;
 	StockDao stockDao = null;
 	KrxItemDao krxDao = null;
+	
+	private static final String LAST_MARKET_CLOSED_TIME = "153000";
 
 	public CompanyListUpdatorFromKrx() {
 		dao = new CompanyExDao();
@@ -191,19 +193,19 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 			dao.insert(companyFromKrx);
 		return companyFromKrx;
 	}
-	
+
 	private void insertDailyStockPrice(KrxItem krxItem, CompanyEx companyFromKrx, String standardDate) throws SQLException {
-		Stock stock = getStockFromKrxItem(krxItem, companyFromKrx, standardDate, "150000");
-		if ( stockDao.select(companyFromKrx, standardDate, "150000") != null ) {
+		insertDailyStockPrice(krxItem, companyFromKrx, standardDate, LAST_MARKET_CLOSED_TIME);
+	}
+
+	private void insertDailyStockPrice(KrxItem krxItem, CompanyEx companyFromKrx, String standardDate, String currentTime) throws SQLException {
+		Stock stock = getStockFromKrxItem(krxItem, companyFromKrx, standardDate, currentTime);
+		if ( stockDao.select(companyFromKrx, standardDate, currentTime) != null ) {
 			// skip
 		} else {
 			stockDao.insert(stock);
 		}
-		if ( krxDao.select(krxItem, standardDate) != null ) {
-			// skip
-		} else {
-			krxDao.insert(krxItem);
-		}
+		krxDao.insert(krxItem);
 	}
 	
 	private void checkUnusedStock(CompanyEx companyEx, String standardDate) {
@@ -424,7 +426,7 @@ public class CompanyListUpdatorFromKrx extends DataUpdator {
 	public static void main(String[] args) {
 		CompanyListUpdatorFromKrx updator = new CompanyListUpdatorFromKrx();
 		//updator.updateKrxSectorInfo();
-		updator.insertETFstockFrom2009Year();
+		updator.insertCompanyAndStockFromKrxItem(StringUtil.convertToStandardDate(new java.util.Date()));
 		// After this class runs, execute procedure 'proc_import_companies_from_extend_table' 
 	}
 	

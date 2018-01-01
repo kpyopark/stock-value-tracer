@@ -39,46 +39,63 @@ CREATE TABLE `tb_company_stock_daily` (
  */
 public class KrxItemDao extends BaseDao {
 	
-	static String INSERT_STRING = "INSERT INTO tb_company_stock_daily \n" +
-			"(STOCK_ID,                                 \n" +
-			"COMPANY_NAME,                              \n" +
-			"STANDARD_DATE,                             \n" +
-			"SECURITY_TYPE,                             \n" +
-			"STOCK_PRICE,                               \n" +
-			"NET_CHANGE,                                \n" +
-			"NET_CHANGE_RATIO,                          \n" +
-			"ASK_PRICE,                                 \n" +
-			"BID_PRICE,                                 \n" +
-			"TODAY_HIGH,                                \n" +
-			"TODAY_LOW,                                 \n" +
-			"VOLUME,                                    \n" +
-			"VOLUME_AMOUNT,                             \n" +
-			"OPEN_PRICE,                                \n" +
-			"PAR_VALUE,                                 \n" +
-			"CURRENCY,                                  \n" +
-			"ORDINARY_SHARE,                            \n" +
-			"MARKET_CAPITAL)                            \n" +
-			"VALUES                                       \n" +
-			"(                                            \n" +
-			"?, -- <{STOCK_ID: }>,                        \n" +
-			"?, -- <{COMPANY_NAME: }>,                    \n" +
-			"?, -- <{STANDARD_DATE: }>,                   \n" +
-			"?, -- <{SECURITY_TYPE: }>,                   \n" +
-			"?, -- <{STOCK_PRICE: }>,                     \n" +
-			"?, -- <{NET_CHANGE: }>,                      \n" +
-			"?, -- <{NET_CHANGE_RATIO: }>,                \n" +
-			"?, -- <{ASK_PRICE: }>,                       \n" +
-			"?, -- <{BID_PRICE: }>,                       \n" +
-			"?, -- <{TODAY_HIGH: }>,                      \n" +
-			"?, -- <{TODAY_LOW: }>,                       \n" +
-			"?, -- <{VOLUME: }>,                          \n" +
-			"?, -- <{VOLUME_AMOUNT: }>,                   \n" +
-			"?, -- <{OPEN_PRICE: }>,                      \n" +
-			"?, -- <{PAR_VALUE: }>,                       \n" +
-			"?, -- <{CURRENCY: }>,                        \n" +
-			"?, -- <{ORDINARY_SHARE: }>,                  \n" +
-			"? -- <{MARKET_CAPITAL: }>                    \n" +
-			")                                            \n";
+	static String INSERT_STRING = "INSERT INTO tb_company_stock_daily ( " +
+			"STOCK_ID,  " +
+			"COMPANY_NAME, " +
+			"STANDARD_DATE,  " +
+			"SECURITY_TYPE,  " +
+			"STOCK_PRICE,  " +
+			"NET_CHANGE, " +
+			"NET_CHANGE_RATIO, " +
+			"ASK_PRICE,  " +
+			"BID_PRICE,  " +
+			"TODAY_HIGH, " +
+			"TODAY_LOW,  " +
+			"VOLUME, " +
+			"VOLUME_AMOUNT,  " +
+			"OPEN_PRICE, " +
+			"PAR_VALUE,  " +
+			"CURRENCY, " +
+			"ORDINARY_SHARE, " +
+			"MARKET_CAPITAL " +
+			") VALUES ( " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?, " +
+			"?  " +
+			") " +
+			"ON CONFLICT (STOCK_ID, STANDARD_DATE) " +
+			"DO UPDATE SET " +
+			"COMPANY_NAME = EXCLUDED.COMPANY_NAME , " +
+			"SECURITY_TYPE= EXCLUDED.SECURITY_TYPE, " +
+			"STOCK_PRICE= EXCLUDED.STOCK_PRICE, " +
+			"NET_CHANGE = EXCLUDED.NET_CHANGE , " +
+			"NET_CHANGE_RATIO = EXCLUDED.NET_CHANGE_RATIO , " +
+			"ASK_PRICE= EXCLUDED.ASK_PRICE, " +
+			"BID_PRICE= EXCLUDED.BID_PRICE, " +
+			"TODAY_HIGH = EXCLUDED.TODAY_HIGH , " +
+			"TODAY_LOW= EXCLUDED.TODAY_LOW, " +
+			"VOLUME = EXCLUDED.VOLUME , " +
+			"VOLUME_AMOUNT= EXCLUDED.VOLUME_AMOUNT, " +
+			"OPEN_PRICE = EXCLUDED.OPEN_PRICE , " +
+			"PAR_VALUE= EXCLUDED.PAR_VALUE, " +
+			"CURRENCY = EXCLUDED.CURRENCY , " +
+			"ORDINARY_SHARE = EXCLUDED.ORDINARY_SHARE , " +
+			"MARKET_CAPITAL = EXCLUDED.MARKET_CAPITAL ";
 	
 	private boolean insertOneRow(PreparedStatement ps, KrxItem krxItem) throws SQLException {
 		int inxCnt = 1;
