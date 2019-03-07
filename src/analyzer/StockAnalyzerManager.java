@@ -1,18 +1,16 @@
 package analyzer;
 
-import internetResource.companyItem.FutureResourceFromKrx;
-import internetResource.companyItem.OptionResourceFromKrx;
-import internetResource.environment.ClosedDayRetriever;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.sun.javafx.binding.StringFormatter;
-
+import common.StringUtil;
+import dao.CompanyExDao;
+import internetResource.companyItem.FutureResourceFromKrx;
+import internetResource.companyItem.OptionResourceFromKrx;
+import internetResource.environment.ClosedDayRetriever;
 import post.Company;
 import post.CompanyEx;
 import post.KrxSecurityType;
@@ -23,8 +21,6 @@ import robot.estimation.StockEstimationUpdator;
 import robot.financialReport.FinancialReportListUpdatorFromFnguide;
 import robot.financialReport.FinancialReportRefiner;
 import robot.stock.StockValueUpdator;
-import common.StringUtil;
-import dao.CompanyExDao;
 
 class ThreadPool {
 	
@@ -162,7 +158,8 @@ public class StockAnalyzerManager {
 			updator.addUpdateListener(listener);
 			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
 				final CompanyEx company = companyList.get(cnt);
-				if ( company.getSecuritySector() == KrxSecurityType.STOCK.getType() )
+				if ( company.getSecuritySector() == KrxSecurityType.STOCK.getType() 
+						&& !company.isPreferedStock() )
 					threadPool.run(new Runnable() {
 						public void run() {
 							try {
@@ -171,13 +168,13 @@ public class StockAnalyzerManager {
 								if (orgCompany.getSecuritySector() == CompanyEx.SECURITY_ORDINARY_STOCK) {
 									updator.updateFinancialStatus(company);
 									if ( orgCompany.isClosed() != company.isClosed() ) {
-										logger.info(StringFormatter.format("[%s]-[%s]Company has closed. [%s]", company.getId(), company.getName(), company.isClosed() ? "Yes" : "No" ).getValue());
+										logger.info(String.format("[%s]-[%s]Company has closed. [%s]", company.getId(), company.getName(), company.isClosed() ? "Yes" : "No" ));
 									} else if ( orgCompany.getFicsSector() != null && !orgCompany.getFicsSector().equals(company.getFicsSector()) ) {
-										logger.info(StringFormatter.format("[%s]-[%s]Company has changed. Fics Sector before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsSector(), company.getFicsSector()).getValue());
+										logger.info(String.format("[%s]-[%s]Company has changed. Fics Sector before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsSector(), company.getFicsSector()));
 									} else if ( orgCompany.getFicsIndustryGroup() != null && !orgCompany.getFicsIndustryGroup().equals(company.getFicsIndustryGroup()) ) {
-										logger.info(StringFormatter.format("[%s]-[%s]Company has changed. Fics Industry Group before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsIndustryGroup(), company.getFicsIndustryGroup()).getValue());
+										logger.info(String.format("[%s]-[%s]Company has changed. Fics Industry Group before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsIndustryGroup(), company.getFicsIndustryGroup()));
 									} else if ( orgCompany.getFicsIndustry() != null && !orgCompany.getFicsIndustry().equals(company.getFicsIndustry()) ) {
-										logger.info(StringFormatter.format("[%s]-[%s]Company has changed. Fics Industry before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsIndustry(), company.getFicsIndustry()).getValue());
+										logger.info(String.format("[%s]-[%s]Company has changed. Fics Industry before[%s]. After[%s]", company.getId(), company.getName(), orgCompany.getFicsIndustry(), company.getFicsIndustry()));
 									} else {
 										return;
 									}
@@ -260,9 +257,9 @@ public class StockAnalyzerManager {
 			StockEstimationUpdator updator = new StockEstimationUpdator();
 			updator.addUpdateListener(listener);
 			String registeredDate = StringUtil.convertToStandardDate(new java.util.Date());
-			for (int cnt = 0 ;cnt < companyList.size(); cnt++ ) {
-				if ( companyList.get(cnt).getSecuritySector() == KrxSecurityType.STOCK.getType() ) {
-					updator.updateStockEstimated(companyList.get(cnt), registeredDate);
+			for (CompanyEx company : companyList) {
+				if ( company.getSecuritySector() == KrxSecurityType.STOCK.getType() && !company.isPreferedStock() ) {
+					updator.updateStockEstimated(company, registeredDate);
 				}
 			}
 			updator.removeUpdateListener(listener);

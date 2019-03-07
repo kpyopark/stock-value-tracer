@@ -15,7 +15,7 @@ public class BaseDao {
 			ds.setDriverClassName("org.postgresql.Driver");
 	        ds.setUsername("postgres");
 	        ds.setPassword("aaaa1111");
-	        ds.setUrl("jdbc:postgresql://127.0.01:5433/stock");
+	        ds.setUrl("jdbc:postgresql://127.0.01:5432/stock");
 	        ds.setMaxActive(120);
 	        ds.setDefaultAutoCommit(true);
 	        ds.setInitialSize(120);

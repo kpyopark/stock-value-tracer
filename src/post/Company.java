@@ -61,8 +61,11 @@ public class Company extends BaseStructure implements Comparable<Company> {
 	public void setClosed(boolean isClosed) {
 		this.isClosed = isClosed;
 	}
-
 	
+	public boolean isPreferedStock() {
+		return id.charAt(id.length()-1) != '0';
+	}
+
 	public String getId() {
 		return id;
 	}

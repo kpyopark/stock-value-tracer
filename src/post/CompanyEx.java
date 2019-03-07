@@ -88,5 +88,5 @@ public class CompanyEx extends Company {
 	public void setSecuritySector(int securitySector) {
 		this.securitySector = securitySector;
 	}
-
+	
 }

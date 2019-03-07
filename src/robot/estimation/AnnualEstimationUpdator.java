@@ -47,7 +47,8 @@ public class AnnualEstimationUpdator extends DataUpdator {
 			for ( String period : periodsList ) {
 				ArrayList<CompanyEx> companies = companyDao.selectAllList(period, KrxSecurityType.STOCK);
 				for ( Company company : companies ) {
-					estimDao.updateFinancialReportEstimated(company, period);
+					if(!company.isPreferedStock())
+						estimDao.updateFinancialReportEstimated(company, period);
 				}
 			}
 		} catch ( Exception e ) {

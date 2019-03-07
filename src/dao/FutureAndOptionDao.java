@@ -11,13 +11,20 @@ import post.FutureAndOption;
 
 public class FutureAndOptionDao extends BaseDao {
 
+	private static String INSERT_FUTURE_AND_OPTION = "INSERT INTO TB_FUTURE_AND_OPTION " + 
+			"( STOCK_ID , STOCK_NAME , FUTURE_OPTION_TYPE, TARGET_YM, " + 
+			"END_TARGET_YM, CLOSED_YN, BASE_STOCK_ID, START_FUTURE_ID, " + 
+			"END_FUTURE_ID, MODIFIED_DATE, TARGET_YMD, ACTION_PRICE ) " + 
+			"VALUES ( ?, ?, ?, ?, ?,  ?, ?, ?, ? , CURRENT_DATE,  ?,? ) " +
+			"ON CONFLICT (STOCK_ID) DO NOTHING";
+	
 	public boolean insert(FutureAndOption futureAndOption) throws SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		boolean rtn = false;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO TB_FUTURE_AND_OPTION ( STOCK_ID , STOCK_NAME , FUTURE_OPTION_TYPE, TARGET_YM, END_TARGET_YM, CLOSED_YN, BASE_STOCK_ID, START_FUTURE_ID, END_FUTURE_ID, MODIFIED_DATE, TARGET_YMD, ACTION_PRICE ) VALUES ( ?, ?, ?, ?, ?,  ?, ?, ?, ? , CURRENT_DATE,  ?,? )");
+			ps = conn.prepareStatement(INSERT_FUTURE_AND_OPTION);
 			ps.setString(1, futureAndOption.getStockId());
 			ps.setString(2, futureAndOption.getStockName());
 			ps.setString(3, futureAndOption.getFutureOptionType());
