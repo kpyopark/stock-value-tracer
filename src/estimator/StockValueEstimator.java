@@ -2,13 +2,13 @@ package estimator;
 
 import java.util.ArrayList;
 
+import dao.CompanyFinancialEstimStatusDao;
+import dao.StockDao;
 import post.Company;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
 import post.Stock;
 import post.StockEstimated;
-import dao.CompanyFinancialEstimStatusDao;
-import dao.StockDao;
 
 public class StockValueEstimator {
 	

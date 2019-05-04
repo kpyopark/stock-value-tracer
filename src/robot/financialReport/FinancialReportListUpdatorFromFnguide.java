@@ -1,8 +1,5 @@
 package robot.financialReport;
 
-import internetResource.companyItem.CompanyListResourceFromFnguide;
-import internetResource.financialReport.FinancialReportResourceFromFnguide;
-
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,15 +8,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import common.StringUtil;
+import dao.CompanyDao;
+import dao.CompanyExDao;
+import dao.CompanyFinancialStatusDao;
+import internetResource.companyItem.CompanyListResourceFromFnguide;
+import internetResource.financialReport.FinancialReportResourceFromFnguide;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.KrxSecurityType;
 import robot.DataUpdator;
-import common.StringUtil;
-import dao.CompanyDao;
-import dao.CompanyExDao;
-import dao.CompanyFinancialStatusDao;
 
 /**
  * 회사의 재무정보를 web상에서 가지고 온다. (분기정보를 포함한다.)

@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import post.Company;
 import post.CompanyFinancialStatus;
 
@@ -46,6 +48,8 @@ public class CompanyFinancialStatusDao extends BaseDao {
 	
 	final static long PRECISION_THRESHOLD = 1000000;
 	
+	final static Logger logger = Logger.getLogger(CompanyFinancialStatusDao.class);
+	
 	public boolean insert(CompanyFinancialStatus financialStat) throws SQLException {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -77,6 +81,7 @@ public class CompanyFinancialStatusDao extends BaseDao {
 			ps.setString(cnt++,  financialStat.isCalculated() ? "Y": "N");
 			rtn = ps.execute();
 		} catch ( SQLException sqle ) {
+			logger.error("Financial Statement Insert Error. Detail Information causing error is the below:\n " + financialStat);
 			throw sqle;
 		} catch ( Exception e ) {
 			System.out.println("=============FINANCIAL DATE:" + financialStat.getStandardDate() );

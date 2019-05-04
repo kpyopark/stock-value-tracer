@@ -4,15 +4,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import common.PeriodUtil;
+import common.StringUtil;
+import dao.CompanyExDao;
+import dao.CompanyFinancialEstimStatusDao;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatusEstimated;
 import post.KrxSecurityType;
 import robot.DataUpdator;
-import common.PeriodUtil;
-import common.StringUtil;
-import dao.CompanyExDao;
-import dao.CompanyFinancialEstimStatusDao;
 
 /**
  * CompanyListUpdator 정보에서 취합한 분기정보를 토대로 일년간의 기초자료를 생성한다.

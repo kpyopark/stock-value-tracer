@@ -4,21 +4,19 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import common.NotNumericContentException;
+import common.StringUtil;
+import common.TimeWatch;
+import dao.CompanyExDao;
+import dao.CompanyStatementOfFinancialPosition;
 import post.Company;
 import post.CompanyEx;
 import post.KrxSecurityType;
 import post.StatementOfFinancialPosition;
-import common.NotNumericContentException;
-import common.StringUtil;
-import common.TimeWatch;
-import dao.CompanyDao;
-import dao.CompanyExDao;
-import dao.CompanyStatementOfFinancialPosition;
 
 public class FinancialStatementResourceFromPaxnet {
 	public static String ID_URL;

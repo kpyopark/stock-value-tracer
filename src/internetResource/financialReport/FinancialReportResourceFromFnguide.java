@@ -8,21 +8,23 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.apache.http.client.HttpClient;
+import org.apache.log4j.Logger;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
+import common.StringUtil;
+import dao.CompanyExDao;
 import post.Company;
 import post.CompanyEx;
 import post.CompanyFinancialStatus;
 import post.KrxSecurityType;
-import common.StringUtil;
-import dao.CompanyDao;
-import dao.CompanyExDao;
 
 public class FinancialReportResourceFromFnguide {
 	
 	HttpClient client = null;
 	static HtmlCleaner cleaner;
+	
+	final static Logger logger = Logger.getLogger(FinancialReportResourceFromFnguide.class);
 	
 	static {
 		cleaner = new HtmlCleaner();
@@ -152,16 +154,20 @@ public class FinancialReportResourceFromFnguide {
 				standardDate = node(standardDates[position]).getText().toString();
 				boolean isPrediction = standardDate.indexOf("(E)") >= 0;
 				if ( standardDate != null && standardDate.length() > 6 ) {
-					standardDate = standardDate.substring(standardDate.indexOf("20"));
-					standardDate = standardDate.substring(0,4)+standardDate.substring(5,7)+ "01";
-					standardDate = StringUtil.getLastDayOfMonth(standardDate);
-					CompanyFinancialStatus financeStatus = new CompanyFinancialStatus();
-					financeStatus.setCompany(company);
-					financeStatus.setStandardDate(standardDate);
-					financeStatus.setQuarter(!isAnnual);
-					financeStatus.setFixed(!isPrediction);
-					list.add(financeStatus);
-					columns.add(position+1);
+					try {
+						standardDate = standardDate.substring(standardDate.indexOf("20"));
+						standardDate = standardDate.substring(0,4)+standardDate.substring(5,7)+ "01";
+						standardDate = StringUtil.getLastDayOfMonth(standardDate);
+						CompanyFinancialStatus financeStatus = new CompanyFinancialStatus();
+						financeStatus.setCompany(company);
+						financeStatus.setStandardDate(standardDate);
+						financeStatus.setQuarter(!isAnnual);
+						financeStatus.setFixed(!isPrediction);
+						list.add(financeStatus);
+						columns.add(position+1);
+					} catch (Exception e) {
+						logger.error("Finance Statement Date Parse Error. Parsed Data :" + standardDate);
+					}
 				}
 			}
 			Object[] items = financeReport.evaluateXPath(isConsolidated ? XPATH_FINANCIAL_STATUS_ITEM_CONSOLIDATED : XPATH_FINANCIAL_STATUS_ITEM_STANDALONE);
@@ -231,7 +237,11 @@ public class FinancialReportResourceFromFnguide {
 	
 	public static void main(String[] args) throws Exception {
 		//testCheckSpecialGeneralFinancialReport();
-		testFinancialStatusAPI();
+		String stockId = "A003490";
+		if(args.length > 0) {
+			stockId = args[0];
+		}
+		testFinancialStatusAPI(stockId);
 	}
 	
 	public static void testCheckSpecialGeneralFinancialReport() {
@@ -251,11 +261,11 @@ public class FinancialReportResourceFromFnguide {
 	}
 	
 	@Deprecated
-	public static void testFinancialStatusAPI() {
+	public static void testFinancialStatusAPI(String stockId) {
 		FinancialReportResourceFromFnguide ir = new FinancialReportResourceFromFnguide();
 		CompanyExDao dao = new CompanyExDao();
 		try {
-			CompanyEx company = dao.select("A079650", null);
+			CompanyEx company = dao.select(stockId, null);
 			ArrayList<CompanyFinancialStatus> financialReports = ir.getFinancialStatus(company);
 			for ( int cnt = 0 ; cnt < financialReports.size(); cnt++ ) {
 				System.out.println( financialReports.get(cnt) );

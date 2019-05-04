@@ -2,16 +2,16 @@ package robot.estimation;
 
 import java.util.ArrayList;
 
-import post.Company;
-import post.CompanyEx;
-import post.KrxSecurityType;
-import post.StockEstimated;
-import robot.DataUpdator;
 import common.PeriodUtil;
 import common.StringUtil;
 import dao.CompanyExDao;
 import dao.CompanyStockEstimationDao;
 import estimator.StockValueEstimator;
+import post.Company;
+import post.CompanyEx;
+import post.KrxSecurityType;
+import post.StockEstimated;
+import robot.DataUpdator;
 
 /**
  * 저장되어 있는 주식정보를 활용하여 기초 자료를 생성한다.

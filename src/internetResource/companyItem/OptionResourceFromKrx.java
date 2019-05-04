@@ -10,10 +10,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import dao.FutureAndOptionDao;
-import post.CompanyEx;
 import post.EnumFutureOptionCategory;
 import post.FutureAndOption;
-import post.KrxMarketType;
 
 public class OptionResourceFromKrx {
 	

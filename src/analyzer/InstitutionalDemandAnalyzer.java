@@ -2,10 +2,10 @@ package analyzer;
 
 import java.util.ArrayList;
 
-import post.Company;
-import post.InstitutionalDamand;
 import dao.CompanyDao;
 import dao.InstitutionalDemandDao;
+import post.Company;
+import post.InstitutionalDamand;
 
 public class InstitutionalDemandAnalyzer {
 	

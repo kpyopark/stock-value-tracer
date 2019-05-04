@@ -9,9 +9,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import dao.KrxItemDao;
 import post.KrxItem;
 import streamProcess.StreamWatcher;
-import dao.KrxItemDao;
 
 public class KrxStreamInserter {
 

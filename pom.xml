@@ -4,6 +4,10 @@
 	<groupId>stock-value-tracer</groupId>
 	<artifactId>stock-value-tracer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>

@@ -9,17 +9,16 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import post.KrxItem;
-import streamProcess.StreamWatcher;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
-import common.QueueUtil;
 
+import common.QueueUtil;
 import dao.KrxItemDao;
+import post.KrxItem;
+import streamProcess.StreamWatcher;
 
 public class KrxMqStreamInserter {
 

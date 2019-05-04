@@ -1,7 +1,5 @@
 package internetResource.environment;
 
-import internetResource.companyItem.KrxItemRetriever;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,8 +9,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import common.StringUtil;
-
 import dao.ClosedDayDao;
+import internetResource.companyItem.KrxItemRetriever;
 
 public class ClosedDayRetriever {
 	static String ITEM_LIST_URL = null;

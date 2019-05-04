@@ -8,11 +8,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import common.StringUtil;
 import post.Company;
 import post.KrxItem;
 import post.KrxSecurityType;
-import common.PeriodUtil;
-import common.StringUtil;
 
 public class CompanyAndItemListResource2016FromKrx {
 	

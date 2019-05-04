@@ -7,10 +7,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import common.NotNumericContentException;
 import post.Company;
 import post.CompanyFinancialStatus;
-
-import common.NotNumericContentException;
 
 /**
  * @deprecated

@@ -9,7 +9,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import post.CompanyEx;
-import post.KrxItem;
 import post.KrxMarketType;
 
 public class CompanyIndustryCode2016FromKrx {

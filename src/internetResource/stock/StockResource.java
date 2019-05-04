@@ -16,10 +16,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
 
+import common.StringUtil;
 import post.Company;
 import post.Stock;
-
-import common.StringUtil;
 
 
 public class StockResource {

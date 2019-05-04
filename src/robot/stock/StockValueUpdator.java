@@ -1,17 +1,16 @@
 package robot.stock;
 
-import internetResource.stock.StockResource;
-
 import java.util.ArrayList;
 
+import common.StringUtil;
+import dao.CompanyExDao;
+import dao.StockDao;
+import internetResource.stock.StockResource;
 import post.Company;
 import post.CompanyEx;
 import post.KrxSecurityType;
 import post.Stock;
 import robot.DataUpdator;
-import common.StringUtil;
-import dao.CompanyExDao;
-import dao.StockDao;
 
 /**
  * 웹에서 최신 주가 정보를 가지고 온다. 

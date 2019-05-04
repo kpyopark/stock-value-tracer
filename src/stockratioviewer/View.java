@@ -15,8 +15,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import post.Company;
 import analyzer.StockAnalyzerManager;
+import post.Company;
 
 public class View extends ViewPart {
 	public static final String ID = "StockRatioViewer.view";

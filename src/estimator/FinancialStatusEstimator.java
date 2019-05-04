@@ -4,11 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import dao.CompanyDao;
+import dao.CompanyFinancialStatusDao;
 import post.Company;
 import post.CompanyFinancialStatus;
 import post.CompanyFinancialStatusEstimated;
-import dao.CompanyDao;
-import dao.CompanyFinancialStatusDao;
 
 public class FinancialStatusEstimator {
 	

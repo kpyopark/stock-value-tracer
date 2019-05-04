@@ -1,11 +1,5 @@
 package robot.company;
 
-import internetResource.companyItem.CompanyAndItemListResource2016FromKrx;
-import internetResource.companyItem.CompanyExpireResource2016FromKrx;
-import internetResource.companyItem.CompanyIndustryCode2016FromKrx;
-import internetResource.companyItem.EtfListResource2016FromKrx;
-import internetResource.financialReport.FinancialReportResourceFromFnguide;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,13 +8,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Predicate;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
 
+import common.PeriodUtil;
+import common.QueueUtil;
+import common.StringUtil;
+import dao.CompanyExDao;
+import dao.KrxItemDao;
+import dao.StockDao;
+import internetResource.companyItem.CompanyAndItemListResource2016FromKrx;
+import internetResource.companyItem.CompanyExpireResource2016FromKrx;
+import internetResource.companyItem.CompanyIndustryCode2016FromKrx;
+import internetResource.companyItem.EtfListResource2016FromKrx;
+import internetResource.financialReport.FinancialReportResourceFromFnguide;
 import post.CompanyEx;
 import post.KrxItem;
 import post.KrxMarketType;
@@ -34,12 +35,6 @@ import streamProcess.krx.KrxMqStreamInserter;
 import streamProcess.krx.KrxMqStreamWebResource;
 import streamProcess.krx.KrxStreamInserter;
 import streamProcess.krx.KrxStreamWebResource;
-import common.PeriodUtil;
-import common.QueueUtil;
-import common.StringUtil;
-import dao.CompanyExDao;
-import dao.KrxItemDao;
-import dao.StockDao;
 
 public class CompanyListUpdatorFromKrx extends DataUpdator {
 	

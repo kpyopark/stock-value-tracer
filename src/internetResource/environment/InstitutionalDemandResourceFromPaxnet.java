@@ -9,14 +9,12 @@ import java.util.concurrent.Executors;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-import post.Company;
-import post.InstitutionalDamand;
-
 import common.StringUtil;
 import common.TimeWatch;
-
 import dao.CompanyDao;
 import dao.InstitutionalDemandDao;
+import post.Company;
+import post.InstitutionalDamand;
 
 public class InstitutionalDemandResourceFromPaxnet {
 	public static String ID_URL;

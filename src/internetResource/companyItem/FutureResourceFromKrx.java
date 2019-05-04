@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringTokenizer;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,8 +16,6 @@ import dao.FutureAndOptionDao;
 import post.CompanyEx;
 import post.EnumFutureOptionCategory;
 import post.FutureAndOption;
-import post.KrxMarketType;
-import post.Stock;
 
 public class FutureResourceFromKrx {
 	

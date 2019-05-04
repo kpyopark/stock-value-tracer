@@ -3,6 +3,8 @@ package analyzer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -95,6 +97,13 @@ public class StockAnalyzerManager {
 	ThreadPool threadPool = new ThreadPool();
 	
 	public StockAnalyzerManager() {
+		Properties props = System.getProperties();
+		Enumeration<Object> keys = props.keys();
+		while(keys.hasMoreElements()) {
+			String key = (String)keys.nextElement();
+			System.out.println(String.format("[%s]:[%s]", key, props.getProperty(key)));
+		}
+		System.out.println(props);
 		init();
 	}
 	
@@ -183,6 +192,7 @@ public class StockAnalyzerManager {
 									System.out.println("Deffered Stock:" + company);
 								}
 							} catch ( Exception e ) {
+								logger.error(String.format("Processing Failed : [%s][%s][%s]", company.getId(), company.getName(), company));
 								e.printStackTrace();
 								failedCompany.add(company);
 							}
