@@ -115,7 +115,7 @@ public class CompanyAndItemListResource2016FromKrx {
 			String jsonStr = getStockPriceInJson(securityType, standardDate, company);
 			JSONParser parser = new JSONParser();
 			JSONObject loadedItems = (JSONObject)parser.parse(jsonStr);
-			JSONArray krxItems = (JSONArray)loadedItems.get("»óÀåÁ¾¸ñ°Ë»ö");
+			JSONArray krxItems = (JSONArray)loadedItems.get("ìƒì¥ì¢…ëª©ê²€ìƒ‰");
 			for ( int pos = 0 ; pos < krxItems.size() ; pos++ ) {
 				KrxItem item = getKrxItem((JSONObject)krxItems.get(pos));
 				item.setStandardDate(standardDate);
@@ -130,14 +130,24 @@ public class CompanyAndItemListResource2016FromKrx {
 	}
 	
 	public static void main(String[] args) {
-		getCurrentCompanyStockInfo();
+		testNullableValue();
+	}
+	
+	private static void testNullableValue() {
+		CompanyAndItemListResource2016FromKrx webResource = new CompanyAndItemListResource2016FromKrx();
+		try {
+			ArrayList<KrxItem> items = webResource.getItemList(KrxSecurityType.ELW, "20200313", null);
+			System.out.println(items);
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static void testGetEachCompanyInfo() {
 		CompanyAndItemListResource2016FromKrx webResource = new CompanyAndItemListResource2016FromKrx();
 		Company company = new Company();
 		company.setId("A005930");
-		company.setName("»ï¼ºÀüÀÚ");
+		company.setName("ì‚¼ì„±ì „ì");
 		try {
 			ArrayList<KrxItem> items = webResource.getItemList(KrxSecurityType.STOCK, "20160224", company);
 			System.out.println(items);
