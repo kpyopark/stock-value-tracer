@@ -136,8 +136,12 @@ public class StringUtil {
 			return 0;
 		if ( content.equals("N/A(IFRS)") )
 			return 0;
-		if ( content.equals("¿ÏÀüÀá½Ä") )
+		if ( content.equals("ìë³¸ì ì‹") )
 			return -1;
+		if ( content.equals("ì™„ì „ì ì‹") )
+			return -1;
+		if ( content.equals("#######"))
+			return 0;
 		content = content.trim();
 		try {
 			rtn = Float.parseFloat(content.replaceAll("%", "").replaceAll(",","").replaceAll("#######",""));

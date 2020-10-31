@@ -25,7 +25,7 @@ public class StockValueEstimator {
 	}
 	
 	/**
-	 * È¸»ç ÁÖ°¡ÀÇ ¹Ì·¡ Ãß»êÄ¡¸¦ ±¸ÇÑ´Ù.
+	 * È¸ï¿½ï¿½ ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½Ì·ï¿½ ï¿½ß»ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param company
 	 * @return
@@ -42,20 +42,20 @@ public class StockValueEstimator {
 				estimation.setStandardDate(standardDate);
 			} else {
 				if ( estimStatus == null )
-					System.out.println("ÇØ´ç Ãß»êÄ¡°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
+					System.out.println("There is no estimation status. ["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
 				if ( stock == null )
-					System.out.println("ÇØ´ç ÁÖ°¡Á¤º¸°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
+					System.out.println("Therer is no matched stock. ["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
-			System.out.println("ÇØ´ç Á¤º¸¸¦ °¡Áö°í ¿À´Â µµÁß ¿¡·¯°¡ ¹ß»ýÇÏ¿´½À´Ï´Ù.["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
+			System.out.println("There are some errors in caculateCompanyStockEstimation.["+company.getName() + ":" + company.getId() + ":" + standardDate + "]");
 		}
 		return estimation;
 	}
 	
 	/**
 	 * 
-	 * Àç¹«Á¦Ç¥¿Í ÁÖ°¡ Á¤º¸·Î ÁÖ°¡ÀÇ ¹Ì·¡Ãß»êÄ¡¸¦ ±¸ÇÑ´Ù.
+	 * ï¿½ç¹«ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½Ì·ï¿½ï¿½ß»ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param cfs
 	 * @param stock
@@ -82,7 +82,7 @@ public class StockValueEstimator {
 				cse.setAvePer(10000);
 				cse.setEarningYield(-100.0f);
 				cse.setAveBpr(-100.0f);
-				System.out.println("ÁÖ°¡°¡ µî·ÏµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù. È®ÀÎ ÇÊ¿ä.[" + stock + "]");
+				System.out.println("ï¿½Ö°ï¿½ï¿½ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. È®ï¿½ï¿½ ï¿½Ê¿ï¿½.[" + stock + "]");
 			}
 		} else {
 			cse.setAveBps(-100);
@@ -90,14 +90,14 @@ public class StockValueEstimator {
 			cse.setAvePer(10000);
 			cse.setEarningYield((float)-100.0);
 			cse.setAveBpr(-100.0f);
-			System.out.println("º¸ÅëÁÖ°¡ µî·ÏµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù. È®ÀÎ ÇÊ¿ä.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
+			System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. È®ï¿½ï¿½ ï¿½Ê¿ï¿½.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
 		}
 		if ( cfs.getNetProfit() > 0 ) {
 			if( cfs.getGrossCapital() > 0 ) {
 				cse.setAveRoe(((float)cfs.getNetProfit())/cfs.getGrossCapital());
 			} else {
 				cse.setAveRoe(0);
-				System.out.println("ÃÑÀÚº»±ÝÀÌ µî·ÏµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
+				System.out.println("ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.[" + cfs.getCompany().getName() + ":" + cfs.getCompany().getId() + "]");
 			}
 			cse.setLastEps((float)(cse.getRecentEps()*Math.pow(1+cse.getAveRoe(),10)));
 		} else {
