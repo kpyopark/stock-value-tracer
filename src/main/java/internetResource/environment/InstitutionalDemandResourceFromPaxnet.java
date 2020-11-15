@@ -69,7 +69,7 @@ public class InstitutionalDemandResourceFromPaxnet {
 				insDemand.setStandardTime("150000");
 				insDemand.setStockClosingPrice(StringUtil.getLongValue(node(dataLine[1]).getText().toString()));
 				insDemand.setStockUpdownRatioOfDay(StringUtil.getFloatValue(node(dataLine[2]).getText().toString().replaceAll("%", "")));
-				insDemand.setStockUpdownPriceOfDay(StringUtil.getLongValue(node(dataLine[3]).getChildTags()[0].getText().toString().replaceAll("¡å", "-").replaceAll("¡ã","")));
+				insDemand.setStockUpdownPriceOfDay(StringUtil.getLongValue(node(dataLine[3]).getChildTags()[0].getText().toString().replaceAll("â–¼", "-").replaceAll("â–²","")));
 				insDemand.setForeignerNetDemand(StringUtil.getLongValue(node(dataLine[4]).getText().toString()));
 				insDemand.setForeignerOwnershipRatio(StringUtil.getFloatValue(node(dataLine[5]).getText().toString().replaceAll("%", "")));
 				insDemand.setCompanyNetDemand(StringUtil.getLongValue(node(dataLine[6]).getText().toString()));

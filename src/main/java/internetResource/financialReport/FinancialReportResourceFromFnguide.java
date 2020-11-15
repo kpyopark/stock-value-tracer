@@ -52,18 +52,18 @@ public class FinancialReportResourceFromFnguide {
 	static String XPATH_CONSOLIDATED_YN = "//*[@id=\"upjongRptGb\"]";
 	
 	static String[][] GENERAL_REPORT_HEADERS = { 
-		{ "¸ÅÃâ¾×" ,"º¸Çè·á¼öÀÍ", "¼ø¿µ¾÷¼öÀÍ", "ÀÌÀÚ¼öÀÍ", "¿µ¾÷¼öÀÍ", "SALES" }, // "SALES", "" }, 
-		{ "¿µ¾÷ÀÌÀÍ","¿µ¾÷¼ÕÀÍ", "OPERATION_PROFIT" },
-		//{ "¿µ¾÷¼ÕÀÍ(¾ï¿ø)","OPERATION_PROFIT" }, // FOR ASSUARANCE INDUSTRY
-		//{ "Á¶Á¤¿µ¾÷ÀÌÀÍ(¾ï¿ø)", "" } ,
-		{ "´ç±â¼øÀÌÀÍ", "NET_PROFIT" },
-		//{"Áö¹èÁÖÁÖ±Í¼Ó(¾ï¿ø)", "" },
-		//{"ºñÁö¹èÁÖÁÖ±Í¼Ó(¾ï¿ø)", ""},
-		{"ÀÚ»êÃÑ°è", "ASSET_TOTAL" },
-		{"ºÎÃ¤ÃÑ°è" ,"DEBT_TOTAL" },
-		{"ÀÚº»ÃÑ°è" ,"CAPITAL_TOTAL" },
-		{"ÀÚº»±İ" ,"CAPITAL" },
-		{"¹ßÇàÁÖ½Ä¼ö", "GENERAL_STOCK_SIZE" }
+		{ "ë§¤ì¶œì•¡" ,"ë³´í—˜ë£Œìˆ˜ìµ", "ìˆœì˜ì—…ìˆ˜ìµ", "ì´ììˆ˜ìµ", "ì˜ì—…ìˆ˜ìµ", "SALES" }, // "SALES", "" }, 
+		{ "ì˜ì—…ì´ìµ","ì˜ì—…ì†ìµ", "OPERATION_PROFIT" },
+		//{ "ì˜ì—…ì†ìµ(ì–µì›)","OPERATION_PROFIT" }, // FOR ASSUARANCE INDUSTRY
+		//{ "ì¡°ì •ì˜ì—…ì´ìµ(ì–µì›)", "" } ,
+		{ "ë‹¹ê¸°ìˆœì´ìµ", "NET_PROFIT" },
+		//{"ì§€ë°°ì£¼ì£¼ê·€ì†(ì–µì›)", "" },
+		//{"ë¹„ì§€ë°°ì£¼ì£¼ê·€ì†(ì–µì›)", ""},
+		{"ìì‚°ì´ê³„", "ASSET_TOTAL" },
+		{"ë¶€ì±„ì´ê³„" ,"DEBT_TOTAL" },
+		{"ìë³¸ì´ê³„" ,"CAPITAL_TOTAL" },
+		{"ìë³¸ê¸ˆ" ,"CAPITAL" },
+		{"ë°œí–‰ì£¼ì‹ìˆ˜", "GENERAL_STOCK_SIZE" }
 	};
 	
 	public boolean checkSpecialGeneralFinancialReport(Company company) throws Exception {
@@ -113,7 +113,7 @@ public class FinancialReportResourceFromFnguide {
 			while( (length = conn.getInputStream().read(buffer, 0, 4096)) != -1 ) {
 				baos.write(buffer, 0, length);
 			}
-			if ( ( baos.size() < 400 ) && ( new String( baos.toByteArray(), "euc-kr" ).indexOf("ÇØ´ç Á¾¸ñÀÌ ¾ø°Å³ª Á¾¸ñ¿¡ ´ëÇÑ Á¤º¸°¡ ¾ø½À´Ï´Ù") > 0 ) ) {
+			if ( ( baos.size() < 400 ) && ( new String( baos.toByteArray(), "euc-kr" ).indexOf("í•´ë‹¹ ì¢…ëª©ì´ ì—†ê±°ë‚˜ ì¢…ëª©ì— ëŒ€í•œ ì •ë³´ê°€ ì—†ìŠµë‹ˆë‹¤") > 0 ) ) {
 				//company.set
 				company.setClosed(true);
 				return list;
@@ -174,39 +174,39 @@ public class FinancialReportResourceFromFnguide {
 			for(int itemCount = 0; itemCount < items.length ; itemCount++ ) {
 				TagNode[] childNodes = node(items[itemCount]).getChildTags();
 				String header = StringUtil.removeHtmlSpaceTag(node(childNodes[0]).getText().toString());
-				if ( header.equals("¸ÅÃâ¾×") || header.equals("º¸Çè·á¼öÀÍ") || header.equals("¼ø¿µ¾÷¼öÀÍ") || header.equals("ÀÌÀÚ¼öÀÍ") || header.equals("¿µ¾÷¼öÀÍ") ) {
+				if ( header.equals("ë§¤ì¶œì•¡") || header.equals("ë³´í—˜ë£Œìˆ˜ìµ") || header.equals("ìˆœì˜ì—…ìˆ˜ìµ") || header.equals("ì´ììˆ˜ìµ") || header.equals("ì˜ì—…ìˆ˜ìµ") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setSales(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("¿µ¾÷ÀÌÀÍ") || header.equals("¿µ¾÷¼ÕÀÍ") ) {
+				} else if ( header.equals("ì˜ì—…ì´ìµ") || header.equals("ì˜ì—…ì†ìµ") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setOperatingProfit(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("´ç±â¼øÀÌÀÍ") ) {
+				} else if ( header.equals("ë‹¹ê¸°ìˆœì´ìµ") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setNetProfit(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("ÀÚ»êÃÑ°è") ) {
+				} else if ( header.equals("ìì‚°ì´ê³„") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setAssets(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("ºÎÃ¤ÃÑ°è") ) {
+				} else if ( header.equals("ë¶€ì±„ì´ê³„") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setDebt(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("ÀÚº»ÃÑ°è") ) {
+				} else if ( header.equals("ìë³¸ì´ê³„") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setGrossCapital(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("ÀÚº»±İ") ) {
+				} else if ( header.equals("ìë³¸ê¸ˆ") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setCapital(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString()) * 100000000);
 					}
-				} else if ( header.equals("ºÎÃ¤ºñÀ²") ) {
+				} else if ( header.equals("ë¶€ì±„ë¹„ìœ¨") ) {
 					//
-				} else if ( header.equals("À¯º¸À²") ) {
+				} else if ( header.equals("ìœ ë³´ìœ¨") ) {
 					//
-				} else if ( header.equals("¹ßÇàÁÖ½Ä¼ö") ) {
+				} else if ( header.equals("ë°œí–‰ì£¼ì‹ìˆ˜") ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setOrdinarySharesSize(StringUtil.getLongValue(node(childNodes[columns.get(position)]).getText().toString())* 1000);
 					}
@@ -218,7 +218,7 @@ public class FinancialReportResourceFromFnguide {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setRoe(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}
-				} else if ( header.indexOf("¹è´ç¼öÀÍ·ü") >= 0 ) {
+				} else if ( header.indexOf("ë°°ë‹¹ìˆ˜ìµë¥ ") >= 0 ) {
 					for(int position = 0 ; position < list.size() ; position++ ) {
 						list.get(position).setDividendRatio(StringUtil.getFloatValue(node(childNodes[columns.get(position)]).getText().toString())/100);
 					}

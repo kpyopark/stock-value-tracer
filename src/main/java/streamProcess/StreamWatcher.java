@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -100,7 +101,7 @@ public class StreamWatcher implements Runnable {
 		watchTargets.clear();
 	}
 	
-	private ConnectionAndChannel createChannel(String queueName) throws IOException {
+	private ConnectionAndChannel createChannel(String queueName) throws IOException, TimeoutException {
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost("localhost");
 		Connection con = factory.newConnection();
@@ -119,7 +120,7 @@ public class StreamWatcher implements Runnable {
 			watchTargets.put(name, new ObservableChannel(createChannel(name)));
 			if ( currentThread == null )
 				start();
-		} catch (IOException ioe) {
+		} catch (Exception ioe) {
 			ioe.printStackTrace();
 			// Skip.
 		}
@@ -132,7 +133,7 @@ public class StreamWatcher implements Runnable {
 			ConnectionAndChannel cac = target.watchTargetChannel;
 			try {
 				cac.channel.close();
-			} catch (IOException ioe) {
+			} catch (Exception ioe) {
 				// skip.
 			} finally {
 				try { cac.con.close(); } catch (IOException ioe) {}

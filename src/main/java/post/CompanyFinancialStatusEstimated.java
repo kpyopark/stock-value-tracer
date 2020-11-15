@@ -7,7 +7,7 @@ public class CompanyFinancialStatusEstimated extends CompanyFinancialStatus {
 	private static final long serialVersionUID = 4960950488390560930L;
 	private boolean isEstimated = true;
 	/**
-	 * Ãß»êÄ¡°¡ ³ª¿Â ÃâÃ³. O = ½º½º·ÎÇÑ °è»êÄ¡, F = fnguide , Y = yahoo , D = datacom
+	 * ì¶”ì‚°ì¹˜ê°€ ë‚˜ì˜¨ ì¶œì²˜. O = ìŠ¤ìŠ¤ë¡œí•œ ê³„ì‚°ì¹˜, F = fnguide , Y = yahoo , D = datacom
 	 */
 	private String estimKind = "O";
 	private String relatedDateList = "";

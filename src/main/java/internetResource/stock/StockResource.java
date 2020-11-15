@@ -108,7 +108,7 @@ public class StockResource {
 	            stock.setStandardDate(STANDARD_DATE.format(currentDate));
 	            stock.setStandardTime(STANDARD_TIME.format(currentDate));
 			} catch ( Exception e1 ) {
-				System.out.println("ÇØ´ç Á¾¸ñÀº Á¤º¸¸¦ À¥ »ó¿¡¼­ È®ÀÎÇØÁÖ¼¼¿ä.["+value+"]["+company+"]");
+				System.out.println("í•´ë‹¹ ì¢…ëª©ì€ ì •ë³´ë¥¼ ì›¹ ìƒì—ì„œ í™•ì¸í•´ì£¼ì„¸ìš”.["+value+"]["+company+"]");
             	//e1.printStackTrace();
             	return null;
 			} finally {
@@ -116,7 +116,7 @@ public class StockResource {
 			}
 		} catch ( Exception e ) {
 			e.printStackTrace();
-			System.out.println("´ÙÀ½ È¸»çÁ¤º¸ ÁÖ°¡¸¦ ÀĞ´Â Áß ¿¡·¯¹ß»ı:"+company);
+			System.out.println("ë‹¤ìŒ íšŒì‚¬ì •ë³´ ì£¼ê°€ë¥¼ ì½ëŠ” ì¤‘ ì—ëŸ¬ë°œìƒ:"+company);
 			throw e;
 		}
 		return stock;
@@ -127,10 +127,10 @@ public class StockResource {
 		try {
 			Company company = new Company();
 			company.setId("A004540");
-			//company.setName("¾Æ¸ğ·¹ÆÛ½ÃÇÈ");
+			//company.setName("ì•„ëª¨ë ˆí¼ì‹œí”½");
 			// KT 030200
 			// KTF 032390
-			// LGÇÊ¸³½ºLCD 034220
+			// LGí•„ë¦½ìŠ¤LCD 034220
 			System.out.println(sr.getStock(company));
 		} catch ( Exception e ) {
 			e.printStackTrace();

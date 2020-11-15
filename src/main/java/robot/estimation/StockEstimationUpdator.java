@@ -14,7 +14,7 @@ import post.StockEstimated;
 import robot.DataUpdator;
 
 /**
- * ÀúÀåµÇ¾î ÀÖ´Â ÁÖ½ÄÁ¤º¸¸¦ È°¿ëÇÏ¿© ±âÃÊ ÀÚ·á¸¦ »ı¼ºÇÑ´Ù.
+ * ì €ì¥ë˜ì–´ ìˆëŠ” ì£¼ì‹ì •ë³´ë¥¼ í™œìš©í•˜ì—¬ ê¸°ì´ˆ ìë£Œë¥¼ ìƒì„±í•œë‹¤.
  * 
  * @author Administrator
  *
@@ -56,7 +56,7 @@ public class StockEstimationUpdator extends DataUpdator {
 
 	/**
 	 * 
-	 * ÁÖ°¡ Ãß»êÄ¡ Á¤º¸¸¦ ¼öÁ¤ÇÑ´Ù.
+	 * ì£¼ê°€ ì¶”ì‚°ì¹˜ ì •ë³´ë¥¼ ìˆ˜ì •í•œë‹¤.
 	 * 
 	 * @param cse
 	 * @return

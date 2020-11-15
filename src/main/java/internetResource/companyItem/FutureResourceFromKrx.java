@@ -122,7 +122,7 @@ public class FutureResourceFromKrx {
 					newItems.add(item);
 				}
 			}
-			// Old ¿¡µµ ¾ø´Â °ÍµéÀº, Closed Yn À» "Y" ·Î º¯°æÇØ¼­ ÀúÀåÇØ¾ß ÇÑ´Ù.
+			// Old ì—ë„ ì—†ëŠ” ê²ƒë“¤ì€, Closed Yn ì„ "Y" ë¡œ ë³€ê²½í•´ì„œ ì €ì¥í•´ì•¼ í•œë‹¤.
 			for(FutureAndOption item: listInDb) {
 				if(item.getBaseStockId() != null)
 					continue;
@@ -132,7 +132,7 @@ public class FutureResourceFromKrx {
 					System.out.println("Disable the future ->" + item.getStockId() + ":" + item.getStockName());
 				}
 			}
-			// »õ·Ó°Ô »ı±ä °ÍµéÀº, Ãß°¡ÇÑ´Ù.
+			// ìƒˆë¡­ê²Œ ìƒê¸´ ê²ƒë“¤ì€, ì¶”ê°€í•œë‹¤.
 			for(FutureAndOption item: newItems) {
 				Optional<CompanyEx> targetBaseStock = futureUnderlyingStocks.stream().filter(x -> 
 				item.getFutureBaseCode().equals(x.getFutureBaseCode())).findFirst();

@@ -9,32 +9,32 @@ public class Stock extends BaseStructure {
 	private static final long serialVersionUID = -6545279609045392980L;
 
 	/**
-	 * ÇØ´ç ÁÖ
+	 * í•´ë‹¹ ì£¼
 	 */
 	private Company company = null;
 	
 	/**
-	 * ÀÏÀÚ
+	 * ì¼ì
 	 */
 	private String standardDate = null;  
 	
 	/**
-	 * ½Ã°£
+	 * ì‹œê°„
 	 */
 	private String standardTime = null;
 	
 	/**
-	 * ¾×¸é°¡
+	 * ì•¡ë©´ê°€
 	 */
 	private float parValue = 0;
 	
 	/**
-	 * ÇöÀç°¡
+	 * í˜„ì¬ê°€
 	 */
 	private int value = 0;
 	
 	/**
-	 * °Å·¡·®
+	 * ê±°ë˜ëŸ‰
 	 */
 	private long volume = 0;
 	

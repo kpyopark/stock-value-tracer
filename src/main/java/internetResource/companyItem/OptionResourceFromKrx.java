@@ -123,7 +123,7 @@ public class OptionResourceFromKrx {
 					newItems.add(item);
 				}
 			}
-			// Old ¿¡µµ ¾ø´Â °ÍµéÀº, Closed Yn À» "Y" ·Î º¯°æÇØ¼­ ÀúÀåÇØ¾ß ÇÑ´Ù.
+			// Old ì—ë„ ì—†ëŠ” ê²ƒë“¤ì€, Closed Yn ì„ "Y" ë¡œ ë³€ê²½í•´ì„œ ì €ìž¥í•´ì•¼ í•œë‹¤.
 			for(FutureAndOption item: listInDb) {
 				if(item.getBaseStockId() != null)
 					continue;
@@ -133,7 +133,7 @@ public class OptionResourceFromKrx {
 					System.out.println("Disable the option ->" + item.getStockId() + ":" + item.getStockName());
 				}
 			}
-			// »õ·Ó°Ô »ý±ä °ÍµéÀº, Ãß°¡ÇÑ´Ù.
+			// ìƒˆë¡­ê²Œ ìƒê¸´ ê²ƒë“¤ì€, ì¶”ê°€í•œë‹¤.
 			for(FutureAndOption item: newItems) {
 				dao.insert(item);
 				System.out.println("Add new option ->" + item.getStockId() + ":" + item.getStockName());

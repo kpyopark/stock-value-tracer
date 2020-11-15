@@ -133,7 +133,7 @@ public class EtfListResource2016FromKrx {
 		EtfListResource2016FromKrx webResource = new EtfListResource2016FromKrx();
 		Company company = new Company();
 		company.setId("A005930");
-		company.setName("»ï¼ºÀüÀÚ");
+		company.setName("ì‚¼ì„±ì „ì");
 		try {
 			ArrayList<KrxItem> items = webResource.getItemList("20160224");
 			System.out.println(items);

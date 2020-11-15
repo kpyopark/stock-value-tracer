@@ -81,18 +81,18 @@ public class CompanyDao extends BaseDao {
 	}
 	
 	/**
-	 * Stock id¸¦ ÀÌ¿ëÇÏ¿© È¸»çÀÇ Á¸Àç ¿©ºÎ¸¦ È®ÀÎÇÏ¸ç
-	 * ÀÖÀ» °æ¿ì È¸»ç Á¤º¸¸¦ °¡Áö°í ¿Â´Ù.
-	 * ¾øÀ» °æ¿ì null°ªÀ» µ¹·ÁÁØ´Ù.
+	 * Stock idë¥¼ ì´ìš©í•˜ì—¬ íšŒì‚¬ì˜ ì¡´ì¬ ì—¬ë¶€ë¥¼ í™•ì¸í•˜ë©°
+	 * ìˆì„ ê²½ìš° íšŒì‚¬ ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
+	 * ì—†ì„ ê²½ìš° nullê°’ì„ ëŒë ¤ì¤€ë‹¤.
 	 * 
-	 * Áß¿ä!! ½ÇÀº ÀÌ ¸Ş½îµå´Â º¯°æÀÌ ÇÊ¿äÇÏ´Ù.
-	 * PK °¡ id¿Í standard_date µÎ°³ÀÓ¿¡µµ ºÒ±¸ÇÏ°í id·Î¸¸ °Ë»öÇÏ±â ¶§¹®ÀÌ´Ù.
+	 * ì¤‘ìš”!! ì‹¤ì€ ì´ ë©”ì˜ë“œëŠ” ë³€ê²½ì´ í•„ìš”í•˜ë‹¤.
+	 * PK ê°€ idì™€ standard_date ë‘ê°œì„ì—ë„ ë¶ˆêµ¬í•˜ê³  idë¡œë§Œ ê²€ìƒ‰í•˜ê¸° ë•Œë¬¸ì´ë‹¤.
 	 * 
 	 * @param id
 	 * @return
 	 * @throws SQLException
 	 */
-	//TODO: °Ë»ö½Ã, id,standard_date µÎ°³·Î °Ë»öÇÒ ¼ö ÀÖµµ·Ï º¯°æÀÌ ÇÊ¿äÇÔ.
+	//TODO: ê²€ìƒ‰ì‹œ, id,standard_date ë‘ê°œë¡œ ê²€ìƒ‰í•  ìˆ˜ ìˆë„ë¡ ë³€ê²½ì´ í•„ìš”í•¨.
 	public Company select(String id,String standardDate) throws SQLException {
 		Company rtn = null;
 		Connection conn = null;

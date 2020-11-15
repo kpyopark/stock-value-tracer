@@ -15,7 +15,7 @@ import post.KrxSecurityType;
 import robot.DataUpdator;
 
 /**
- * CompanyListUpdator Á¤º¸¿¡¼­ ÃëÇÕÇÑ ºĞ±âÁ¤º¸¸¦ Åä´ë·Î ÀÏ³â°£ÀÇ ±âÃÊÀÚ·á¸¦ »ı¼ºÇÑ´Ù.
+ * CompanyListUpdator ì •ë³´ì—ì„œ ì·¨í•©í•œ ë¶„ê¸°ì •ë³´ë¥¼ í† ëŒ€ë¡œ ì¼ë…„ê°„ì˜ ê¸°ì´ˆìë£Œë¥¼ ìƒì„±í•œë‹¤.
  * 
  * @author Administrator
  *
@@ -29,9 +29,9 @@ public class AnnualEstimationUpdator extends DataUpdator {
 	}
 	
 	/**
-	 * ÀüÃ¼ ±â¾÷Á¤º¸ ¸ñ·ÏÀ» ±âÃÊ·Î
-	 * Ãß»êÄ¡¸¦ °è»êÇÑ´ÙÀ½
-	 * Ãß»êÄ¡ Å×ÀÌºíÀ» updateÇÑ´Ù.
+	 * ì „ì²´ ê¸°ì—…ì •ë³´ ëª©ë¡ì„ ê¸°ì´ˆë¡œ
+	 * ì¶”ì‚°ì¹˜ë¥¼ ê³„ì‚°í•œë‹¤ìŒ
+	 * ì¶”ì‚°ì¹˜ í…Œì´ë¸”ì„ updateí•œë‹¤.
 	 * 
 	 * @throws SQLException
 	 */

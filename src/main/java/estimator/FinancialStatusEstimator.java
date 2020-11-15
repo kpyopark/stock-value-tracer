@@ -36,12 +36,12 @@ public class FinancialStatusEstimator {
 	static String[] STANDARD_QUARTER_LIST = {FIRST_QUARTER,SECOND_QUARTER,THIRD_QUARTER,FORTH_QUARTER};
 
 	/**
-	 * 	ºĞ±â ¼öÀÍÁß °¡Àå ÃÖ½ÅÀÇ °Í(¹Ì·¡¿¹»óÄ¡ Á¦¿Ü) 4°¡Áö¸¦ °¡Áö°í ¿Â´Ù.
-	 *  ¿¬°£ ¼öÀÍÁõ °¡Àå ÃÖ½ÅÀÇ °Í(¹Ì·¡¿¹»óÄ¡ Á¦¿Ü, fixed) À» °¡Áö°í ¿Â´Ù.
-	 *  ºĞ±â¿¡¼­ ±¸ÇÒ ¼ö ÀÖ´Â ±â°£°ú ¿¬°£ ¼öÀÍ¿¡¼­  ±¸ÇÒ ¼ö ÀÖ´Â ±â°£À» ºñ±³ÇÏ¿© °¡´ÉÇÑ Å«ÂÊÀ» ¼±ÅÃÇÑ´Ù.
+	 * 	ë¶„ê¸° ìˆ˜ìµì¤‘ ê°€ì¥ ìµœì‹ ì˜ ê²ƒ(ë¯¸ë˜ì˜ˆìƒì¹˜ ì œì™¸) 4ê°€ì§€ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
+	 *  ì—°ê°„ ìˆ˜ìµì¦ ê°€ì¥ ìµœì‹ ì˜ ê²ƒ(ë¯¸ë˜ì˜ˆìƒì¹˜ ì œì™¸, fixed) ì„ ê°€ì§€ê³  ì˜¨ë‹¤.
+	 *  ë¶„ê¸°ì—ì„œ êµ¬í•  ìˆ˜ ìˆëŠ” ê¸°ê°„ê³¼ ì—°ê°„ ìˆ˜ìµì—ì„œ  êµ¬í•  ìˆ˜ ìˆëŠ” ê¸°ê°„ì„ ë¹„êµí•˜ì—¬ ê°€ëŠ¥í•œ í°ìª½ì„ ì„ íƒí•œë‹¤.
 	 *  
-	 *  ±¸ÇØÁø Àç¹«Á¤º¸ ¸®½ºÆ®´Â °¡Àå ÃÖ½ÅÀÇ ÀÚ·áµéÀÎ °ÍÀÌ´Ù.
-	 *  ÀÌ¸¦ ÅëÇØ Àç¹«Á¤º¸¸¦ Ãß»êÇÑ´Ù.
+	 *  êµ¬í•´ì§„ ì¬ë¬´ì •ë³´ ë¦¬ìŠ¤íŠ¸ëŠ” ê°€ì¥ ìµœì‹ ì˜ ìë£Œë“¤ì¸ ê²ƒì´ë‹¤.
+	 *  ì´ë¥¼ í†µí•´ ì¬ë¬´ì •ë³´ë¥¼ ì¶”ì‚°í•œë‹¤.
 	 * 
 	 * @param company
 	 * @return
@@ -60,7 +60,7 @@ public class FinancialStatusEstimator {
 			if ( continuousQuarterList.size() == 0 ) {
 				rtn = annualList;
 			} else if ( annualList.size() == 0 ) {
-				// ÀÌ·± ÀÏÀÌ ¹ß»ıÇÏ¸é ¾ÈµÇ°ÚÁö¿ä.^^
+				// ì´ëŸ° ì¼ì´ ë°œìƒí•˜ë©´ ì•ˆë˜ê² ì§€ìš”.^^
 				rtn = continuousQuarterList;
 			} else {
 				rtn = ( continuousQuarterList.get(0).getStandardDate().compareTo(
@@ -76,19 +76,19 @@ public class FinancialStatusEstimator {
 	public CompanyFinancialStatusEstimated getEstimatedCompanyFinancialStatus(ArrayList<CompanyFinancialStatus> cfsList, String registeredDate) {
 		CompanyFinancialStatusEstimated estimated = new CompanyFinancialStatusEstimated();
 		if ( cfsList.size() == 0 ) {
-			System.out.println("±âÃÊ Àç¹«Á¤º¸¸¦ È¹µæÇÏÁö ¸øÇß½À´Ï´Ù. À§¿¡ ÇÁ·Î±×·¥À» ´Ù½Ã ÇÑ¹ø ¼ÕÁ» º¸¼¼¿ä.");
+			System.out.println("ê¸°ì´ˆ ì¬ë¬´ì •ë³´ë¥¼ íšë“í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. ìœ„ì— í”„ë¡œê·¸ë¨ì„ ë‹¤ì‹œ í•œë²ˆ ì†ì¢€ ë³´ì„¸ìš”.");
 			return null;
 		}
 		if ( cfsList.get(0).isQuarter() ) {
 			if ( cfsList.size() < 4 ) {
-				System.out.println("ºĞ±âÁ¤º¸°¡ Á¤È®ÇÏ°Ô µé¾î¿ÀÁö ¾Ê¾Ò½À´Ï´Ù. ÀÌ ¸Å½îµå ¹Ù·Î ÀüÀ» È®ÀÎÇÏ¼¼¿ä.");
+				System.out.println("ë¶„ê¸°ì •ë³´ê°€ ì •í™•í•˜ê²Œ ë“¤ì–´ì˜¤ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. ì´ ë§¤ì˜ë“œ ë°”ë¡œ ì „ì„ í™•ì¸í•˜ì„¸ìš”.");
 			} else {
 				CompanyFinancialStatus first = cfsList.get(0);
 				CompanyFinancialStatus second = cfsList.get(1);
 				CompanyFinancialStatus third = cfsList.get(2);
 				CompanyFinancialStatus forth = cfsList.get(3);
 				
-				//System.out.println("--ºĞ±âÁ¤º¸·Î »êÃâ--[" + first.getCompany().getId() + ":" + first.getCompany().getName() +"]");
+				//System.out.println("--ë¶„ê¸°ì •ë³´ë¡œ ì‚°ì¶œ--[" + first.getCompany().getId() + ":" + first.getCompany().getName() +"]");
 				
 				estimated.setCompany(first.getCompany());
 				estimated.setRelatedDateList(first.getStandardDate()+","+second.getStandardDate()+"," +third.getStandardDate() + "," + forth.getStandardDate());
@@ -107,7 +107,7 @@ public class FinancialStatusEstimator {
 						( third.isFixed() ? third.getInvestedCapital() : 0 ) + ( forth.isFixed() ? forth.getInvestedCapital() : 0 )) / fixedCfsCount;
 				long estimatedNetProfit = first.getNetProfit() + second.getNetProfit() + third.getNetProfit() + forth.getNetProfit();
 				if ( first.getNetProfit() == 0 || second.getNetProfit() == 0 || third.getNetProfit() == 0 || forth.getNetProfit() == 0 ) {
-					// ºĞ±âº° ¼ø¼öÀÍÀÌ Á¤È®ÇÏ°Ô »êÃâµÇÁö ¾ÊÀº°æ¿ì. Á¤È®ÇÏÁö ¾ÊÀº 0ÀÎ Ç×¸ñÀº Á¦¿ÜÇÏ°í ¼öÀÍÀ» ±¸ÇÒ ¼ö ÀÖµµ·Ï ¼öÁ¤ÇÑ´Ù.
+					// ë¶„ê¸°ë³„ ìˆœìˆ˜ìµì´ ì •í™•í•˜ê²Œ ì‚°ì¶œë˜ì§€ ì•Šì€ê²½ìš°. ì •í™•í•˜ì§€ ì•Šì€ 0ì¸ í•­ëª©ì€ ì œì™¸í•˜ê³  ìˆ˜ìµì„ êµ¬í•  ìˆ˜ ìˆë„ë¡ ìˆ˜ì •í•œë‹¤.
 					int realValueCount = 0;
 					realValueCount += first.getNetProfit() != 0 ? 1 : 0;
 					realValueCount += second.getNetProfit() != 0 ? 1 : 0;
@@ -115,10 +115,10 @@ public class FinancialStatusEstimator {
 					realValueCount += forth.getNetProfit() != 0 ? 1 : 0;
 					estimatedNetProfit = realValueCount == 0 ? 0 : estimatedNetProfit * 4 / realValueCount; 
 				}
-				//TODO: ¹è´ç¼öÀÍÀ²°ú °°Àº °ÍµéÀº ¿©·¯ÇØ µ¿¾ÈÀÇ ÀÚ·á¸¦ ÅëÇÑ Ãß»êÄ¡·Î ÃßÈÄ °è»êÇÏ´Â °ÍÀ¸·Î ÇÑ´Ù.
+				//TODO: ë°°ë‹¹ìˆ˜ìµìœ¨ê³¼ ê°™ì€ ê²ƒë“¤ì€ ì—¬ëŸ¬í•´ ë™ì•ˆì˜ ìë£Œë¥¼ í†µí•œ ì¶”ì‚°ì¹˜ë¡œ ì¶”í›„ ê³„ì‚°í•˜ëŠ” ê²ƒìœ¼ë¡œ í•œë‹¤.
 				long estimatedOperatingProfit = first.getOperatingProfit() + second.getOperatingProfit() + third.getOperatingProfit() + forth.getOperatingProfit();
 				if ( first.getOperatingProfit() == 0 || second.getOperatingProfit() == 0 || third.getOperatingProfit() == 0 || forth.getOperatingProfit() == 0 ) {
-					// ºĞ±âº° ¼ø¼öÀÍÀÌ Á¤È®ÇÏ°Ô »êÃâµÇÁö ¾ÊÀº°æ¿ì. Á¤È®ÇÏÁö ¾ÊÀº 0ÀÎ Ç×¸ñÀº Á¦¿ÜÇÏ°í ¼öÀÍÀ» ±¸ÇÒ ¼ö ÀÖµµ·Ï ¼öÁ¤ÇÑ´Ù.
+					// ë¶„ê¸°ë³„ ìˆœìˆ˜ìµì´ ì •í™•í•˜ê²Œ ì‚°ì¶œë˜ì§€ ì•Šì€ê²½ìš°. ì •í™•í•˜ì§€ ì•Šì€ 0ì¸ í•­ëª©ì€ ì œì™¸í•˜ê³  ìˆ˜ìµì„ êµ¬í•  ìˆ˜ ìˆë„ë¡ ìˆ˜ì •í•œë‹¤.
 					int realValueCount = 0;
 					realValueCount += first.getOperatingProfit() != 0 ? 1 : 0;
 					realValueCount += second.getOperatingProfit() != 0 ? 1 : 0;
@@ -128,7 +128,7 @@ public class FinancialStatusEstimator {
 				}
 				long estimatedOrdinaryProfit = first.getOrdinaryProfit() + second.getOrdinaryProfit() + third.getOrdinaryProfit() + forth.getOrdinaryProfit();
 				if ( first.getOrdinaryProfit() == 0 || second.getOrdinaryProfit() == 0 || third.getOrdinaryProfit() == 0 || forth.getOrdinaryProfit() == 0 ) {
-					// ºĞ±âº° ¼ø¼öÀÍÀÌ Á¤È®ÇÏ°Ô »êÃâµÇÁö ¾ÊÀº°æ¿ì. Á¤È®ÇÏÁö ¾ÊÀº 0ÀÎ Ç×¸ñÀº Á¦¿ÜÇÏ°í ¼öÀÍÀ» ±¸ÇÒ ¼ö ÀÖµµ·Ï ¼öÁ¤ÇÑ´Ù.
+					// ë¶„ê¸°ë³„ ìˆœìˆ˜ìµì´ ì •í™•í•˜ê²Œ ì‚°ì¶œë˜ì§€ ì•Šì€ê²½ìš°. ì •í™•í•˜ì§€ ì•Šì€ 0ì¸ í•­ëª©ì€ ì œì™¸í•˜ê³  ìˆ˜ìµì„ êµ¬í•  ìˆ˜ ìˆë„ë¡ ìˆ˜ì •í•œë‹¤.
 					int realValueCount = 0;
 					realValueCount += first.getOrdinaryProfit() != 0 ? 1 : 0;
 					realValueCount += second.getOrdinaryProfit() != 0 ? 1 : 0;
@@ -136,11 +136,11 @@ public class FinancialStatusEstimator {
 					realValueCount += forth.getOrdinaryProfit() != 0 ? 1 : 0;
 					estimatedOrdinaryProfit = realValueCount == 0 ? 0 : estimatedOrdinaryProfit * 4 / realValueCount; 
 				}
-				// ÁÖ½Ä¼ö´Â °¡Àå ÃÖ½ÅÀÇ ÁÖ½Ä¼ö¸¦ °¡Áö°í ¿Â´Ù. modifid 2007.02.27
+				// ì£¼ì‹ìˆ˜ëŠ” ê°€ì¥ ìµœì‹ ì˜ ì£¼ì‹ìˆ˜ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤. modifid 2007.02.27
 				long estimatedOrdinarySharesSize = getLatestOrdinarySharesSize(first.getCompany(), registeredDate);
 					//(( first.isFixed() ? first.getOrdinarySharesSize() : 0 ) + ( second.isFixed() ? second.getOrdinarySharesSize() : 0 ) +
 					//	( third.isFixed() ? third.getOrdinarySharesSize() : 0 ) + ( forth.isFixed() ? forth.getOrdinarySharesSize() : 0 )) / fixedCfsCount;
-				// ÁÖ½Ä¼ö´Â °¡Àå ÃÖ½ÅÀÇ ÁÖ½Ä¼ö¸¦ °¡Áö°í ¿Â´Ù. modifid 2007.02.27
+				// ì£¼ì‹ìˆ˜ëŠ” ê°€ì¥ ìµœì‹ ì˜ ì£¼ì‹ìˆ˜ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤. modifid 2007.02.27
 				long estimatedPrefferedSharesSize = getLatestPrefferedSharesSize(first.getCompany(), registeredDate);
 					//(( first.isFixed() ? first.getPrefferedSharesSize() : 0 ) + ( second.isFixed() ? second.getPrefferedSharesSize() : 0 ) +
 					//	( third.isFixed() ? third.getPrefferedSharesSize() : 0 ) + ( forth.isFixed() ? forth.getPrefferedSharesSize() : 0 )) / fixedCfsCount;
@@ -167,13 +167,13 @@ public class FinancialStatusEstimator {
 		} else {
 			java.util.Collections.sort(cfsList,new StandardDateReverseComparator());
 			try {
-				//System.out.println("--³â Á¤º¸·Î »êÃâ--[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
+				//System.out.println("--ë…„ ì •ë³´ë¡œ ì‚°ì¶œ--[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
 				estimated.setRelatedDateList(cfsList.get(0).getStandardDate());
 				estimated.copyStructure(cfsList.get(0));
 				estimated.setOrdinarySharesSize(getLatestOrdinarySharesSize(cfsList.get(0).getCompany(), registeredDate));
 				estimated.setPrefferedSharesSize(getLatestPrefferedSharesSize(cfsList.get(0).getCompany(), registeredDate));
 			} catch ( Exception e ) {
-				System.out.println("³â°£ Àç¹«Á¤º¸¸¦ Á¤È®ÇÏ°Ô ¾òÁö ¸øÇß½À´Ï´Ù. È®ÀÎÀÌ ÇÊ¿äÇÕ´Ï´Ù.[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
+				System.out.println("ë…„ê°„ ì¬ë¬´ì •ë³´ë¥¼ ì •í™•í•˜ê²Œ ì–»ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. í™•ì¸ì´ í•„ìš”í•©ë‹ˆë‹¤.[" + cfsList.get(0).getCompany().getId() + ":" + cfsList.get(0).getCompany().getName() +"]");
 			}
 		}
 		return estimated;
@@ -241,7 +241,7 @@ public class FinancialStatusEstimator {
 				secondMonth = Integer.parseInt(secondQuarter.substring(4,6));
 				return (firstYear - secondYear) * 12 + ( firstMonth - secondMonth ) == 3;
 			} catch ( Exception e ) {
-				// ¿¡·¯°¡ ³ª¸é ºĞ±âÁ¤º¸°¡ Æ²¸° °ÍÀÓ.
+				// ì—ëŸ¬ê°€ ë‚˜ë©´ ë¶„ê¸°ì •ë³´ê°€ í‹€ë¦° ê²ƒì„.
 			}
 		}
 		return isNextQuarter;
@@ -250,7 +250,7 @@ public class FinancialStatusEstimator {
 	
 	
 	/**
-	 * ºĞ±â½ÇÀıÁ¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * ë¶„ê¸°ì‹¤ì ˆì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * @param cfsList
 	 * @return
 	 */
@@ -265,7 +265,7 @@ public class FinancialStatusEstimator {
 	}
 	
 	/**
-	 * ³â°£½ÇÀûÁ¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * ë…„ê°„ì‹¤ì ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * @param cfsList
 	 * @return
 	 */
@@ -287,10 +287,10 @@ public class FinancialStatusEstimator {
 				if ( cfsList.get(cnt).isFixed() ) {
 					newList.add(cfsList.get(cnt));
 				} else {
-					//System.out.println("ÀÌ ÀÚ·á´Â ¹Ì·¡ÀÚ·á(Ãß»êÄ¡)ÀÌ¹Ç·Î Á¦¿ÜÇØ¾ßÇÔ.[" + cfsList.get(cnt).getCompany().getId() + ":" + cfsList.get(cnt).getCompany().getName() + ":" + cfsList.get(cnt).getStandardDate() + "]" );
+					//System.out.println("ì´ ìë£ŒëŠ” ë¯¸ë˜ìë£Œ(ì¶”ì‚°ì¹˜)ì´ë¯€ë¡œ ì œì™¸í•´ì•¼í•¨.[" + cfsList.get(cnt).getCompany().getId() + ":" + cfsList.get(cnt).getCompany().getName() + ":" + cfsList.get(cnt).getStandardDate() + "]" );
 				}
 			} else {
-				//System.out.println("ÀÌ ÀÚ·á´Â ¹Ì·¡ÀÚ·á(Ãß»êÄ¡)ÀÌ¹Ç·Î Á¦¿ÜÇØ¾ßÇÔ.[" + cfsList.get(cnt).getCompany().getId() + ":" + cfsList.get(cnt).getCompany().getName() + ":" + cfsList.get(cnt).getStandardDate() + "]" );
+				//System.out.println("ì´ ìë£ŒëŠ” ë¯¸ë˜ìë£Œ(ì¶”ì‚°ì¹˜)ì´ë¯€ë¡œ ì œì™¸í•´ì•¼í•¨.[" + cfsList.get(cnt).getCompany().getId() + ":" + cfsList.get(cnt).getCompany().getName() + ":" + cfsList.get(cnt).getStandardDate() + "]" );
 			}
 		}
 		return newList;
@@ -312,7 +312,7 @@ public class FinancialStatusEstimator {
 		Company company = new Company();
 		String currentDate = STANDARD_DATE_FORMAT.format(new Date());
 		company.setId("A031980");
-		company.setName("ÇÇ¿¡½ºÄÉÀÌ");
+		company.setName("í”¼ì—ìŠ¤ì¼€ì´");
 		System.out.println(estim.getEstimatedCompanyFinancialStatus(estim.getStandardFinancialStatusList(company, currentDate), currentDate));
 		System.out.println(FinancialStatusEstimator.getLatestOrdinarySharesSize(company, currentDate));
 	}
@@ -320,7 +320,7 @@ public class FinancialStatusEstimator {
 }
 
 /**
- * Àç¹«»óÅÂ¿¡¼­ ±âÁØ³¯Â¥¼øÀ¸·Î sortingÇÒ ¶§ »ç¿ëÇÏ´Â Comparator
+ * ì¬ë¬´ìƒíƒœì—ì„œ ê¸°ì¤€ë‚ ì§œìˆœìœ¼ë¡œ sortingí•  ë•Œ ì‚¬ìš©í•˜ëŠ” Comparator
  * @author Administrator
  *
  */

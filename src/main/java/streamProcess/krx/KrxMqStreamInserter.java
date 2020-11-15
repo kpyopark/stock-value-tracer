@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Delivery;
 
 import common.QueueUtil;
 import dao.KrxItemDao;
@@ -40,12 +42,12 @@ public class KrxMqStreamInserter {
 		Channel selectQueueChannel = null;
 		Channel insertQueueChannel = null;
 
-		public CheckExistAlready() throws IOException {
+		public CheckExistAlready() throws IOException, TimeoutException {
 			dao = new KrxItemDao();
 			createQueues();
 		}
 
-		public void createQueues() throws IOException {
+		public void createQueues() throws IOException, TimeoutException {
 			ConnectionFactory factory = new ConnectionFactory();
 			factory.setHost("localhost");
 			mqCon = factory.newConnection();
@@ -60,17 +62,17 @@ public class KrxMqStreamInserter {
 		}
 		
 		public void closeQueue() {
-			try { selectQueueChannel.close(); } catch (IOException ioe) {}
-			try { insertQueueChannel.close(); } catch (IOException ioe) {}
+			try { selectQueueChannel.close(); } catch (Exception ioe) {}
+			try { insertQueueChannel.close(); } catch (Exception ioe) {}
 			try { mqCon.close(); } catch (IOException ioe) {}
 		}
 
 		public void run() {
 			Kryo serializer = new Kryo();
 			serializer.register(KrxItem.class);
-			QueueingConsumer consumer = null;
+			DefaultConsumer consumer = null;
 			try {
-				consumer = new QueueingConsumer(selectQueueChannel);
+				consumer = new DefaultConsumer(selectQueueChannel);
 				selectQueueChannel.basicConsume(QueueUtil.QUEUE_SELECTKRX, true, consumer);
 			} catch ( IOException ioe ) {
 				ioe.printStackTrace();
@@ -78,7 +80,8 @@ public class KrxMqStreamInserter {
 			}
 			while(!needExit) {
 				try {
-					QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+					/*
+					Delivery delivery = consumer.nextDelivery();
 					KrxItem newItem = QueueUtil.getInstanceFromBytes(serializer, delivery.getBody(), KrxItem.class);
 					if ( newItem != null ) {
 						//System.out.println("check :" + newItem.getId() + ":" + newItem.getStandardDate() );
@@ -86,6 +89,7 @@ public class KrxMqStreamInserter {
 							insertQueueChannel.basicPublish("", QueueUtil.QUEUE_INSERTKRX, null, delivery.getBody());
 						}
 					}
+					*/
 				} catch ( Exception e ) { e.printStackTrace();}
 			}
 			closeQueue();
@@ -97,11 +101,11 @@ public class KrxMqStreamInserter {
 		Connection mqCon = null;
 		Channel insertQueueChannel = null;
 		/* static */ final int MAX_BULK_SIZE = 100;
-		public KrxItemInserter() throws IOException {
+		public KrxItemInserter() throws IOException, TimeoutException {
 			dao = new KrxItemDao();
 			createQueues();
 		}
-		public void createQueues() throws IOException {
+		public void createQueues() throws IOException, TimeoutException {
 			ConnectionFactory factory = new ConnectionFactory();
 			factory.setHost("localhost");
 			mqCon = factory.newConnection();
@@ -111,7 +115,7 @@ public class KrxMqStreamInserter {
 			insertQueueChannel.queueDeclare(QueueUtil.QUEUE_INSERTKRX, false, false, false, args);
 		}
 		public void closeQueue() {
-			try { insertQueueChannel.close(); } catch (IOException ioe) {}
+			try { insertQueueChannel.close(); } catch (Exception ioe) {}
 			try { mqCon.close(); } catch (IOException ioe) {}
 		}
 
@@ -137,9 +141,9 @@ public class KrxMqStreamInserter {
 		public void run() {
 			Kryo serializer = new Kryo();
 			serializer.register(KrxItem.class);
-			QueueingConsumer consumer = null;
+			DefaultConsumer consumer = null;
 			try {
-				consumer = new QueueingConsumer(insertQueueChannel);
+				consumer = new DefaultConsumer(insertQueueChannel);
 				insertQueueChannel.basicConsume(QueueUtil.QUEUE_INSERTKRX, true, consumer);
 			} catch ( IOException ioe ) {
 				ioe.printStackTrace();
@@ -149,6 +153,7 @@ public class KrxMqStreamInserter {
 			int size = 0;
 			while(!needExit) {
 				try {
+					/*
 					QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000);
 					if ( delivery != null && delivery.getBody() != null ) {
 						KrxItem newItem = QueueUtil.getInstanceFromBytes(serializer, delivery.getBody(), KrxItem.class);
@@ -162,7 +167,7 @@ public class KrxMqStreamInserter {
 						tryToBulkInsert(bulk);
 						size = 0;
 					}
-
+					*/
 				} catch ( Exception e ) { e.printStackTrace();}
 			}
 			closeQueue();
@@ -182,7 +187,7 @@ public class KrxMqStreamInserter {
 			}
 			StreamWatcher watcher = StreamWatcher.getStreamWatcher();
 			watcher.addWatchTarget(QueueUtil.QUEUE_INSERTKRX);
-		} catch (IOException ioe) {
+		} catch (Exception ioe) {
 			ioe.printStackTrace();
 			// When the exceptions occurs during initialization, all resource will be canceled.
 			stopStream();

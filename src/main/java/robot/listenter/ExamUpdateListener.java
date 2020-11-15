@@ -12,10 +12,10 @@ public class ExamUpdateListener implements IUpdateListener {
 	public void companyChanged(CompanyEx company, Throwable err) {
 		if ( company != null ) {
 			if ( err != null  ) { 
-				System.out.println(company.getId() + "[" + company.getName() + "] Á¤º¸ ¼öÁ¤Áß ¿¡·¯ ¹ß»ı[" + err.getMessage() + "]" );
+				System.out.println(company.getId() + "[" + company.getName() + "] ì •ë³´ ìˆ˜ì •ì¤‘ ì—ëŸ¬ ë°œìƒ[" + err.getMessage() + "]" );
 				err.printStackTrace();
 			} else {
-				System.out.println(company.getId() + "[" + company.getName() + "] È¸»çÁ¤º¸ º¯°æ" );
+				System.out.println(company.getId() + "[" + company.getName() + "] íšŒì‚¬ì •ë³´ ë³€ê²½" );
 			}
 		}
 	}
@@ -24,10 +24,10 @@ public class ExamUpdateListener implements IUpdateListener {
 			Throwable err) {
 		if ( cfs != null ) {
 			if ( err != null  ) { 
-				System.out.println(cfs.getCompany().getId() + "[" + cfs.getCompany().getName() + "] [" + cfs.getStandardDate() + "] Àç¹«ÀçÇ¥ Á¤º¸ ¼öÁ¤Áß ¿¡·¯ ¹ß»ı[" + err.getMessage() + "]" );
+				System.out.println(cfs.getCompany().getId() + "[" + cfs.getCompany().getName() + "] [" + cfs.getStandardDate() + "] ì¬ë¬´ì¬í‘œ ì •ë³´ ìˆ˜ì •ì¤‘ ì—ëŸ¬ ë°œìƒ[" + err.getMessage() + "]" );
 				err.printStackTrace();
 			} else {
-				System.out.println(cfs.getCompany().getId() + "[" + cfs.getCompany().getName() + "] [" + cfs.getStandardDate() + "] Àç¹«ÀçÇ¥ Á¤º¸ º¯°æ" );
+				System.out.println(cfs.getCompany().getId() + "[" + cfs.getCompany().getName() + "] [" + cfs.getStandardDate() + "] ì¬ë¬´ì¬í‘œ ì •ë³´ ë³€ê²½" );
 			}
 		}
 	}
@@ -36,10 +36,10 @@ public class ExamUpdateListener implements IUpdateListener {
 			CompanyFinancialStatusEstimated cfe, Throwable err) {
 		if ( cfe != null ) {
 			if ( err != null  ) { 
-				System.out.println(cfe.getCompany().getId() + "[" + cfe.getCompany().getName() + "] [" + cfe.getStandardDate() + "] Àç¹«ÀçÇ¥ Ãß»êÄ¡ Á¤º¸ ¼öÁ¤Áß ¿¡·¯ ¹ß»ı[" + err.getMessage() + "]" );
+				System.out.println(cfe.getCompany().getId() + "[" + cfe.getCompany().getName() + "] [" + cfe.getStandardDate() + "] ì¬ë¬´ì¬í‘œ ì¶”ì‚°ì¹˜ ì •ë³´ ìˆ˜ì •ì¤‘ ì—ëŸ¬ ë°œìƒ[" + err.getMessage() + "]" );
 				err.printStackTrace();
 			} else {
-				System.out.println(cfe.getCompany().getId() + "[" + cfe.getCompany().getName() + "] [" + cfe.getStandardDate() + "] Àç¹«ÀçÇ¥ Ãß»êÄ¡ Á¤º¸ º¯°æ" );
+				System.out.println(cfe.getCompany().getId() + "[" + cfe.getCompany().getName() + "] [" + cfe.getStandardDate() + "] ì¬ë¬´ì¬í‘œ ì¶”ì‚°ì¹˜ ì •ë³´ ë³€ê²½" );
 			}
 		}
 	}
@@ -47,10 +47,10 @@ public class ExamUpdateListener implements IUpdateListener {
 	public void stockEstimationChanged(StockEstimated cse, Throwable err) {
 		if ( cse != null ) {
 			if ( err != null  ) { 
-				System.out.println(cse.getCompany().getId() + "[" + cse.getCompany().getName() + "] [" + cse.getStandardDate() + "] ÁÖ°¡ Ãß»êÄ¡ Á¤º¸ ¼öÁ¤Áß ¿¡·¯ ¹ß»ı[" + err.getMessage() + "]" );
+				System.out.println(cse.getCompany().getId() + "[" + cse.getCompany().getName() + "] [" + cse.getStandardDate() + "] ì£¼ê°€ ì¶”ì‚°ì¹˜ ì •ë³´ ìˆ˜ì •ì¤‘ ì—ëŸ¬ ë°œìƒ[" + err.getMessage() + "]" );
 				err.printStackTrace();
 			} else {
-				System.out.println(cse.getCompany().getId() + "[" + cse.getCompany().getName() + "] [" + cse.getStandardDate() + "] ÁÖ°¡ Ãß»êÄ¡ Á¤º¸ º¯°æ" );
+				System.out.println(cse.getCompany().getId() + "[" + cse.getCompany().getName() + "] [" + cse.getStandardDate() + "] ì£¼ê°€ ì¶”ì‚°ì¹˜ ì •ë³´ ë³€ê²½" );
 			}
 		}
 	}
@@ -58,10 +58,10 @@ public class ExamUpdateListener implements IUpdateListener {
 	public void stockValueChanged(Stock stock, Throwable err) {
 		if ( stock != null ) {
 			if ( err != null  ) { 
-				System.out.println(stock.getCompany().getId() + "[" + stock.getCompany().getName() + "] [" + stock.getStandardDate() + "] ÁÖ°¡ Á¤º¸ ¼öÁ¤Áß ¿¡·¯ ¹ß»ı[" + err.getMessage() + "]" );
+				System.out.println(stock.getCompany().getId() + "[" + stock.getCompany().getName() + "] [" + stock.getStandardDate() + "] ì£¼ê°€ ì •ë³´ ìˆ˜ì •ì¤‘ ì—ëŸ¬ ë°œìƒ[" + err.getMessage() + "]" );
 				err.printStackTrace();
 			} else {
-				System.out.println(stock.getCompany().getId() + "[" + stock.getCompany().getName() + "] [" + stock.getStandardDate() + "] ÁÖ°¡ Á¤º¸ º¯°æ" );
+				System.out.println(stock.getCompany().getId() + "[" + stock.getCompany().getName() + "] [" + stock.getStandardDate() + "] ì£¼ê°€ ì •ë³´ ë³€ê²½" );
 			}
 		}
 	}

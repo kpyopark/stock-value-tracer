@@ -204,7 +204,7 @@ public class InstitutionalDemandDao extends BaseDao {
 	}
 	
 	/**
-	 * ÇØ´ç Á¾¸ñ¿¡ ¸Â´Â Àç¹«Á¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * í•´ë‹¹ ì¢…ëª©ì— ë§ëŠ” ì¬ë¬´ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * @param company
 	 * @return
 	 * @throws SQLException

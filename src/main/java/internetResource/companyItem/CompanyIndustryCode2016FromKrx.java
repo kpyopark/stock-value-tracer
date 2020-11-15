@@ -21,7 +21,7 @@ public class CompanyIndustryCode2016FromKrx {
 
 	static String[][] ITEM_LIST_PARAMS = {
 		{"market_gubun","ALL"},			// 0
-		{"isu_cdnm","ÀüÃ¼"},				// 1
+		{"isu_cdnm","ì „ì²´"},				// 1
 		{"sort_type","A"},				// 2
 		{"lst_stk_vl","1"},				// 3
 		{"cpt","1"},					// 4

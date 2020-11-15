@@ -20,7 +20,7 @@ public class StockManager {
 		
 		ArrayList<String> list = new ArrayList<String>();
 		
-		//TODO : ¸ğµç ÁÖ½ÄÁ¤º¸¸¦ °¡Áö°í ¿Ã¼ö ÀÖ´Â ¹æ¹ıÀ» È®ÀÎÇÏÀÚ.
+		//TODO : ëª¨ë“  ì£¼ì‹ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¬ìˆ˜ ìˆëŠ” ë°©ë²•ì„ í™•ì¸í•˜ì.
 		
 		return list;
 	}

@@ -168,10 +168,10 @@ public class KrxItemDao extends BaseDao {
 	
 	/**
 	 * 
-	 * ÁÖ½ÄÀÇ Á¾·ù, ³¯Â¥, ½Ã°£¿¡ ¸ÂÃß¾î ÁÖ°¡Á¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * ì£¼ì‹ì˜ ì¢…ë¥˜, ë‚ ì§œ, ì‹œê°„ì— ë§žì¶”ì–´ ì£¼ê°€ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * 
-	 * ½Ã°£ÀÌ ¾ø´Ù¸é, ÃÖÁ¾ ½Ã°£ÀÇ Á¤º¸¸¦
-	 * ³¯Â¥°¡ ¾ø´Ù¸é, ÃÖÁ¾ ³¯Â¥ÀÇ Á¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * ì‹œê°„ì´ ì—†ë‹¤ë©´, ìµœì¢… ì‹œê°„ì˜ ì •ë³´ë¥¼
+	 * ë‚ ì§œê°€ ì—†ë‹¤ë©´, ìµœì¢… ë‚ ì§œì˜ ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * 
 	 * @param id
 	 * @param standardDate
@@ -242,10 +242,10 @@ public class KrxItemDao extends BaseDao {
 	
 	/**
 	 * 
-	 * ÁÖ½ÄÀÇ Á¾·ù, ³¯Â¥, ½Ã°£¿¡ ¸ÂÃß¾î ÁÖ°¡Á¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * ì£¼ì‹ì˜ ì¢…ë¥˜, ë‚ ì§œ, ì‹œê°„ì— ë§žì¶”ì–´ ì£¼ê°€ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * 
-	 * ½Ã°£ÀÌ ¾ø´Ù¸é, ÃÖÁ¾ ½Ã°£ÀÇ Á¤º¸¸¦
-	 * ³¯Â¥°¡ ¾ø´Ù¸é, ÃÖÁ¾ ³¯Â¥ÀÇ Á¤º¸¸¦ °¡Áö°í ¿Â´Ù.
+	 * ì‹œê°„ì´ ì—†ë‹¤ë©´, ìµœì¢… ì‹œê°„ì˜ ì •ë³´ë¥¼
+	 * ë‚ ì§œê°€ ì—†ë‹¤ë©´, ìµœì¢… ë‚ ì§œì˜ ì •ë³´ë¥¼ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 * 
 	 * @param id
 	 * @param standardDate

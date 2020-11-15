@@ -7,77 +7,77 @@ public class CompanyFinancialStatus extends BaseStructure {
 	 */
 	private static final long serialVersionUID = 1397366767529694042L;
 	/**
-	 * È¸»çÁ¤º¸
+	 * íšŒì‚¬ì •ë³´
 	 */
 	private Company company = null;
 	/**
-	 * assets : ÀÚ»ê
+	 * assets : ìì‚°
 	 */
 	private long assets = 0;
 	/**
-	 * capital : ÀÚº»
+	 * capital : ìë³¸
 	 */
 	private long capital = 0;
 	/**
-	 * debt : ºÎÃ¤
+	 * debt : ë¶€ì±„
 	 */
 	private long debt = 0;
 	/**
-	 * devidendRatio : ¹è´çÀ² 
+	 * devidendRatio : ë°°ë‹¹ìœ¨ 
 	 */
 	private float dividendRatio = (float) 0.0;
 	/**
-	 * ÀÚº»ÃÑ°è
+	 * ìë³¸ì´ê³„
 	 */
 	private long grossCapital = 0;
 	/**
-	 * ÇöÀç Á¤º¸°¡ °íÁ¤µÈ Á¤º¸ÀÎÁö ¿©ºÎ
+	 * í˜„ì¬ ì •ë³´ê°€ ê³ ì •ëœ ì •ë³´ì¸ì§€ ì—¬ë¶€
 	 */
 	private boolean isFixed = true;
 	/**
-	 * KOSPI µîÀç¿©ºÎ
+	 * KOSPI ë“±ì¬ì—¬ë¶€
 	 */
 	private boolean isKOSPI = true;
 	/**
-	 * ÇöÀç Á¤º¸°¡ net quarterÀÎÁö ¿©ºÎ
+	 * í˜„ì¬ ì •ë³´ê°€ net quarterì¸ì§€ ì—¬ë¶€
 	 */
 	private boolean isQuarter = false;
 	/**
-	 * netProfit : ¼øÀÌÀÍ 
+	 * netProfit : ìˆœì´ìµ 
 	 */
 	private long netProfit = 0;
 	/**
-	 * operatingProfit : ¿µ¾÷ÀÌÀÍ 
+	 * operatingProfit : ì˜ì—…ì´ìµ 
 	 */
 	private long operatingProfit = 0;
 	/**
-	 * °æ»óÀÌÀÍ
+	 * ê²½ìƒì´ìµ
 	 */
 	private long ordinaryProfit = 0;
 	private float roa = (float) 0.0;
 	private float roe = (float) 0.0;
 	private float roi = (float) 0.0;
 	/**
-	 * saled : ÃÑ¸ÅÃâ
+	 * saled : ì´ë§¤ì¶œ
 	 */
 	private long sales = 0;
 	
 	/**
-	 * ±âÁØÀÏÀÚ
+	 * ê¸°ì¤€ì¼ì
 	 */
 	private String standardDate = null;
 	/**
-	 * º¸ÅëÁÖ ¹ßÇà ÁÖ½Ä¼ö
+	 * ë³´í†µì£¼ ë°œí–‰ ì£¼ì‹ìˆ˜
 	 */
 	private long ordinarySharesSize = 0;
 	
 	/**
-	 * ¿ì¼±ÁÖ ¹ßÇà ÁÖ½Ä¼ö
+	 * ìš°ì„ ì£¼ ë°œí–‰ ì£¼ì‹ìˆ˜
 	 */
 	private long prefferedSharesSize = 0;
 	
 	/**
-	 * ÅõÇÏÀÚº»
+	 * íˆ¬í•˜ìë³¸
 	 */
 	private long investedCapital = 0;
 	

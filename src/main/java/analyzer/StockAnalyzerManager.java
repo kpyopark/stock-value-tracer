@@ -125,15 +125,15 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
-	 * ÈŞÀåÀÏ Á¤º¸¸¦ °»½ÅÇÑ´Ù.
+	 * íœ´ì¥ì¼ ì •ë³´ë¥¼ ê°±ì‹ í•œë‹¤.
 	 */
 	public void startClosedDayUpdator() {
 		ClosedDayRetriever.updateClosedDays();
 	}
 	
 	/**
-	 * È¸»ç ¸ñ·ÏÀ» ¼öÁ¤ÇÑ´Ù.
-	 * ÇöÀç ÀÌ ºÎºĞÀº ¼ÕÁúÀÌ ¾à°£ ÇÊ¿äÇÔ.
+	 * íšŒì‚¬ ëª©ë¡ì„ ìˆ˜ì •í•œë‹¤.
+	 * í˜„ì¬ ì´ ë¶€ë¶„ì€ ì†ì§ˆì´ ì•½ê°„ í•„ìš”í•¨.
 	 */
 	public void startCompanyListUpdator() {
 		try {
@@ -147,8 +147,8 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
-	 * Index ¸ñ·ÏÀ» ¼öÁ¤ÇÑ´Ù.
-	 * ÀÌ ºÎºĞÀº ´Ù¸¥ ÇÁ·Î±×·¥¿¡¼­ È°¿ëÇÏ±â À§ÇÏ¿© ÀÓ½Ã Ãß°¡ÇÑ ºÎºĞÀÌ´Ù.
+	 * Index ëª©ë¡ì„ ìˆ˜ì •í•œë‹¤.
+	 * ì´ ë¶€ë¶„ì€ ë‹¤ë¥¸ í”„ë¡œê·¸ë¨ì—ì„œ í™œìš©í•˜ê¸° ìœ„í•˜ì—¬ ì„ì‹œ ì¶”ê°€í•œ ë¶€ë¶„ì´ë‹¤.
 	 * 
 	 */
 	public void updateOptionListUpdator() {
@@ -158,7 +158,7 @@ public class StockAnalyzerManager {
 	
 	
 	/**
-	 * Àç¹«ÀçÇ¥ Á¤º¸¸¦ Web¿¡¼­ °¡Áö°í ¿Â´Ù.
+	 * ì¬ë¬´ì¬í‘œ ì •ë³´ë¥¼ Webì—ì„œ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 */
 	public void startCompanyFinancialStatusUpdator() {
 		try {
@@ -210,7 +210,7 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
-	 * ¿À·ù°¡ ¹ß»ıÇÑ Àç¹« Á¤º¸¸¦ º¸Á¤ÇÑ´Ù.
+	 * ì˜¤ë¥˜ê°€ ë°œìƒí•œ ì¬ë¬´ ì •ë³´ë¥¼ ë³´ì •í•œë‹¤.
 	 */
 	public void startFinancialReportRefiner() {
 		try {
@@ -221,7 +221,7 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
-	 * È¸»ç ÁÖ°¡Á¤º¸¸¦ Web¿¡¼­ °¡Áö°í ¿Â´Ù.
+	 * íšŒì‚¬ ì£¼ê°€ì •ë³´ë¥¼ Webì—ì„œ ê°€ì§€ê³  ì˜¨ë‹¤.
 	 */
 	public void startStockValueUpdator() {
 		try {
@@ -238,7 +238,7 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
-	 * ¹Ì·¡ÀÇ È¸»ç Àç¹«Á¦Ç¥¸¦ Ãß»êÇÑ´Ù.
+	 * ë¯¸ë˜ì˜ íšŒì‚¬ ì¬ë¬´ì œí‘œë¥¼ ì¶”ì‚°í•œë‹¤.
 	 */
 	public void startAnnualEstimationUpdator() {
 		try {
@@ -260,7 +260,7 @@ public class StockAnalyzerManager {
 	}
 	
 	/**
-	 * ÁÖ°¡ ¿¹»óÄ¡¸¦ Ãß»êÇÑ´Ù.
+	 * ì£¼ê°€ ì˜ˆìƒì¹˜ë¥¼ ì¶”ì‚°í•œë‹¤.
 	 */ 
 	public void startStockValueEstimationUpdator() {
 		try {
@@ -281,7 +281,7 @@ public class StockAnalyzerManager {
 	static SimpleDateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	
 	/**
-	 * ÁÖ°¡¸¦ Æò°¡ÇÑ´Ù.
+	 * ì£¼ê°€ë¥¼ í‰ê°€í•œë‹¤.
 	 */
 	public void startStockAnalyzer() {
 		try {

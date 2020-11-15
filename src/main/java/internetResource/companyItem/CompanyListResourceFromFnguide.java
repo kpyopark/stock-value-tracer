@@ -97,7 +97,7 @@ public class CompanyListResourceFromFnguide {
 					financialStatus.setStandardDate(date);
 					System.out.println(company.getStandardDate());
 					company.setStandardDate(date);
-					financialStatus.setKOSPI(br.readLine().indexOf("À¯") >= 0);
+					financialStatus.setKOSPI(br.readLine().indexOf("ìœ ") >= 0);
 					System.out.println(financialStatus.isKOSPI());
 					financialStatus.setAssets(1000000 * getLongValue(getValueFieldFromLine(br.readLine())));
 					System.out.println(financialStatus.getAssets());

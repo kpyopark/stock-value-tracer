@@ -8,24 +8,24 @@ public class StockRank extends BaseStructure {
 	private static final long serialVersionUID = -5067583453728158614L;
 
 	/**
-	 * ÁÖ°¡ ´ë»ó È¸»ç 
+	 * ì£¼ê°€ ëŒ€ìƒ íšŒì‚¬ 
 	 */
 	private Company company = null;
 	
 	private StockEstimated stockEstimation = null;
 	
 	/**
-	 * ROE¸¦ ±âÁØÀ¸·Î Rank
+	 * ROEë¥¼ ê¸°ì¤€ìœ¼ë¡œ Rank
 	 */
 	private int roeRank = Integer.MAX_VALUE;
 	
 	/**
-	 * PER¸¦ ±âÁØÀ¸·Î Rank
+	 * PERë¥¼ ê¸°ì¤€ìœ¼ë¡œ Rank
 	 */
 	private int perRank = Integer.MAX_VALUE;
 	
 	/**
-	 * ÃÖ»óÀÇ Rank
+	 * ìµœìƒì˜ Rank
 	 */
 	private int totRank = Integer.MAX_VALUE;
 	

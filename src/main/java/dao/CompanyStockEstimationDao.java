@@ -69,7 +69,7 @@ public class CompanyStockEstimationDao extends BaseDao {
 	}
 	
 	/**
-	 * °Ë»öÇÏ°íÀÚ ÇÏ´Â Á¤È®ÇÑ È¸»çÁ¤º¸¿Í ±âÁØÀÏÀÚ¸¦ ¾Ë °æ¿ì ÀÌ¿ë.
+	 * ê²€ìƒ‰í•˜ê³ ì í•˜ëŠ” ì •í™•í•œ íšŒì‚¬ì •ë³´ì™€ ê¸°ì¤€ì¼ìë¥¼ ì•Œ ê²½ìš° ì´ìš©.
 	 * 
 	 * @param company
 	 * @param standardDate
@@ -128,7 +128,7 @@ public class CompanyStockEstimationDao extends BaseDao {
 	}
 	
 	/**
-	 * °Ë»öÇÏ°íÀÚ ÇÏ´Â Á¤È®ÇÑ È¸»çÁ¤º¸¿Í ±âÁØÀÏÀÚ¸¦ ¾Ë °æ¿ì ÀÌ¿ë.
+	 * ê²€ìƒ‰í•˜ê³ ì í•˜ëŠ” ì •í™•í•œ íšŒì‚¬ì •ë³´ì™€ ê¸°ì¤€ì¼ìë¥¼ ì•Œ ê²½ìš° ì´ìš©.
 	 * 
 	 * @param company
 	 * @param standardDate

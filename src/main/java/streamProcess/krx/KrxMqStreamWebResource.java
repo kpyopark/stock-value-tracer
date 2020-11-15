@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.rabbitmq.client.Channel;
@@ -55,12 +56,12 @@ public class KrxMqStreamWebResource {
 		Connection mqCon = null;
 		Channel selectQueueChannel = null;
 		CompanyAndItemListResource2016FromKrx ir = new CompanyAndItemListResource2016FromKrx();		
-		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_) throws IOException {
+		public KrxItemCrawlerService(BlockingQueue<KrxWebResourceTask> source_) throws IOException, TimeoutException {
 			source = source_;
 			createDestinationQueue();
 		}
 
-		public void createDestinationQueue() throws IOException {
+		public void createDestinationQueue() throws IOException, TimeoutException {
 			ConnectionFactory factory = new ConnectionFactory();
 			factory.setHost("localhost");
 			mqCon = factory.newConnection();
@@ -71,7 +72,7 @@ public class KrxMqStreamWebResource {
 			selectQueueChannel.queueDeclare(QueueUtil.QUEUE_SELECTKRX, false, false, false, args);
 			selectQueueChannel.queuePurge(QueueUtil.QUEUE_SELECTKRX);
 		}
-		public void closeQueue() throws IOException {
+		public void closeQueue() throws IOException, TimeoutException {
 			try {
 				if ( selectQueueChannel != null ) 
 					selectQueueChannel.close();
@@ -114,7 +115,7 @@ public class KrxMqStreamWebResource {
 			StreamWatcher watcher = StreamWatcher.getStreamWatcher();
 			watcher.addWatchTarget(QueueUtil.QUEUE_WEBRESOURCE, webResourceTask);
 			watcher.addWatchTarget(QueueUtil.QUEUE_SELECTKRX);
-		} catch (IOException ioe) {
+		} catch (Exception ioe) {
 			ioe.printStackTrace();
 			needExit = true;
 			stopStream();
